@@ -11,6 +11,8 @@ Gsend embeds a Fragile which will be created in the GTK main thread (using "idle
 Gsend.new gets a closure (instead of a Gobject value),
   the closure's return type is the type of the specific Gobject
 
+"https://docs.rs/woab/0.6.0/woab/"
+
 "https://gtk-rs.org/"
 gtksourceview4 webkit2gtk
 poppler-glib goffice goocanvas
