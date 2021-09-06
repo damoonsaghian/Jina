@@ -1,10 +1,10 @@
 Acton is a programming language, based on actors and ownership mechanism
-actors are used for asynchronous programming (and not just for concurrent programming)
 
 we can use mutable borrow (!T) and immutable borrow (&T) to access data synchronously
-for asynchronous access we have to use actors
+for asynchronous access we use actors
 "https://riker.rs/hierarchy/"
 "https://crates.io/crates/aurum_actors"
+  "https://docs.rs/aurum_actors/0.0.1/aurum_actors/#forgeable-references"
   "https://docs.rs/aurum_actors/0.0.1/aurum_actors/core/index.html#sending-messages"
 "https://github.com/elfo-rs/elfo"
   "https://docs.rs/elfo/0.1.19/elfo/struct.Addr.html"
@@ -48,15 +48,17 @@ to deal with it, programming languages choose different approaches:
 , abandon concurrency altogether; make single threaded programs
 , implement complicated and error prone lock mechanisms
 , abandon mutability like in pure functional programming; but since mutability is necessary any way,
-  a complicated mechanism like monads, linear types, or effects must be used
-  any how, lack of direct mutability, and the need for aggressive garbage collection in functional programming,
-  makes it not so efficient
+  a complicated mechanism like monads, linear types, effects, or Clojure reference types, must be used
+  "https://stackoverflow.com/questions/9132346/clojure-differences-between-ref-var-agent-atom-with-examples"
+  "http://clojure-doc.org/articles/language/concurrency_and_parallelism.html#clojure-reference-types"
+  any how, lack of direct mutability, and the need for aggressive garbage collection,
+  means that functional programming is not an efficient method
 , use the approach taken by Pony "https://www.ponylang.io/"
   it doesn't abandon aliasing (sharing) nor mutability, instead it controls them using reference capabilities
   Pony's approach introduces many complexities, especially when dealing with generics
   i think the main reason for its complexities is that even class fields have reference capabilities
 
-the right approach is using actors plus Rust's ownership mechanism:
+the right approach is to use ownership mechanism (as is done in Rust):
 , any resource has an owner
 , borrows must have a lifetime less than the owner
 , mutable borrow has exclusive access to the resource, during its lifetime
