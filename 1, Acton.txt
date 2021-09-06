@@ -1,9 +1,17 @@
-Acton is a programming language, based on actors
+Acton is a programming language, based on actors and ownership mechanism
 actors are used for asynchronous programming (and not just for concurrent programming)
 
 we can use mutable borrow (!T) and immutable borrow (&T) to access data synchronously
 for asynchronous access we have to use actors
-https://github.com/Xudong-Huang/may_actor
+"https://riker.rs/hierarchy/"
+"https://crates.io/crates/aurum_actors"
+  "https://docs.rs/aurum_actors/0.0.1/aurum_actors/core/index.html#sending-messages"
+"https://github.com/elfo-rs/elfo"
+  "https://docs.rs/elfo/0.1.19/elfo/struct.Addr.html"
+  "https://github.com/elfo-rs/elfo/blob/master/elfo/examples/usage.rs"
+"https://docs.rs/acto/0.1.0/acto/struct.ActorId.html"
+  "https://github.com/Actyx/acto/blob/master/examples/pingpong.rs"
+"https://github.com/Xudong-Huang/may_actor"
 actor variables actually hold an ID, and thus can easily be copied across async parts of the program
 this implies that an ID can refer to a deallocated actor
 when we send a message to a deallocated actor, it just does nothing

@@ -85,8 +85,9 @@ f :: &X, &Y -> () = {x, y ->
 
 'M = import "module/path/relative/to/current/directory"
 'a, 'B, 'c = import "module/path/relative/to/current/directory"
-a: 'x, B: 'Y, c: 'c = M
-a: 'x = M
+'x = import "module/path/relative/to/current/directory" .a
+(a: 'x, B: 'Y, c: 'c) = M
+'x, 'Y, 'c = M .a, .B, .c
 'M = import "/module/path/relative/to/project/root"
 'M = import "//package'name'majorVersionNumber/module/path"
 
