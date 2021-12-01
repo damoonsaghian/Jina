@@ -2,6 +2,10 @@ software rendering gives us a lot more flexibility,
   because we won't be limited by a hardware implementation,
   with triangle only rasterization, isolated shader programs, and fixed size buffers
 GPU equivalent performance can be achieved using SIMD ("https://en.wikipedia.org/wiki/SIMD")
+"https://www.quora.com/What-is-the-main-difference-between-SIMD-and-GPU"
+"https://stackoverflow.com/questions/27333815/cpu-simd-vs-gpu-simd"
+"https://en.wikipedia.org/wiki/Vector_processor"
+"https://en.wikipedia.org/wiki/RISC-V#Vector_set"
 
 graphical objects are made of primitives
   each primitive has a specific algorithm for rasterization

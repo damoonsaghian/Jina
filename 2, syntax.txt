@@ -5,27 +5,27 @@ character: \a
 UTF-8 string: "abc"
 
 tuples:
-1, 2, 3
+(1 2 3)
 tuple can match on sub'tuples:
-match (1, 2, 3) {x, y -> ...}
+match (1 2 3) {x y -> ...}
 named tuples:
-x: 1, y: 2, z: 3
+(x: 1 y: 2 z: 3)
 named tuples can be matched on tuples if the name of variables match:
-match (x: 1, y: 2) {x, y -> ...}
+match (x: 1 y: 2) {x y -> ...}
 we can't have a tuple with only one element, but we can have a named tuple with only one element
 
 arrays:
-[1, 2, 3]
+[1 2 3]
 an empty array:
 x :: Array<Int> = []
 indexing: x_1
 maps:
-[\a => 1, \b => 2, \c => 3]
+[\a => 1 \b => 2 \c => 3]
 an empty map:
 x :: Map<Char, Int> = []
 maps with strings as keys:
-["a" => 1, "b" => 2, "c" => 3]
-[a: 1, b: 2, c: 3]
+["a" => 1 "b" => 2 "c" => 3]
+[a: 1 b: 2 c: 3]
 
 variable definition:
 x = 1
@@ -34,22 +34,26 @@ x .= 1
 x.a = 1
 
 closure:
-{x, y -> ...}
+{x y -> ...}
 move closure:
-^{x, y -> ...}
+^{x y -> ...}
 
 actors:
 a = Actor B(x)
 a.do {b -> ...}
 
 function call:
-f(x, y)
-f x, y
-note that in nested function calls or tuples, inner expressions must all have parentheses
-function call with a closures as the last arguments:
-f x, y {...} {...}
+f x y
+f1 a f2(x y)
+f1 a (x y)
+note that in nested function calls, inner ones must have parentheses,
+  and there must be no spaces between function name and the parentheses
 
-{f x, y} can be written as: | f x, y
+a b c, e f g
+is equivalent to:
+a b c e(f g)
+
+{f x y} can be written as: | f x y
 
 if else:
 if condition {...} {...}
@@ -79,44 +83,43 @@ the root module can contain the "main" function
 
 c :: Int = 1
 
-f :: &X, &Y -> () = {x, y ->
+f :: &X &Y -> () = {x y ->
   ...
 }
 
 'M = import "module/path/relative/to/current/directory"
-'a, 'B, 'c = import "module/path/relative/to/current/directory"
+'a 'B 'c = import "module/path/relative/to/current/directory"
 'x = import "module/path/relative/to/current/directory" .a
-(a: 'x, B: 'Y, c: 'c) = M
-'x, 'Y, 'c = M .a, .B, .c
+'x 'Y 'c = M .a .B .c
 'M = import "/module/path/relative/to/project/root"
 'M = import "//package'name'majorVersionNumber/module/path"
 
 struct:
-:: S(a: A, b: B)
-:: S(A, B)
+:: S a: A b: B
+:: S A B
 private struct:
-:: 'S(a: A, b: B)
+:: 'S a: A b: B
 
 enum:
 :: E
-:| X(a: A, b: B)
+:| X a: A b: B
 :| Y
 
 generic struct:
-:: S[a](a, B)
+:: S[a] a B
 
 type alias:
-:: A = (B, C)
+:: A = (B C)
 :: A = B[C]
 
 :: T {
-  m :: &, &X -> Y = {self, x -> ...}
+  m :: & &X -> Y = {self, x -> ...}
   n :: ! -> () = {self -> ...}
 }
 
 trait:
 :: t {
-  m :: &, &A -> B
+  m :: & &A -> B
   n :: ! -> ()
 }
 implementing a trait:
