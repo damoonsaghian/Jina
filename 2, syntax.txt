@@ -44,15 +44,13 @@ a = Actor B(x)
 a.do {b -> ...}
 
 function call:
-f x y
-f1 a f2(x y)
-f1 a (x y)
-note that in nested function calls, inner ones must have parentheses,
-  and there must be no spaces between function name and the parentheses
-
-a b c, e f g
-is equivalent to:
-a b c e(f g)
+f(x y)
+note that there must be no spaces between function name and the parentheses
+some syntactic sugar which also make Acton suitable for interactive use:
+"f x y" becomes "f(x y)"
+"a b c, e f g" becomes "a b c e(f g)"
+", f" becomes "f()"
+in interactive mode, there is always a comma at the beginning
 
 {f x y} can be written as: | f x y
 
