@@ -3,6 +3,8 @@ multi'line comment: /* */
 
 character: \a
 UTF-8 string: "abc"
+string interpolation:
+"a {b}"
 
 tuples:
 (1 2 3)
@@ -19,13 +21,12 @@ arrays:
 an empty array:
 x :: Array<Int> = []
 indexing: x_1
-maps:
-[\a => 1 \b => 2 \c => 3]
+maps with string as keys:
+[a: 1 b: 2 c: 3]
+maps with variables as keys:
+[{a}: 1 {b}: 2 {c}: 3]
 an empty map:
 x :: Map<Char, Int> = []
-maps with strings as keys:
-["a" => 1 "b" => 2 "c" => 3]
-[a: 1 b: 2 c: 3]
 
 variable definition:
 x = 1
@@ -78,7 +79,7 @@ iterator.for'each {x -> ...}
 in modules we can only have static definitions
 ie we can only define types, functions, and constants which can be computed at compile'time
 in a module, definitions marked with an apostrophe, are private
-the file called "0.cr" is the root module
+the file called "0.act" is the root module
 the root module can contain the "main" function
 
 c :: Int = 1
@@ -90,23 +91,23 @@ f :: &X &Y -> () = {x y ->
 'M = import "module/path/relative/to/current/directory"
 'a 'B 'c = import "module/path/relative/to/current/directory"
 'x = import "module/path/relative/to/current/directory" .a
-'x 'Y 'c = M .a .B .c
+'Y = M.B
 'M = import "/module/path/relative/to/project/root"
 'M = import "//package'name'majorVersionNumber/module/path"
 
 struct:
-:: S a: A b: B
-:: S A B
+:: S(a: A b: B)
+:: S(A B)
 private struct:
-:: 'S a: A b: B
+:: 'S(a: A b: B)
 
 enum:
 :: E
-:| X a: A b: B
+:| X(a: A b: B)
 :| Y
 
 generic struct:
-:: S[a] a B
+:: S[a](a B)
 
 type alias:
 :: A = (B C)
