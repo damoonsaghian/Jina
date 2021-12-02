@@ -95,35 +95,37 @@ f :: &X &Y -> () = {x y ->
 'M = import "/module/path/relative/to/project/root"
 'M = import "//package'name'majorVersionNumber/module/path"
 
-struct:
-:: S(a: A b: B)
-:: S(A B)
-private struct:
-:: 'S(a: A b: B)
-
-enum:
-:: E
-:| X(a: A b: B)
-:| Y
+struct definition:
+S :(
+  a: A
+  b: B
+)
+S :(A B)
 
 generic struct:
-:: S[a](a B)
+S[a] :(a B)
 
 type alias:
-:: A = (B C)
-:: A = B[C]
+A := (B C)
+A := B[C]
 
-:: T {
+primitive type:
+P :()
+enum:
+E := X | Y
+
+implementing a type:
+S :{
   m :: & &X -> Y = {self, x -> ...}
   n :: ! -> () = {self -> ...}
 }
 
 trait:
-:: t {
-  m :: & &A -> B
-  n :: ! -> ()
-}
+T :[
+  m: & &A -> B
+  n: ! -> ()
+]
 implementing a trait:
-:: S t {
+S :> T :{
   ...
 }
