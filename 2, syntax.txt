@@ -49,9 +49,8 @@ note that there must be no spaces between function name and the parentheses
 some syntactic sugar which also make Acton suitable for interactive use:
 "f x y" becomes "f(x y)"
 "a b c, e f g" becomes "a b c e(f g)"
-"; f" becomes "f()"
-"; f a b" becomes: f(["a" "b"])
-in interactive mode, there is always a semicolon at the beginning
+", f" becomes "f()"
+in interactive mode, there is always a comma at the beginning
 
 {f x y} can be written as: | f x y
 
