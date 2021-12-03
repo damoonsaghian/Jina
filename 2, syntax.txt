@@ -3,6 +3,7 @@ multi'line comment: /* */
 
 character: \a
 UTF-8 string: "abc"
+one word string: 'abc
 string interpolation:
 "a {b}"
 
