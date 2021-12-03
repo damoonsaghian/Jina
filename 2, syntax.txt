@@ -46,11 +46,8 @@ a.do {b -> ...}
 function call:
 f(x y)
 note that there must be no spaces between function name and the parentheses
-some syntactic sugar which also make Acton suitable for interactive use:
-"f x y" becomes "f(x y)"
+"f x y" as the first expression of the line becomes "f(x y)"
 "a b c, e f g" becomes "a b c e(f g)"
-", f" becomes "f()"
-in interactive mode, there is always a comma at the beginning
 
 {f x y} can be written as: | f x y
 
