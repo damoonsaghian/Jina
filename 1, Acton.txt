@@ -157,3 +157,4 @@ math:
 https://nalgebra.org/rustdoc/nalgebra/index.html
 https://gitlab.com/ornamentist/un-algebra
 https://github.com/rustsim/alga
+https://www.sympy.org/en/index.html
