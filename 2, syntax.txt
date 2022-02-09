@@ -92,12 +92,12 @@ f = {x &X y &Y -> :Z
   ...
 }
 
-'M = import "module/path/relative/to/current/directory"
+'m = import "module/path/relative/to/current/directory"
 'a 'B 'c = import "module/path/relative/to/current/directory"
 'x = import "module/path/relative/to/current/directory" .a
-'Y = M.B
-'M = import "/module/path/relative/to/project/root"
-'M = import "//package'name'majorVersionNumber/module/path"
+'Y = m.B
+'m = import "/module/path/relative/to/project/root"
+'m = import "//package'name'majorVersionNumber/module/path"
 
 struct definition:
 S := (
@@ -117,9 +117,6 @@ S = (
   }
 )
 
-construct an instance of a struct:
-S.(x y)
-
 simple function calls are always expanded, based on the type of it's first argument:
   "f x y" is converted to "X.f x y"
 so Rust's free functions can only be called like this: "module.function"
@@ -131,8 +128,8 @@ cloned types:
 A :: (B C)
 A :: B[C]
 cloned types are especially useful for defining traits on imported structs
-  (which can't be done directly on the imported structs)
-"https://github.com/rust-lang/rust/issues/53862"
+because it can't be done directly on the imported structs
+  "https://github.com/rust-lang/rust/issues/53862"
 
 primitive type:
 P := ()
@@ -140,10 +137,10 @@ enum:
 E :: X + Y
 
 trait:
-T :{
-  m : & &X -> Y
-  n : ! -> ()
-}
+T :: (
+  m: & &X -> Y
+  n: ! -> ()
+)
 
 implementing a struct which implements traits T1 and T2:
 S :< T1 + T2 = (
