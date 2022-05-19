@@ -13,6 +13,12 @@ Gsend.new gets a closure (instead of a Gobject value),
 
 "https://docs.rs/woab/0.6.0/woab/"
 
+subclassing is a central concept in the design of GTK
+the approach of "gtk-rs" to circumvent that, needs a lot of boilerplate
+"https://gtk-rs.org/gtk4-rs/stable/latest/book/gobject_subclassing.html"
+"https://www.figuiere.net/technotes/notes/tn002/" (subclassing Gtk widgets in Rust)
+is there a way to hide these complexities?
+
 "https://gtk-rs.org/"
 gtksourceview4 webkit2gtk
 poppler-glib goffice goocanvas

@@ -75,7 +75,7 @@ iterator.for'each {x -> ...}
 in modules we can only have static definitions
 ie we can only define types, functions, and constants which can be computed at compile'time
 in a module, definitions marked with an apostrophe, are private
-the file called "0.act" is the root module
+the file called "a.act" is the root module
 the root module can contain the "main" function
 
 c : Int = 1
