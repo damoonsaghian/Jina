@@ -7,9 +7,9 @@ solution:
 "https://docs.rs/send_wrapper/0.4.0/send_wrapper/"
 we deal with Gobjects by wrapping them in a Gsend
 Gsend embeds a Fragile which will be created in the GTK main thread (using "idle_add"),
-  and then received (and put inside the Gsend) using a channel
+	and then received (and put inside the Gsend) using a channel
 Gsend.new gets a closure (instead of a Gobject value),
-  the closure's return type is the type of the specific Gobject
+	the closure's return type is the type of the specific Gobject
 
 "https://docs.rs/woab/0.6.0/woab/"
 
@@ -22,6 +22,6 @@ is there a way to hide these complexities?
 or maybe it's better to implement a GUI library, from scratch
 "https://github.com/kas-gui/kas"
 Chromium Embedded Framework
-  "https://github.com/Julusian/rust-cef"
-  "https://github.com/cztomczak/cefpython"
+	"https://github.com/Julusian/rust-cef"
+	"https://github.com/cztomczak/cefpython"
 ffmpeg
