@@ -17,26 +17,26 @@ string interpolation:
 "a {b}"
 
 tuples:
-(1 2 3)
-tuple can match on sub'tuples:
-match (1 2 3) {x y -> ...}
+(1, 2, 3)
+tuple can be matched on sub'tuples:
+match (1, 2, 3) {x, y -> ...}
 named tuples:
-(x: 1 y: 2 z: 3)
+(x: 1, y: 2, z: 3)
 named tuples can be matched on tuples if the name of variables match:
-match (x: 1 y: 2) {x y -> ...}
+match (x: 1, y: 2) {x, y -> ...}
 we can't have a tuple with only one element, but we can have a named tuple with only one element
 
 arrays:
-[1 2 3]
+[1, 2, 3]
 an empty array:
 x :[Int] = []
 indexing: x_1
 maps with string as keys:
-[a: 1 b: 2 c: 3]
+[a: 1, b: 2, c: 3]
 maps with variables as keys:
-[{a}: 1 {b}: 2 {c}: 3]
+[a : 1, b : 2, c : 3]
 an empty map:
-x :[Char:Int] = []
+x :[Char, Int] = []
 
 variable definition:
 x = 1
@@ -44,23 +44,19 @@ assignment:
 x .= 1
 x.a = 1
 
-closure:
-{x y -> ...}
-move closure:
-^{x y -> ...}
+closure (translated to move closures in Rust):
+{x, y -> ...}
 
 actors:
-a = Actor(B(x))
+a = Actor B(x)
 a .do {b -> ...}
 
 function call:
-f(x y)
-note that there must be no spaces between function name and the parentheses
-"f x y" as the first expression, becomes "f(x y)"
-"a b c, e f g" becomes "a b c e(f g)"
-f{} or f[] or f"" always become f({}) or f([])  f("a")
+f x y
+which is equivalent to:
+f(x, y)
 
-{f(x y)} can be written as: | f(x y)
+{f x y} can be written as: | f x y
 
 if else:
 if condition {...} {...}
@@ -90,30 +86,27 @@ the root module can contain the "main" function
 
 c :Int = 1
 
-f = {x :X y &Y -> Z
+f = {x :X, y &Y -> :Z
 	...
 }
 
 'm = import"module/path/relative/to/current/directory"
-'a 'B 'c = import"module/path/relative/to/current/directory"
+'a, 'B, 'c = import"module/path/relative/to/current/directory"
 'x = import"module/path/relative/to/current/directory".a
 'Y = m.B
 'm = import"/module/path/relative/to/project/root"
 'm = import"//package'name'majorVersionNumber/module/path"
 
 struct definition:
-S := (
-	a: A
-	b: B
-)
+S := (a: A,	b: B)
 tuple struct:
 S := (A B)
 
 implementing a struct:
 S = (
-	m: {self &S x &X -> Y
+	m: {self &S x &X -> :Y
 		...
-	}
+	},
 	n: {self !S ->
 		...
 	}
@@ -125,10 +118,10 @@ which is equivalent to:
 X.f x y
 
 generic struct:
-S(a) := (a B)
+S(a) := (a, B)
 
 cloned types:
-A :: (B C)
+A :: (B, C)
 A :: B(C)
 cloned types are especially useful for defining traits on imported structs
 because it can't be done directly on the imported structs
@@ -141,7 +134,7 @@ E :: X + Y
 
 trait:
 T :: (
-	m: & &X -> Y
+	m: & &X -> Y,
 	n: ! -> ()
 )
 
