@@ -48,11 +48,3 @@ with a scene graph we can have fine grained graphical objects which can be combi
 "https://en.wikipedia.org/wiki/Stencil_buffer"
 "https://www.scratchapixel.com"
 "https://www.scratchapixel.com/lessons/3d-basic-rendering/phong-shader-BRDF"
-
-"https://github.com/rust-windowing/winit"
-"https://github.com/kas-gui/kas"
-"https://github.com/sebcrozet/kiss3d"
-"https://github.com/three-rs/three"
-"https://crates.io/crates/rust-3d"
-"https://github.com/38/plotters"
-"https://github.com/rustsim/nphysics"

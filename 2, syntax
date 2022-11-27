@@ -10,46 +10,42 @@ or:
 	comment
 	;
 
-character: \a
-UTF-8 string: "abc"
-one word string: 'abc
-string interpolation:
-"a {b}"
-
-tuples:
-(1, 2, 3)
-tuple can be matched on sub'tuples:
-match (1, 2, 3) {x, y -> ...}
-named tuples:
-(x: 1, y: 2, z: 3)
-named tuples can be matched on tuples if the name of variables match:
-match (x: 1, y: 2) {x, y -> ...}
-we can't have a tuple with only one element, but we can have a named tuple with only one element
-
-arrays:
-[1, 2, 3]
-an empty array:
-x :[Int] = []
-indexing: x_1
-maps with string as keys:
-[a: 1, b: 2, c: 3]
-maps with variables as keys:
-[a : 1, b : 2, c : 3]
-an empty map:
-x :[Char, Int] = []
-
 variable definition:
-x = 1
-assignment:
-x .= 1
-x.a = 1
+	v = 1
+private variables:
+	v' = 1
 
-closure (translated to move closures in Rust):
-{x, y -> ...}
+symbols: 'a '123
+UTF-8 string (an array of UTF-8 symbols): "abc"
+string interpolation: "a {b}"
+
+tuples: (1, 2, 3)
+use matching to access the contained items
+	x, y, z = 1, 2, 3
+tuple can be matched on sub'tuples:
+	x, y = 1, 2, 3
+named tuples: (x: 1, y: 2, z: 3)
+named tuples can be matched on tuples if the name of variables match:
+	x, y = x: 1, y: 2
+we can't have a tuple with only one element, but a named tuple with only one element is possible
+
+arrays: [1, 2, 3]
+empty array:
+	x :[Int] = []
+indexing: x_1
+maps with symbols as keys:
+	[a: 1, b: 2, c: 3]
+maps with variables as keys:
+	[a : 1, b : 2, c : 3]
+empty map:
+	x :[Char, Int] = []
+
+function:
+{ x, y -> ... }
 
 actors:
 a = Actor B(x)
-a .do {b -> ...}
+a.do { b -> ... }
 
 function call:
 f x y
@@ -58,87 +54,81 @@ f(x, y)
 
 {f x y} can be written as: | f x y
 
-if else:
+if'else:
 if condition {...} {...}
-if condition {} | if c {} {}
+if condition {...} | if c {...} {...} | if c {...} {...}
 
 and or:
-True && {False}
-True || {False}
+'true & {'false}
+'true \ {'false}
 
-match x {
-	Some(a) -> ...
-	Nil -> ...
-}
+matching:
+	match x {
+		x :X -> ...
+		x :'nil -> ...
+	}
+though in this simple case there is a shortcut: x?
 
 loops:
-loop {...break...}
-while {condition} {...}
-for iterator {x -> ...}
+	loop {...break...}
+while {condition} { ... }
+	for iterator { x -> ... }
 which is equivalent to:
-iterator .for'each {x -> ...}
+	iterator.for'each { x -> ... }
 
-in modules we can only have static definitions
-ie we can only define types, functions, and constants which can be computed at compile'time
-in a module, definitions marked with an apostrophe, are private
-the file called "a.act" is the root module
-the root module can contain the "main" function
+modules are made of classes, functions and constants
+the file named "0" is the root module
+the root module can contain the main function
 
 c :Int = 1
 
-f = {x :X, y &Y -> :Z
+f = { x :X, y :Y -> :Z
 	...
 }
 
-'m = import"module/path/relative/to/current/directory"
-'a, 'B, 'c = import"module/path/relative/to/current/directory"
-'x = import"module/path/relative/to/current/directory".a
-'Y = m.B
-'m = import"/module/path/relative/to/project/root"
-'m = import"//package'name'majorVersionNumber/module/path"
+import classes, functions and constants from other modules:
+C', f' = import "module/path/relative/to/current/directory"
+C', f: ff' = import "module/path/relative/to/current/directory"
+C', f' = import "/module/path/relative/to/project/root"
+C', f' = import "//package'name'majorVersionNumber/module/path"
 
-struct definition:
-S := (a: A,	b: B)
-tuple struct:
-S := (A B)
-
-implementing a struct:
-S = (
-	m: {self &S x &X -> :Y
-		...
+class:
+C = class [
+	f1: F1,
+	f2: F2,
+	new: { f1 :F1 ->
+		self.f2 = ...
 	},
-	n: {self !S ->
+	m1: { a :A -> :R
+		self.m2()
+	},
+	m2: { ->
 		...
 	}
-)
+]
 
-calling methods:
-x .f y
-which is equivalent to:
-X.f x y
+calling a method:
+	o.m a
+mutating a field:
+	o.f = ...
 
-generic struct:
-S(a) := (a, B)
+generic class:
+C(t) { ... }
 
-cloned types:
-A :: (B, C)
-A :: B(C)
-cloned types are especially useful for defining traits on imported structs
-because it can't be done directly on the imported structs
-	"https://github.com/rust-lang/rust/issues/53862"
+type alias:
+	T := (T1, T2)
+	T := T1(T2)
+symbols and numbers are actually their own types:
+	's :'s
+	1 :1
+enums:
+	Bool := 'true + 'false
+"C?" is a shortcut for "C + 'nil"
 
-primitive type:
-P := ()
-enum:
-E :: X + Y
-
-trait:
-T :: (
-	m: & &X -> Y,
-	n: ! -> ()
-)
-
-implementing a struct which implements traits T1 and T2:
-S :< T1 + T2 = (
-	...
-)
+interfaces are classes without constructors:
+	I = interface [f1: F1, f2: F2] {
+		m1: { ... },
+		m2: { ... }
+	}
+defining a class which implements interfaces I1 and I2:
+	C :: I1 + I2 = class { ... }
