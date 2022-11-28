@@ -1,4 +1,4 @@
-Rustic is a programming language, based on actors and ownership mechanism
+Rustic is a programming language, based on actors, with static memory managment
 
 memory management:
 , in synchronous parts, it can be done statically (no need for a garbage collector)
