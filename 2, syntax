@@ -13,6 +13,8 @@ type anotation:
 
 symbols:
 	'symbol
+if the first character of a symbol is a number, the apostrophe is not required
+	yeah, number are just symbols
 symbols are actually their own types:
 	's :'s
 a string is an array of UTF-8 symbols, and can be written as:
@@ -38,6 +40,8 @@ to access an element:
 	t.1
 tuples can be matched on sub'tuples:
 	a, b = 1, 2, 3
+to change an element:
+	t.1 = 2
 records (named tuples):
 	nt = (a: 1, b: 2, c: 3)
 to access an element:
