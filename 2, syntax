@@ -13,8 +13,6 @@ type anotation:
 
 symbols:
 	'symbol
-if the first character of a symbol is a number, the apostrophe is not required
-	yeah, number are just symbols
 symbols are actually their own types:
 	's :'s
 a string is an array of UTF-8 symbols, and can be written as:
