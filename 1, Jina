@@ -1,0 +1,63 @@
+Jina is a simple coherent programming language
+may it unify the programming cummunities, and be a start for a better future
+	like Mahsa Jina Amini, the girl whose tragic murder united Iranian people for a better future
+
+it uses some simple concepts to solve those problems which makes programming languages complicated:
+, symbols and records are used to define classes and inheritance
+, actors are used to achieve lock'free concurrency, and static memory managment
+
+memory management:
+, in synchronous parts, it can be done statically (no need for a garbage collector)
+	"https://www.toptal.com/software/eliminating-garbage-collector"
+	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
+, in asynchronous parts, use actors
+	actor variables actually hold an ID, and thus can easily be copied across async parts of the program
+	this implies that an ID can refer to a deallocated actor
+	when we send a message to a deallocated actor, it just does nothing
+"https://riker.rs/hierarchy/"
+"https://crates.io/crates/aurum_actors"
+	"https://docs.rs/aurum_actors/0.0.1/aurum_actors/#forgeable-references"
+	"https://docs.rs/aurum_actors/0.0.1/aurum_actors/core/index.html#sending-messages"
+"https://github.com/elfo-rs/elfo"
+	"https://docs.rs/elfo/0.1.19/elfo/struct.Addr.html"
+	"https://github.com/elfo-rs/elfo/blob/master/elfo/examples/usage.rs"
+"https://docs.rs/acto/0.1.0/acto/struct.ActorId.html"
+	"https://github.com/Actyx/acto/blob/master/examples/pingpong.rs"
+"https://github.com/Xudong-Huang/may_actor"
+
+sharing mutable data in concurrent parts of a program is problematic
+a data race happens when these three behaviors occur:
+, two or more pointers access the same data at the same time
+, at least one of the pointers is being used to write to the data
+, there’s no mechanism being used to synchronize access to the data
+
+to deal with it, programming languages choose different approaches:
+, abandon concurrency altogether; make single threaded programs
+, implement complicated and error prone lock mechanisms
+, abandon mutability like in pure functional programming; but since mutability is necessary any way,
+	a complicated mechanism like monads, linear types, effects, or Clojure reference types, must be used
+	"https://stackoverflow.com/questions/9132346/clojure-differences-between-ref-var-agent-atom-with-examples"
+	"http://clojure-doc.org/articles/language/concurrency_and_parallelism.html#clojure-reference-types"
+	any how, the lack of direct mutability, and the need for aggressive garbage collection,
+		means that functional programming is not an efficient method
+, use the approach taken by Pony "https://www.ponylang.io/"
+	it doesn't abandon aliasing (sharing) nor mutability, instead it controls them using reference capabilities
+	Pony's approach introduces many complexities, especially when dealing with generics
+	i think the main reason for its complexities is that even class fields have reference capabilities
+, simply use actors, and only allow actors and copy types to be shared concurrently
+
+types show us what we can do with the data, ie which operations are valid
+the class hierarchy design, like the one in Java, is problematic
+	"http://ptgmedia.pearsoncmg.com/images/020163371x/items/item33.html"
+also it leads to the problem of covariance for generic types
+	"https://en.wikipedia.org/wiki/Wildcard_(Java)"
+i feel that this problem was the motivation for dynamic typing (another bad design)
+one solution is to have two kind of types:
+, concrete types (like final classes in Java) can be instantiated, but cannot have subtypes
+, abstract types (like abstract classes in Java) cannot be instantiated, but can have subtypes
+but i think it's enough to just avoid direct subtype replacement, and instead use restricted generics
+
+Jina compiles to C:
+"https://yosefk.com/blog/c-as-an-intermediate-language.html"
+"https://wiki.c2.com/?CeeAsAnIntermediateLanguage"
+"https://github.com/dbohdan/compilers-targeting-c"

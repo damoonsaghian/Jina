@@ -1,14 +1,10 @@
-single'line comment:
+comment line:
 	; comment
-multi'line comment:
-	;
-	multi'line
+note that ";" must be the first non'whitespace charactor on the line
+comment block:
+	;[ multi'line
 	comment
-	;
-or:
-	;; multi'line
-	comment
-	;
+	]
 
 variable definition:
 	v = ...
@@ -20,8 +16,8 @@ symbols:
 symbols are actually their own types:
 	's :'s
 a string is an array of UTF-8 symbols, and can be written as:
-	"abc"
-string interpolation: "abc{x}"
+	'[abc]
+string interpolation: '[abc{x}]
 
 arrays:
 	[1, 2, 3]
@@ -42,21 +38,27 @@ to access an element:
 	t.1
 tuples can be matched on sub'tuples:
 	a, b = 1, 2, 3
-named tuples:
+records (named tuples):
 	nt = (a: 1, b: 2, c: 3)
 to access an element:
 	nt.a
-named tuples can be matched on tuples if the name of variables match:
+records can be matched on tuples if the name of variables match:
 	a, b = a: 1, b: 2
+record/tuple product:
+	p = (a: 1, b: 2) * (c: 3)
+	p == (a: 1, b: 2, c: 3)
 
-structs are like taged tuples:
-	s = 's(a: 1, b: 2)
-which can also be written as:
-	s = 's a: 1 b: 2
-note that type of "s" is:
-	:'s(a: Int, b: Int)
-accessing elements is like in tuples:
-	s.a
+structs are like taged tuples or taged record:
+	s1 = 's(1, 2)
+	s1 = 's 1 2
+	s2 = 's(a: 1, b: 2)
+	s2 = 's a: 1 b: 2
+note the types:
+	s1 :'s(Int, Int)
+	s2 :'s(a: Int, b: Int)
+accessing elements is like in tuples and records:
+	s1.1
+	s2.a
 
 function:
 	f = { a :A, b :B -> ... }
@@ -95,45 +97,46 @@ to make a definition private, append an apostrophe to the end of its name
 the file named "0" is the root module
 the root module can contain the main function
 to import definitions from other modules:
-	m' = import "module/path/relative/to/current/directory"
+	m' = import '[module/path/relative/to/current/directory]
 	C', f' = m
 	x' = m.y
-	m' = import "/module/path/relative/to/project/root"
-	m' = import "//hostname/package name including major version/module/path"
+	m' = import '[/module/path/relative/to/project/root]
+	m' = import '[//hostname/package name including major version/module/path]
 
 type alias:
 	T := (T1, T2)
 enums:
 	Bool := 'true + 'false
 "C?" is a shortcut for "C + 'nil"
+type aliases are applied only when comparing types
 
-struct alias:
-	S := 's(a: A, b: B)
+classes are autually type aliases for structs:
+	C := 's(a: A, b: B)
 defining methods:
-	S = (
-		new: { a :A -> :S
+	C = (
+		new: { a :A -> :C
 			b = ...
 			's(a: a, b: b)
 		},
-		m: { self :S, x :X ->
+		m: { self :C, x :X ->
 			...
 		}
 	)
 creating an instance:
-	i = S.new x
+	i = C.new x
 or:
-	i = 's a: x b: y
+	i :C = 's a: x b: y
+note that in the second case, declaring the type is mandatory
 calling a method:
 	i .m x
 which is equivalent to:
-	S.m i x
+	C.m i x
 
-generic struct alias:
-	S(t) := 's(a: t, b: B)
-interfaces:
-	I := (
-		m1: (I, A) -> B,
-		m2: I -> C
-	)
-defining methods of the struct alias "S" which implements interfaces "I1" and "I2":
-	S :: I1 + I2 = ...
+derived class (inheritance):
+D := C * (e: E)
+D :> C
+
+generics:
+	C(t) := 's(a: t, b: B)
+restricted generics:
+	C(t :> D) := 's(a: t, b: B)
