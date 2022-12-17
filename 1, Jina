@@ -1,10 +1,10 @@
 Jina is a simple coherent programming language
 Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a revolution in Iran
-this is the message on her tombstone:
+at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-it uses some simple concepts to simplify the complexities of programming languages:
-, symbols and records are used to define class hierarchy
+the main features of Jina:
+, types are first class values
 , actors are used to achieve lock'free concurrency, as well as static memory managment
 
 memory management:
@@ -40,27 +40,6 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 , simply use actors, and only allow actors and copy types to be shared concurrently
-
-types show us what we can do with the data, ie which operations are valid
-"https://en.wikipedia.org/wiki/Algebraic_data_type"
-in Jina we have:
-, numeric types: Int, Float
-, symbols which are their own types
-, maps and arrays
-, function types
-, sum types (enums)
-, records and tuples
-, structs which are records taged with symbols
-
-the class hierarchy design, like the one in Java, is problematic
-	"http://ptgmedia.pearsoncmg.com/images/020163371x/items/item33.html"
-also it leads to the problem of covariance for generic types
-	"https://en.wikipedia.org/wiki/Wildcard_(Java)"
-i feel that this problem was the motivation for dynamic typing (another bad design)
-one solution is to have two kind of types:
-, concrete types (like final classes in Java) can be instantiated, but cannot have subtypes
-, abstract types (like abstract classes in Java) cannot be instantiated, but can have subtypes
-but i think it's enough to just avoid direct subtype replacement, and instead use restricted generics
 
 Jina compiles to C:
 "https://yosefk.com/blog/c-as-an-intermediate-language.html"

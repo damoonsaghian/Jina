@@ -1,69 +1,58 @@
-comment line:
+comment line (";" must be the first non'whitespace charactor on the line):
 	; comment
-note that ";" must be the first non'whitespace charactor on the line
-comment block:
-	;[ multi'line
+comment blocks:
+	;; comment ;;
+	;; multi'line
 	comment
-	]
+	;;
 
 variable definition:
 	v = ...
 type anotation:
-	v :T = ...
+	v :: T = ...
 
-symbols:
-	'symbol
-symbols are actually their own types:
-	's :'s
-a string is an array of UTF-8 symbols, and can be written as:
-	'[abc]
-string interpolation: '[abc{x}]
+UTF8 character:
+	\a
+string:
+	"abc def"
+one word string:
+	'abc
+string interpolation: "abc{x}"
 
-arrays:
+array:
 	[1, 2, 3]
 empty array:
-	x :[Int] = []
+	x :: Array(Int) = []
 indexing:
 	x_1
-maps with symbols as keys:
+maps:
+	['a : 1, 'b : 2, 'c : 3]
+when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
-maps with variables as keys:
-	[a : 1, b : 2, c : 3]
 empty map:
-	x :[Char, Int] = []
+	x :: Map(String, Int) = []
 
-tuple:
-	t = (1, 2, 3)
+records:
+	r = (a: 1, b: 2, c: 3)
+	r = (1, 2, c: 3)
 to access an element:
-	t.1
-tuples can be matched on sub'tuples:
-	a, b = 1, 2, 3
+	r.a
+	r.1
 to change an element:
-	t.1 = 2
-records (named tuples):
-	nt = (a: 1, b: 2, c: 3)
-to access an element:
-	nt.a
-records can be matched on tuples if the name of variables match:
+	r.a = 2
+records can be matched on sub'records:
+	a, b = 1, 2, 3
+taged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
-record/tuple product:
-	p = (a: 1, b: 2) * (c: 3)
-	p == (a: 1, b: 2, c: 3)
 
-structs are like taged tuples or taged record:
-	s1 = 's(1, 2)
-	s1 = 's 1 2
-	s2 = 's(a: 1, b: 2)
-	s2 = 's a: 1 b: 2
-note the types:
-	s1 :'s(Int, Int)
-	s2 :'s(a: Int, b: Int)
-accessing elements is like in tuples and records:
-	s1.1
-	s2.a
+record extension:
+	r = (a: 1, b: 2)
+	r c: 3 d: 4 == r(c: 3, d: 4) == (a: 1, b: 2, c: 3)
+if the field already exists, and the types match, replace it:
+	r a: 3 == (a: 3, b: 2)
 
 function:
-	f = { a :A, b :B -> ... }
+	f = { a :: A, b :: B -> ... }
 function call:
 	f x y
 which is equivalent to:
@@ -75,12 +64,12 @@ if'else:
 	if condition {...} {...}
 	if condition {...} | if c {...} {...} | if c {...} {...}
 and or:
-	'true .and {'false}
-	'true .or {'false}
+	True .and {False}
+	True .or {False}
 matching:
 	match a {
-		's b -> ...
-		'nil -> ...
+		Some b -> ...
+		None -> ...
 	}
 
 loops:
@@ -92,53 +81,41 @@ which is equivalent to:
 
 actors:
 a = Actor B(x)
-a.do { b -> ... }
+a .do { b -> ... }
 
 modules are files containing definitions
 to make a definition private, append an apostrophe to the end of its name
 the file named "0" is the root module
 the root module can contain the main function
 to import definitions from other modules:
-	m' = import '[module/path/relative/to/current/directory]
-	C', f' = m
-	x' = m.y
-	m' = import '[/module/path/relative/to/project/root]
-	m' = import '[//hostname/package name including major version/module/path]
+	C', f' = import "module/path/relative/to/current/directory"
+	C: D', f' = import "module/path/relative/to/current/directory"
+	m' = import "/module/path/relative/to/project/root"
+	m' = import "//hostname/package name including major version/module/path"
 
-type alias:
-	T := (T1, T2)
-enums:
-	Bool := 'true + 'false
-"C?" is a shortcut for "C + 'nil"
-type aliases are applied only when comparing types
+types are first class values
 
-classes are autually type aliases for structs:
-	C := 's(a: A, b: B)
-defining methods:
+enum:
+	Bool = True + False
+"C?" is a shortcut for "C + None"
+
+class:
 	C = (
-		new: { a :A -> :C
-			b = ...
-			's(a: a, b: b)
-		},
+		a: A,
+		b: B,
 		m: { self :C, x :X ->
 			...
 		}
 	)
-creating an instance:
-	i = C.new x
-or:
-	i :C = 's a: x b: y
-note that in the second case, declaring the type is mandatory
+creating an instance (which is actually a record extention):
+	i = C a: x b: y
 calling a method:
 	i .m x
 which is equivalent to:
-	C.m i x
+	i.m i x
 
-derived class (inheritance):
-D := C * (e: E)
-D :> C
+subclassing (again just a record extention):
+D = C e: E
 
 generics:
-	C(t) := 's(a: t, b: B)
-restricted generics:
-	C(t :> D) := 's(a: t, b: B)
+C = { t :: D -> a: t, b: B }
