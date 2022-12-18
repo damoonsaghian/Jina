@@ -13,7 +13,8 @@ type anotation:
 
 UTF8 character:
 	\a
-string:
+	\0000
+UTF8 string:
 	"abc def"
 one word string:
 	'abc
@@ -46,10 +47,14 @@ taged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 
 record extension:
-	r = (a: 1, b: 2)
-	r c: 3 d: 4 == r(c: 3, d: 4) == (a: 1, b: 2, c: 3)
-if the field already exists, and the types match, replace it:
-	r a: 3 == (a: 3, b: 2)
+	(a: 1, b: 2)..(c: 3, d: 4)
+which can also be written as:
+	(a: 1, b: 2) .. c: 3 d: 4
+the above value behaves like (but is not equal to):
+	(a: 1, b: 2, c: 3, d: 4)
+if the field already exists, and if it's a subtypes, the old value will be masked:
+	(a: Int, b: 2)..(a: 3) ;; behaves like (a: 3, b: 2) ;;
+note that we can only mutate the fields of extention part (and not the base part)
 
 function:
 	f = { a :: A, b :: B -> ... }
@@ -103,19 +108,23 @@ class:
 	C = (
 		a: A,
 		b: B,
-		m: { self :C, x :X ->
+		new: { a :: A -> :: C
+			b = ...
+			C .. a: a b: b
+		}
+		m: { self :: C, x :: X -> :: Y
 			...
 		}
 	)
-creating an instance (which is actually a record extention):
-	i = C a: x b: y
+creating an instance:
+	i = C .. a: x b: y
 calling a method:
 	i .m x
 which is equivalent to:
 	i.m i x
 
-subclassing (again just a record extention):
-D = C e: E
+subclassing:
+D = C .. e: E
 
 generics:
 C = { t :: D -> a: t, b: B }
