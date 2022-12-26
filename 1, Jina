@@ -4,7 +4,8 @@ at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
 the main features of Jina:
-, types are first class values
+, all the complexity of usual type systems are disappeared using records, record extensions,
+	and treating types as first class values
 , actors are used to achieve lock'free concurrency, as well as static memory managment
 
 memory management:
