@@ -3,10 +3,16 @@ Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a re
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-the main features of Jina:
-, all the complexity of usual type systems are disappeared using records, record extensions,
-	and treating types as first class values
-, actors are used to achieve lock'free concurrency, as well as static memory managment
+all the complexity of usual type systems are disappeared with an innovative trick,
+	using records, record extensions, and treating types as first class values
+
+I32 and I64 are immutable types; they will always be copied into variables
+all other types are mutable, so they will be referenced by variables
+inside a function, variables captured from outside will be copy'on'write
+	and if the lifetimes can't be computed statically, they will just be copied
+so we can't mutate the environment of a function; all mutations will be synchronous 
+
+actors are used to achieve lock'free concurrency, as well as static memory managment
 
 memory management:
 , in synchronous parts, it can be done statically (no need for a garbage collector)
