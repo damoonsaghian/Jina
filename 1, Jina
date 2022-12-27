@@ -33,7 +33,7 @@ to deal with it, programming languages choose different approaches:
 , abandon mutability like in pure functional programming; but since mutability is necessary any way,
 	a complicated mechanism like monads, linear types, effects, or Clojure reference types, must be used
 	"https://stackoverflow.com/questions/9132346/clojure-differences-between-ref-var-agent-atom-with-examples"
-	"http://clojure-doc.org/articles/language/concurrency_and_parallelism.html#clojure-reference-types"
+	"https://clojure-doc.org/articles/language/concurrency_and_parallelism/"
 	any how, the lack of direct mutability, and the need for aggressive garbage collection,
 		means that functional programming is not an efficient method
 , use the approach taken by Pony "https://www.ponylang.io/"
