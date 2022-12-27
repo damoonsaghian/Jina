@@ -83,7 +83,7 @@ loops:
 while {condition} { ... }
 	for iterator { x -> ... }
 which is equivalent to:
-	iterator.for'each { x -> ... }
+	iterator .for'each { x -> ... }
 
 modules are files containing definitions
 to make a definition private, append an apostrophe to the end of its name
