@@ -3,14 +3,8 @@ Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a re
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-all the complexity of usual type systems are disappeared with an innovative trick,
-	using records, record extensions, and treating types as first class values
-
-I32 and I64 are immutable types; they will always be copied into variables
-all other types are mutable, so they will be referenced by variables
-inside a function, variables captured from outside will be copy'on'write
-	and if the lifetimes can't be computed statically, they will just be copied
-so we can't mutate the environment of a function; all mutations will be synchronous 
+all complexities of usual type systems are resolved in a natural way,
+	using records, record extensions, and treating types as normal data
 
 actors are used to achieve lock'free concurrency, as well as static memory managment
 
@@ -43,10 +37,17 @@ to deal with it, programming languages choose different approaches:
 	any how, the lack of direct mutability, and the need for aggressive garbage collection,
 		means that functional programming is not an efficient method
 , use the approach taken by Pony "https://www.ponylang.io/"
-	it doesn't abandon aliasing (sharing) nor mutability, instead it controls them using reference capabilities
+	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 , simply use actors, and only allow actors and copy types to be shared concurrently
+
+in Jina, I32 and I64 are immutable types; they will always be copied into variables
+actors are opaque types and they also will be copied
+all other types are mutable, so they will be referenced by variables
+but inside a function, references captured from outside will be copy'on'write
+	and if the lifetime of the reference can't be computed statically, it will just be copied
+so we can't mutate the environment of a function; all mutations will be synchronous 
 
 Jina compiles to C:
 "https://yosefk.com/blog/c-as-an-intermediate-language.html"
