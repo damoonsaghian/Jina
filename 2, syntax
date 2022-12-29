@@ -12,14 +12,26 @@ type annotation:
 	v :: T = ...
 
 integers: I32, I64
-writing an I32 in character form:
-	\a
+floating point numbers: F32 F64
 
+box:
+	b :: !I32 = !1
+mutate the data in box:
+	b .set 2
+
+strings are immutable UTF8 encoded, excluding the new line character
 UTF8 strings:
 	s :: String = "abc def"
-one word strings:
+one word string:
 	'abc
 string interpolation: "abc{x}"
+array of strings:
+	'[
+	line1
+	line2
+	]
+which is equivalent to:
+	["line1", "line2"]
 
 array:
 	a = [1, 2, 3]
