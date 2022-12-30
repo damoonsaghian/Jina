@@ -42,13 +42,13 @@ to deal with it, programming languages choose different approaches:
 	i think the main reason for its complexities is that even class fields have reference capabilities
 , simply use actors, and only allow actors and copy types to be shared concurrently
 
-I32 and I64 Float are are small, so they will always be copied into variables
-actors are opaque types and they also will be copied
-records are immutable and will be referenced by variables
+in Jina:
+, numbers are small and have fixed size, so they will always be copied into variables
+, actors are opaque types and they also will always be copied into variables
+, strings, arrays, maps, and records are immutable, and they are referenced by variables
 	but when captured in functions,	if the lifetime of the reference can't be computed statically,
 	it will just be copied (so there is no need for garbage collection)
-variables with types !T, Array!(T), or Map!(T1, T2) are mutable
-	they will be referenced by variables
+, variables with types !T, Array!(T), or Map!(T1, T2) are mutable, and they are referenced by variables
 	but when captured in functions, they will be copied
 so we can't mutate the environment of a function; all mutations will be synchronous
 
