@@ -74,14 +74,19 @@ function call:
 which is equivalent to:
 	f(x, y)
 
-{f x y} can be written as: | f x y
+{f x y} can be written as: # f x y
 
 if'else:
 	if condition {...} {...}
-	if condition {...} | if c {...} {...} | if c {...} {...}
+	if condition {...} # if c {...} {...} # if c {...} {...}
+
 and or:
+	True & False
+	True \ False
+which are equivalent to:
 	True .and {False}
 	True .or {False}
+
 matching:
 	match a {
 		b :: B -> ...
@@ -106,8 +111,8 @@ to import definitions from other modules:
 	m' = import "//hostname/package name including major version/module/path"
 
 enum:
-	Bool = True + False
-"C?" is a shortcut for "C + None"
+	Bool = True | False
+"C?" is a shortcut for "C | None"
 
 class:
 	C = (
