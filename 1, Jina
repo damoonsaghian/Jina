@@ -46,11 +46,13 @@ in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
 , actors are opaque types and they also will always be copied into variables
 , strings, arrays, maps, and records are immutable, and they are referenced by variables
-	but when captured in functions,	if the lifetime of the reference can't be computed statically,
-	it will just be copied (so there is no need for garbage collection)
-, variables with types !T, Array!(T), or Map!(T1, T2) are mutable, and they are referenced by variables
-	but when captured in functions, they will be copied
-so we can't mutate the environment of a function; all mutations will be synchronous
+	in sync parts of the program, they will be reference counted statically
+	when captured in async functions, they will be reference counted dynamically
+	so there is no need for garbage collection
+, there are three mutable types: boxes, mutable arrays, mutable maps; they are referenced by variables
+	in sync parts of the program, they will be reference counted statically
+	when captured in async functions, they will be copied
+	so we can't mutate the environment of an async function; all mutations will be synchronous
 
 Jina compiles to C:
 "https://yosefk.com/blog/c-as-an-intermediate-language.html"

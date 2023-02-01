@@ -1,27 +1,28 @@
 comment line (";" must be the first non'whitespace charactor on the line):
 	; comment
 comment blocks:
-	;; comment ;;
-	;; multi'line
+	;[comment]
+	;[multi'line
 	comment
-	;;
+	]
 
 variable definition:
 	v = ...
 type annotation:
-	v :: T = ...
+	v : T = ...
+types can be treated like values which are their own subtypes
 
-integers: Int8, Int16, Int32, Int64, Int (which can be 32 or 64 depending on the system)
+integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
 floating point numbers: F32, F64
 
 box:
-	b :: !I32 = 1
+	b : !I32 = 1
 mutate the data in box:
-	b .set 2
+	b.set 2
 note that !T is a subtype of T, so all operation for T is also valid on !T
 
 strings are immutable, and encoded in UTF8
-	s :: String = "abc def"
+	s : String = "abc def"
 one word string:
 	'abc
 string interpolation: "abc{x}"
@@ -34,17 +35,16 @@ which is equivalent to:
 	["line1", "line2"]
 
 array:
-	a = [1, 2, 3]
+	a : A Int = [1, 2, 3]
 indexing:
 	a_1
-map are like arrays, but indexed using strings instead of integers:
-	['a : 1, 'b : 2, 'c : 3]
+maps are like arrays, but indexed using strings instead of integers:
+	m : M Int = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
-mutable array/maps:
-	a :: Array!(Int) = [1, 2, 3]
-	a = Array!(T).new()
-	m = Map!(T).new()
+mutable array/map:
+	a : A! Int = [1, 2, 3]
+	a = A! Int .new()
 
 records:
 	r = (a: 1, b: 2, c: 3)
@@ -59,16 +59,16 @@ taged fields can be matched on untaged ones, if the name of variables match:
 
 record extension:
 	(a: 1, b: 2)..(c: 3, d: 4)
-if the second operand is a literal record (ie not a variable), this can also be written as:
-	(a: 1, b: 2).(c: 3, d: 4)
+which can also be written as:
+	(a: 1, b: 2). (c: 3, d: 4)
 	(a: 1, b: 2). c: 3 d: 4
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
 common fields are possible if the new field is a subtype of the old one (which will be masked):
-	(a: Int, b: 2)..(a: 3) ;; behaves like (a: 3, b: 2) ;;
+	(a: Int, b: 2). a: 3 ;; behaves like (a: 3, b: 2) ;;
 
 function:
-	f = { a :: A, b :: B -> ... }
+	f : (A, B) -> C = { a : A, b : B | : C ... }
 function call:
 	f x y
 which is equivalent to:
@@ -84,21 +84,27 @@ and or:
 	True & False
 	True \ False
 which are equivalent to:
-	True .and {False}
-	True .or {False}
+	True.and {False}
+	True.or {False}
 
 matching:
 	match a {
-		b :: B -> ...
-		None -> ...
+		b : B | ...
+		None | ...
 	}
 
 loops:
-	loop {...break...}
+	loop { ... break ... }
 while {condition} { ... }
-	for iterator { x -> ... }
+	for iterator { x | ... }
 which is equivalent to:
-	iterator .for'each { x -> ... }
+	iterator.for'each { x | ... }
+
+async function:
+	{ a : A || ... }
+actor:
+	a = Actor.new B. x y
+	a.do { b : B || ... }
 
 modules are files containing definitions
 to make a definition private, append an apostrophe to the end of its name
@@ -111,34 +117,28 @@ to import definitions from other modules:
 	m' = import "//hostname/package name including major version/module/path"
 
 enum:
-	Bool = True | False
-"C?" is a shortcut for "C | None"
+	Bool = [True, False]
+"C?" is a shortcut for "[C, None]"
 
 class:
 	C = (
 		a: A,
 		b: B,
-		new: { a :: A -> :: C
+		new: { a : A | : C
 			b = ...
 			C. a: a b: b
 		}
-		m: { self :: C, x :: X -> :: Y
+		m: { self, x : X | : Y
 			...
 		}
 	)
 creating an instance:
 	i = C. a: x b: y
-calling a method:
-	i .m x
-which is equivalent to:
-	i.m i x
+when calling a method, the "self" argument is skiped:
+	i.m x
 
 subclassing:
-S = C.(e: E)
+S = C. e: E
 
 generics:
-G = { p :: P -> a: p, b: B }
-
-actors:
-a = Actor.new B.(x, y)
-a .do { b :: B -> ... }
+G = { p : P | a: p, b: B }
