@@ -60,7 +60,6 @@ taged fields can be matched on untaged ones, if the name of variables match:
 record extension:
 	(a: 1, b: 2)..(c: 3, d: 4)
 which can also be written as:
-	(a: 1, b: 2). (c: 3, d: 4)
 	(a: 1, b: 2). c: 3 d: 4
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
@@ -68,17 +67,17 @@ common fields are possible if the new field is a subtype of the old one (which w
 	(a: Int, b: 2). a: 3 ;; behaves like (a: 3, b: 2) ;;
 
 function:
-	f : (A, B) -> C = { a : A, b : B | : C ... }
+	f : Func (A, B) C = { a : A, b : B | : C ... }
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
 
-{f x y} can be written as: # f x y
+{f x y} can be written as: \\ f x y
 
 if'else:
 	if condition {...} {...}
-	if condition {...} # if c {...} {...} # if c {...} {...}
+	if condition {...} \\ if c {...} \\ if c {...} {...}
 
 and or:
 	True & False
