@@ -1,6 +1,8 @@
 comment line (";" must be the first non'whitespace charactor on the line):
 	; comment
-comment blocks:
+comment at the end of a line:
+	;; comment
+comment block:
 	;[comment]
 	;[multi'line
 	comment
@@ -94,7 +96,7 @@ matching:
 
 loops:
 	loop { ... break ... }
-while {condition} { ... }
+	while {condition} { ... }
 	for iterator { x | ... }
 which is equivalent to:
 	iterator.for'each { x | ... }
@@ -126,7 +128,7 @@ class:
 		new: { a : A | : C
 			b = ...
 			C. a: a b: b
-		}
+		},
 		m: { self, x : X | : Y
 			...
 		}

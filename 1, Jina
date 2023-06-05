@@ -40,7 +40,7 @@ to deal with it, programming languages choose different approaches:
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
-, simply use actors, and only allow actors and copy types to be shared concurrently
+, use actors
 
 in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
