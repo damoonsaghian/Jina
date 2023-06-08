@@ -1,4 +1,5 @@
-Jina is a simple coherent programming language
+Jina is a simple coherent programming language with first'class types, actors, and sane memory management
+
 Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
@@ -6,21 +7,14 @@ at her funeral, these words were written on a stone above her grave:
 all complexities of usual type systems are resolved in a natural way,
 	using records, record extensions, and treating types as normal data
 
-actors are used to achieve lock'free concurrency, as well as static memory managment
-
 memory management:
-, in synchronous parts, it can be done statically (no need for a garbage collector)
-	"https://www.toptal.com/software/eliminating-garbage-collector"
-	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
-, in asynchronous parts, use actors
-	actor variables actually hold an ID, and thus can easily be copied across async parts of the program
-	this implies that an ID can refer to a deallocated actor
-	when we send a message to a deallocated actor, it will be ignored
-"https://riker.rs/hierarchy/"
-"https://crates.io/crates/aurum_actors"
-	"https://docs.rs/aurum_actors/latest/aurum_actors/#forgeable-references"
-"https://github.com/Xudong-Huang/may_actor"
+, in synchronous parts, it can be done statically
+, in asynchronous parts, reference counting is used
+"http://aardappel.github.io/lobster/memory_management.html"
+"https://www.toptal.com/software/eliminating-garbage-collector"
+"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
+actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
 , two or more pointers access the same data at the same time
@@ -40,21 +34,16 @@ to deal with it, programming languages choose different approaches:
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
-, use actors
 
 in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
-, actors are opaque types and they also will always be copied into variables
-, strings, arrays, maps, and records are immutable, and they are referenced by variables
-	in sync parts of the program, they will be reference counted statically
-	when captured in async functions, they will be reference counted dynamically
-	so there is no need for garbage collection
+, strings, arrays, maps, records, and actors are immutable, and they are referenced by variables
+	when captured in async functions, they will be reference counted (atomicly)
 , there are three mutable types: boxes, mutable arrays, mutable maps; they are referenced by variables
-	in sync parts of the program, they will be reference counted statically
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
 
-Jina compiles to C:
-"https://yosefk.com/blog/c-as-an-intermediate-language.html"
-"https://wiki.c2.com/?CeeAsAnIntermediateLanguage"
-"https://github.com/dbohdan/compilers-targeting-c"
+Jina compiles to Vala:
+"https://wiki.gnome.org/Projects/Vala/Documentation"
+"https://valadoc.org/"
+"https://wiki.gnome.org/Projects/Vala/ListOfBindings"
