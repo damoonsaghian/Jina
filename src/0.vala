@@ -1,7 +1,6 @@
 /*
-ref vars in a function will be kept in a list
-if it is captured by an async funcion, it will be marked
-at the end of the function unmarked variables will be freed explicitly
+to prevent ref counting, all variables, unless they are captured by an async funcion,
+	will be defined as owned, and subsequent access would be marked as unowned
 
 after compiling Jina to Vala:
 valac --enable-experimental-non-null -d <output-dir> -o <output-file-name> <main-vala-file-path>
