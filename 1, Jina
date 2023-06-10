@@ -8,7 +8,7 @@ all complexities of usual type systems are resolved in a natural way,
 	using records, record extensions, and treating types as normal data
 
 memory management:
-, in synchronous parts, it can be done statically
+, in synchronous parts, it can be done at compile time
 , in asynchronous parts, reference counting is used
 "http://aardappel.github.io/lobster/memory_management.html"
 "https://www.toptal.com/software/eliminating-garbage-collector"
@@ -37,13 +37,11 @@ to deal with it, programming languages choose different approaches:
 
 in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
-, strings, arrays, maps, records, and actors are immutable, and they are referenced by variables
-	when captured in async functions, they will be reference counted (atomicly)
+, strings, arrays, maps, records, functions and actors are immutable, and they are referenced by variables
+	when captured in async functions, they will be reference counted
 , there are three mutable types: boxes, mutable arrays, mutable maps; they are referenced by variables
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
 
 Jina compiles to Vala:
 "https://wiki.gnome.org/Projects/Vala/Documentation"
-"https://valadoc.org/"
-"https://wiki.gnome.org/Projects/Vala/ListOfBindings"
