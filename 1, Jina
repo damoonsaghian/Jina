@@ -43,5 +43,4 @@ in Jina:
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
 
-Jina compiles to Vala:
-"https://wiki.gnome.org/Projects/Vala/Documentation"
+Jina compiles to Rust

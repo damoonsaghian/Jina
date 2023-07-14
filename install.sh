@@ -1,5 +1,5 @@
-apt-get install vala gcc
-project_dir="$(dirname "$0")"
-mkdir -p "$project_dir/.cache/vala"
-valac -d "$project_dir/.cache/vala" -o jina "$project_dir/src/0.vala"
-cp "$project_dir/.cache/vala/jina" /usr/local/bin/
+apt-get install rustc cargo
+cd "$(dirname "$0")"
+mkdir -p ".cache/cargo"
+cargo build --release --target-dir ".cache/cargo"
+cp "$project_dir/.cache/cargo/release/jina" /usr/local/bin/
