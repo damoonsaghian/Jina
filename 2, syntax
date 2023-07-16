@@ -66,7 +66,7 @@ which can also be written as:
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
 common fields are possible if the new field is a subtype of the old one (which will be masked):
-	(a: Int, b: 2). a: 3 ;; behaves like (a: 3, b: 2) ;;
+	(a: Int, b: 2). a: 3 ;; behaves like (a: 3, b: 2)
 
 function:
 	f : Func (A, B) C = { a : A, b : B | : C ... }

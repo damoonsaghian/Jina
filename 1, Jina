@@ -43,4 +43,4 @@ in Jina:
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
 
-Jina compiles to Rust
+Jina compiles to Glib2 based C code

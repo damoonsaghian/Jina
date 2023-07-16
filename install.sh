@@ -1,5 +1,5 @@
-apt-get install rustc cargo
+apt-get install gcc
 cd "$(dirname "$0")"
-mkdir -p ".cache/cargo"
-cargo build --release --target-dir ".cache/cargo"
-cp "$project_dir/.cache/cargo/release/jina" /usr/local/bin/
+mkdir -p ".cache/gcc"
+gcc ".cache/gcc"
+cp "$project_dir/.cache/gcc/jina" /usr/local/bin/
