@@ -4,8 +4,8 @@ Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a re
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-all complexities of usual type systems are resolved in a natural way,
-	using records, record extensions, and treating types as normal data
+using records, record extensions, and treating types as normal data,
+	usual complexities of type systems are resolved in a natural way
 
 memory management:
 , in synchronous parts, it can be done at compile time
@@ -43,4 +43,4 @@ in Jina:
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
 
-Jina compiles to Glib2 based C code
+Jina compiles to Rust

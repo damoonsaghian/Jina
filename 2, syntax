@@ -12,7 +12,6 @@ variable definition:
 	v = ...
 type annotation:
 	v : T = ...
-types can be treated like values which are their own subtypes
 
 integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
 floating point numbers: F32, F64
@@ -65,8 +64,11 @@ which can also be written as:
 	(a: 1, b: 2). c: 3 d: 4
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
-common fields are possible if the new field is a subtype of the old one (which will be masked):
-	(a: Int, b: 2). a: 3 ;; behaves like (a: 3, b: 2)
+in the case of common fields:
+, if the new field is a subtype of the old one, the old one will be masked
+	so "(a: Int, b: 2). a: 3" behaves like (a: 3, b: 2)
+	note that a type (or a value) is not subtype of itself
+, otherwise the field will be inaccessable
 
 function:
 	f : Func (A, B) C = { a : A, b : B | : C ... }

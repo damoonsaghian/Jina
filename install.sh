@@ -1,5 +1,5 @@
-apt-get install gcc
+apt-get install cargo
 cd "$(dirname "$0")"
-mkdir -p ".cache/gcc"
-gcc -o .cache/gcc/jina src/*.c
-cp "$project_dir/.cache/gcc/jina" /usr/local/bin/
+mkdir -p ".cache/cargo"
+cargo build --release --target-dir .cache/cargo
+cp "$project_dir/.cache/cargo/release/jina" /usr/local/bin/
