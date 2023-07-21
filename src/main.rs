@@ -1,0 +1,4 @@
+/*
+records containing types will be compiled to structs and traits
+records where all fields are types will be compiled to traits
+*/
