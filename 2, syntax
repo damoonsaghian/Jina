@@ -64,11 +64,12 @@ which can also be written as:
 	(a: 1, b: 2). c: 3 d: 4
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
-in the case of common fields:
-, if the new field is a subtype of the old one, the old one will be masked
+for common fields, if the new one is a subtype of the old one, the old one will be masked
 	so "(a: Int, b: 2). a: 3" behaves like (a: 3, b: 2)
-	note that a type (or a value) is not subtype of itself
-, otherwise the field will be inaccessable
+when extending a record:
+, all fields must be masked by their subtypes
+, thoses fields that are equal to their subtypes (ie literal values) will be ignored
+, new fields can always be added
 
 function:
 	f : Func (A, B) C = { a : A, b : B | : C ... }

@@ -1,11 +1,14 @@
-Jina is a simple coherent programming language with first'class types, actors, and sane memory management
+Jina is a "rustic" programming language with sane memory management, actors, and a coherent syntax,
+	which compiles to Rust
 
-Mahsa Jina Amini was a girl whose tragic murder by the evil regime, started a revolution in Iran
+Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-using records, record extensions, and treating types as normal data,
-	usual complexities of type systems are resolved in a natural way
+Jina's syntax is elegant and coherent:
+, types are treated like normal data
+, classes and interfaces are just records
+, constructing new objects, and implementing interfaces are just record extensions
 
 memory management:
 , in synchronous parts, it can be done at compile time
@@ -42,5 +45,3 @@ in Jina:
 , there are three mutable types: boxes, mutable arrays, mutable maps; they are referenced by variables
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
-
-Jina compiles to Rust
