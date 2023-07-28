@@ -1,3 +1,8 @@
+Jina's syntax is elegant and coherent:
+, types are treated like normal data
+, classes and interfaces are just records
+, constructing new objects, and implementing interfaces are just record extensions
+
 comment line (";" must be the first non'whitespace charactor on the line):
 	; comment
 comment at the end of a line:
