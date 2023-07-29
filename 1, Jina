@@ -1,4 +1,5 @@
-Jina is a programming language with sane memory management, actors, and a coherent syntax, that compiles to C
+Jina is a "rustic" programming language with sane memory management, actors, and a coherent syntax,
+	that compiles to Rust
 
 Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
