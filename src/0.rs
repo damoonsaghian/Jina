@@ -15,7 +15,6 @@ https://github.com/rust-lang/crates.io/issues/75
 https://theupdateframework.com/
 https://github.com/rust-lang/rfcs/pull/3403
 https://github.com/trustification/rust-rfcs/blob/sigstore-rfc/text/0000-sigstore-integration.md
-instead use git and release tags and keys
 
 https://github.com/rust-windowing/glutin
 	https://crates.io/crates/glutin-winit
@@ -33,6 +32,7 @@ https://github.com/audulus/vger-rs
 https://github.com/linebender/vello
 https://github.com/chickenbreeder/kaffee
 https://github.com/ggez/ggez
+https://github.com/google/forma
 https://github.com/BVE-Reborn/rend3/
 https://github.com/nanoqsh/dunge
 https://github.com/kas-gui/kas (widgets are not Send; full of macros)
