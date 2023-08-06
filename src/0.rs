@@ -37,19 +37,23 @@ https://github.com/BVE-Reborn/rend3/
 https://github.com/nanoqsh/dunge
 https://github.com/kas-gui/kas (widgets are not Send; full of macros)
 https://crates.io/crates/image
-ffmpeg libavfilter
+	libgraphicsmagick-q16-3 libimlib2
+	libjxl libavif heif webp librsvg2
+https://github.com/rust-av/rust-av
 	https://crates.io/crates/video-rs
 	https://crates.io/crates/rusty_ffmpeg
 	https://crates.io/crates/ac-ffmpeg
 	https://crates.io/crates/ffmpeg-next
-	libjxl libavif heif webp librsvg2
-	mp4/matroska/webm containers
-	AV1 Opus
-	mp3 and vpx
-	h264(openh264), h265(libde265), and aac(fdk-aac)
-	av1(aom-libs)
-https://github.com/rust-av/rust-av
-libwpewebkit
+libavfilter
+mp4/matroska/webm containers
+AV1 Opus
+mp3 and vpx
+h264(openh264), h265(libde265), and aac(fdk-aac)
+av1(aom-libs)
+
+pipewire
+
+libwpewebkit: https://github.com/Igalia/cog
 
 widgets: containers, image/video (view and edit), text (view and edit)
 */
