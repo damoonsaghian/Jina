@@ -1,8 +1,3 @@
-Jina's syntax is elegant and coherent:
-, types are treated like normal data
-, classes and interfaces are just records
-, constructing new objects, and implementing interfaces are just record extensions
-
 comment line (";" must be the first non'whitespace charactor on the line):
 	; comment
 comment at the end of a line:
@@ -69,12 +64,7 @@ which can also be written as:
 	(a: 1, b: 2). c: 3 d: 4
 the above value behaves like (but is not exactly the same as):
 	(a: 1, b: 2, c: 3, d: 4)
-for common fields, if the new one is a subtype of the old one, the old one will be masked
-	so "(a: Int, b: 2). a: 3" behaves like (a: 3, b: 2)
-when extending a record:
-, all fields must be masked by their subtypes
-, thoses fields that are equal to their subtypes (ie literal values) will be ignored
-, new fields can always be added
+common fields are not allowed
 
 function:
 	f : Func (A, B) C = { a : A, b : B | : C ... }
@@ -126,28 +116,34 @@ to import definitions from other modules:
 	m' = import "//hostname/package name including major version/module/path"
 
 enum:
-	Bool = [True, False]
-"C?" is a shortcut for "[C, None]"
+	True := True
+	False := False
+	Bool :: True \ False
+"C?" is a shortcut for "C\None"
 
-class:
-	C = (
-		a: A,
-		b: B,
+structs:
+	S :: (a: A, b: B)
+	S = (
 		new: { a : A | : C
 			b = ...
-			C. a: a b: b
+			S. a: a b: b
 		},
 		m: { self, x : X | : Y
 			...
 		}
 	)
 creating an instance:
-	i = C. a: x b: y
+	i = S. a: x b: y
 when calling a method, the "self" argument is skiped:
 	i.m x
 
-subclassing:
-S = C. e: E
+traits:
+	T :: (
+		m1: Func (T, X) Y,
+		m2: Func () ()
+	)
+implementing a trait:
+	S : T = (...)
 
 generics:
-G = { p : P | a: p, b: B }
+G :: p | a: p, b: B
