@@ -118,46 +118,56 @@ module extension:
 	.{ a = 1; b = 2 }.{ c = 3; d = 4 }
 the above behaves like:
 	.{ a = 1; b = 2; c = 3; d = 4 }
+masking common definitions is possible if the types match
+
 modules can have unimplemented identifiers, in which case we can make an instance like this:
 	.{ a :Int; b = 2 }.(a: 1)
 which can also be written as:
 	.{ a :Int; b = 2 }. a: 1
+note that in an instance, all unimplemented identifiers must be given values
 
-singletons:
-	True = .{}
-	False = .{}
+enums, classes and interfaces are self'referential modules
+
 enum:
-	Bool = [True, False]
-"?A" is a shortcut for "[A, ()]"
+Bool = .{
+	True :Self
+	False :Self
+}
 
-classes are self referential modules:
+classes:
 	C = .{
-		a : A
-		b : B
-		new = { A. a; Self |
+		a :A
+		b :B
+		new = { a :A | :Self
 			b = ...
 			Self. a: a b: b
 		}
-		m = { self, X. x; Y |
+		m = { self, x :X | :Y
 			...
 		}
 	}
+in classes all methods (functions with "self" arg) must be implemented
 creating an instance of a class:
 	i = S.new a: x
 	i = S. a: x b: y
 when calling a method, the "self" argument is skiped:
 	i.m x
 
-interface:
+interface can have unimplemented methods (and thus can't produce an instance):
 	I = .{
 		m1 : Func (I, X) Y
 		m2 = {...}
 	}
-as you see (for m2) default methods are supported too
-implementing an interface:
-	C = (I1 + I2).{...}
+a class that implements some interfaces:
+	C = I1. I2. {...}
 
 generics:
-	C = .{ X : () | ... }
+	C = .{ X :() | ... }
 generics bound by an interface:
-	C = { X : I | ... }
+	C = .{ X :I | ... }
+a generic enum:
+	Maybe = .{ X :() |
+		Some : Func X Self
+		None :Self
+	}
+"?A" is a shortcut for "Maybe(A)"
