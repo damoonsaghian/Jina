@@ -17,8 +17,8 @@ integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
 floating point numbers: F32, F64
 
 box:
-	b : !I32 = 1
-mutate the data in box:
+	b : !I32 = !1
+mutate the data in a box:
 	b.set 2
 note that !T is a subtype of T, so all operation for T is also valid on !T
 
@@ -36,20 +36,19 @@ which is equivalent to:
 	["line1", "line2"]
 
 array:
-	a : A Int = [1, 2, 3]
+	a : Array(Int) = [1, 2, 3]
 indexing:
 	a_1
 maps are like arrays, but indexed using strings instead of integers:
-	m : M Int = ["a": 1, "b": 2, "c": 3]
+	m : Map(Int) = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
 mutable array/map:
-	a : A! Int = [1, 2, 3]
-	a = A! Int .new()
+	a : Array!(Int) = ![1, 2, 3]
 
 records:
-	r = (a: 1, b: 2, c: 3)
-	r = (1, 2, c: 3)
+	r = a: 1, b: 2, c: 3
+	r = 1, 2, c: 3
 to access an element:
 	r.a
 	r.1
@@ -58,22 +57,14 @@ records can be matched on smaller records:
 taged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 
-record extension:
-	(a: 1, b: 2)..(c: 3, d: 4)
-which can also be written as:
-	(a: 1, b: 2). c: 3 d: 4
-the above value behaves like (but is not exactly the same as):
-	(a: 1, b: 2, c: 3, d: 4)
-common fields are not allowed
-
 function:
-	f : Func (A, B) C = { a : A, b : B | : C ... }
+	f : Func (A, B) C = { a : A, b : B | C :: ... }
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
 
-{f x y} can be written as: \\ f x y
+{ f x y } can be written as: \\ f x y
 
 if'else:
 	if condition {...} {...}
@@ -83,13 +74,13 @@ and or:
 	True & False
 	True \ False
 which are equivalent to:
-	True.and {False}
-	True.or {False}
+	True .and {False}
+	True .or {False}
 
 matching:
 	match a {
 		b : B | ...
-		None | ...
+		() | ...
 	}
 
 loops:
@@ -100,9 +91,9 @@ which is equivalent to:
 	iterator.for'each { x | ... }
 
 async function:
-	{ a : A || ... }
+	af : Async A = { a : A || ... }
 actor:
-	a = Actor.new B. x y
+	a = Actor.new B. (x, y)
 	a.do { b : B || ... }
 
 modules are files containing definitions
@@ -110,40 +101,53 @@ to make a definition private, append an apostrophe to the end of its name
 the file named "0" is the root module
 the root module can contain the main function
 to import definitions from other modules:
-	C', f' = import "module/path/relative/to/current/directory"
-	C: D', f' = import "module/path/relative/to/current/directory"
+	A', a' = import "module/path/relative/to/current/directory"
+	A: B', a' = import "module/path/relative/to/current/directory"
 	m' = import "/module/path/relative/to/project/root"
 	m' = import "//hostname/package name including major version/module/path"
 
-enum:
-	True := True
-	False := False
-	Bool :: True \ False
-"C?" is a shortcut for "C\None"
+module extension:
+	.{ a = 1; b = 2 }.{ c = 3; d = 4 }
+the above value behaves like:
+	.{ a = 1; b = 2; c = 3; d = 4 }
+module instance:
+	.{ a : Int; b = 2 }.(a: 1)
+which can also be written as:
+	.{ a : Int; b = 2 }. a: 1
 
-structs:
-	S :: (a: A, b: B)
-	S = (
-		new: { a : A | : C
+undefined symbols begining with a capital letter (eg True and False), are their own subtype (like literals)
+enum:
+	Bool = [True, False]
+"?A" is a shortcut for "[A, ()]"
+
+classes are self referntial modules:
+	C = .{
+		a : A
+		b : B
+		new = { a : A | Self ::
 			b = ...
-			S. a: a b: b
-		},
-		m: { self, x : X | : Y
+			Self. a: a b: b
+		}
+		m = { self, x : X | Y ::
 			...
 		}
-	)
+	}
 creating an instance:
-	i = S. a: x b: y
+	i = S.new a: x
+	i = S. a: x b y
 when calling a method, the "self" argument is skiped:
 	i.m x
 
-traits:
-	T :: (
-		m1: Func (T, X) Y,
-		m2: Func () ()
-	)
-implementing a trait:
-	S : T = (...)
+interface:
+	I = .{
+		m1 : Func (I, X) Y
+		m2 = {...}
+	}
+as you see (for m2) default methods are supported too
+implementing an interface:
+	C = (I1 + I2).{...}
 
 generics:
-G :: p | a: p, b: B
+	C = .{ X : () | ... }
+generics bound by an interface:
+	C = { X : I | ... }

@@ -35,8 +35,10 @@ to deal with it, programming languages choose different approaches:
 
 in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
-, strings, arrays, maps, records, functions and actors are immutable, and they are referenced by variables
+, strings, arrays, maps, records, functions and actors are immutable,
+	and they are generally referenced by variables (when they are small they may be copied)
 	when captured in async functions, they will be reference counted
-, there are three mutable types: boxes, mutable arrays, mutable maps; they are referenced by variables
+, there are three mutable types: boxes, mutable arrays, mutable maps
+	they are always referenced by variables
 	when captured in async functions, they will be copied
 	so we can't mutate the environment of an async function; all mutations will be synchronous
