@@ -12,43 +12,46 @@ variable definition:
 	v = ...
 type annotation:
 	v : T = ...
+	v :T = ...
 
 integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
 floating point numbers: F32, F64
 
+strings are immutable, and encoded in UTF8
+	s :String = "abc def"
+one word string:
+	'abc
+string interpolation: "abc{x}"
+
 box:
-	b : !I32 = !1
+	b :!I32 = !1
 mutate the data in a box:
 	b.set 2
 note that !T is a subtype of T, so all operation for T is also valid on !T
 
-strings are immutable, and encoded in UTF8
-	s : String = "abc def"
-one word string:
-	'abc
-string interpolation: "abc{x}"
-array of strings:
-	'[
-	line1
-	line2
-	]
-which is equivalent to:
-	["line1", "line2"]
-
 array:
-	a : Array(Int) = [1, 2, 3]
+	a :Array(Int) = [1, 2, 3]
 indexing:
 	a_1
 maps are like arrays, but indexed using strings instead of integers:
-	m : Map(Int) = ["a": 1, "b": 2, "c": 3]
+	m :Map(Int) = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
 mutable array/map:
-	a : Array!(Int) = ![1, 2, 3]
+	a :Array!(Int) = ![1, 2, 3]
+
+array of strings:
+	'[
+		line1
+			line2
+	]
+which is equivalent to:
+	["line1", "\tline2"]
+mutable variant: !'[]
 
 records:
 	r = a: 1, b: 2, c: 3
-	r = 1, 2, c: 3
+	r :(Int, Int, c: Int) = 1, 2, c: 3
 to access an element:
 	r.a
 	r.1
@@ -58,7 +61,7 @@ taged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 
 function:
-	f : Func (A, B) C = { a : A, b : B | C :: ... }
+	f :Func (A, B) C = { a :A , b :B | :C ... }
 function call:
 	f x y
 which is equivalent to:
@@ -79,7 +82,7 @@ which are equivalent to:
 
 matching:
 	match a {
-		b : B | ...
+		B. b | ...
 		() | ...
 	}
 
@@ -91,50 +94,57 @@ which is equivalent to:
 	iterator.for'each { x | ... }
 
 async function:
-	af : Async A = { a : A || ... }
+	af :Async(A) = { a :A || ... }
 actor:
-	a = Actor.new B. (x, y)
-	a.do { b : B || ... }
+	a = Actor.new B.new(x, y)
+	a.do { b :B || ... }
 
 modules are files containing definitions
+also we can create a module, nested in a file, using this syntax:
+	m = .{...}
 to make a definition private, append an apostrophe to the end of its name
 the file named "0" is the root module
 the root module can contain the main function
-to import definitions from other modules:
-	A', a' = import "module/path/relative/to/current/directory"
-	A: B', a' = import "module/path/relative/to/current/directory"
-	m' = import "/module/path/relative/to/project/root"
-	m' = import "//hostname/package name including major version/module/path"
+to access a file module, just use its path relative to the directory containing the root module:
+	m' = ..dir..dir..file
+equivalently:
+	m' = .."dir1".."dir2".."file"
+	m' = .."dir1/dir2/file"
+too access modules in packages (protocol can be gnunet, git or local):
+	m' = .."protocol://address//package'name/major'version/dir1/dir2/file"
+	m' = .."protocol://address/"..package'name..major'version..dir1..dir2..file
 
 module extension:
 	.{ a = 1; b = 2 }.{ c = 3; d = 4 }
-the above value behaves like:
+the above behaves like:
 	.{ a = 1; b = 2; c = 3; d = 4 }
-module instance:
-	.{ a : Int; b = 2 }.(a: 1)
+modules can have unimplemented identifiers, in which case we can make an instance like this:
+	.{ a :Int; b = 2 }.(a: 1)
 which can also be written as:
-	.{ a : Int; b = 2 }. a: 1
+	.{ a :Int; b = 2 }. a: 1
 
-undefined symbols begining with a capital letter (eg True and False), are their own subtype (like literals)
+singletons:
+	True = .{}
+	False = .{}
 enum:
 	Bool = [True, False]
 "?A" is a shortcut for "[A, ()]"
 
-classes are self referntial modules:
+classes are self referential modules:
 	C = .{
 		a : A
 		b : B
-		new = { a : A | Self ::
+		new = { A. a; Self |
 			b = ...
 			Self. a: a b: b
 		}
-		m = { self, x : X | Y ::
+		m = { self, X. x; Y |
 			...
 		}
 	}
-creating an instance:
+creating an instance of a class:
 	i = S.new a: x
-	i = S. a: x b y
+	i = S. a: x b: y
 when calling a method, the "self" argument is skiped:
 	i.m x
 
