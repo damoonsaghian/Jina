@@ -126,15 +126,14 @@ which can also be written as:
 	.{ a :Int; b = 2 }. a: 1
 note that in an instance, all unimplemented identifiers must be given values
 
-enums, classes and interfaces are self'referential modules
+singletons:
+	True = .{}
+	False = .{}
+enums:
+	Bool = True :: False
+"?A" is a shortcut for "A::()"
 
-enum:
-Bool = .{
-	True :Self
-	False :Self
-}
-
-classes:
+classes are self'referential modules:
 	C = .{
 		a :A
 		b :B
@@ -153,7 +152,7 @@ creating an instance of a class:
 when calling a method, the "self" argument is skiped:
 	i.m x
 
-interface can have unimplemented methods (and thus can't produce an instance):
+interfaces are like classes, but they can have unimplemented methods (and thus can't have instances):
 	I = .{
 		m1 : Func (I, X) Y
 		m2 = {...}
@@ -165,9 +164,3 @@ generics:
 	C = .{ X :() | ... }
 generics bound by an interface:
 	C = .{ X :I | ... }
-a generic enum:
-	Maybe = .{ X :() |
-		Some : Func X Self
-		None :Self
-	}
-"?A" is a shortcut for "Maybe(A)"
