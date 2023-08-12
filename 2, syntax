@@ -104,20 +104,17 @@ to make a definition private, append an apostrophe to the end of its name
 the file named "0" is the root module
 the root module can contain the main function
 to access a module, just use its path relative to the directory containing the root module:
-	m' = //dir//dir//file
-equivalently:
-	m' = //"dir1"//"dir2"//"file"
-	m' = //"dir1/dir2/file"
+	m' = ..file'name
+	m' = .."dir/file'name"
 too access modules in packages (protocol can be gnunet, git or local):
-	m' = //"protocol://address//package'name/major'version/dir1/dir2/file"
-	m' = //"protocol://address/"//package'name//major'version//dir1//dir2//file
+	m' = .."protocol://address'of'project'dir//major'version/dir/file"
 
 singletons are like empty modules:
 	True = .{}
 	False = .{}
 enums:
-	Bool = True :: False
-"?A" is a shortcut for "A::()"
+	Bool = True .. False
+"?A" is a shortcut for "A..()"
 
 classes are like modules, but they can have unimplemented definitions
 we create instances of a class, by implementing all those definitions
@@ -155,12 +152,11 @@ interface inheritance:
 	I3 = I1..I2..{}
 
 a class that implements some interfaces:
-	C :I1 = C..{...}
-	C :I2 = C..{...}
-note that classes can't be subtypes of other classes, because to create a subtype,
-	all unimplemented definitions must be implemented
+	C :I1..I2 = {...}
+note that classes can't be subtypes of other classes
+	because to create a subtype, all unimplemented definitions must be implemented
 
 generics:
-	C = .{ X :() | ... }
+	C = .{ X | ... }
 generics bound by an interface:
 	C = .{ X :I | ... }
