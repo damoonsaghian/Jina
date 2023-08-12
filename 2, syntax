@@ -113,8 +113,8 @@ singletons are like empty modules:
 	True = .{}
 	False = .{}
 enums:
-	Bool = True .. False
-"?A" is a shortcut for "A..()"
+	Bool = True+False
+"?A" is a shortcut for "A+()"
 
 classes are like modules, but they can have unimplemented definitions
 we create instances of a class, by implementing all those definitions
