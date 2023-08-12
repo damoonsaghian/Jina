@@ -82,8 +82,8 @@ which are equivalent to:
 
 matching:
 	match a {
-		B. b | ...
-		() | ...
+		Some b | ...
+		None | ...
 	}
 
 loops:
@@ -109,12 +109,11 @@ to access a module, just use its path relative to the directory containing the r
 too access modules in packages (protocol can be gnunet, git or local):
 	m' = .."protocol://address'of'project'dir//major'version/dir/file"
 
-singletons are like empty modules:
-	True = .{}
-	False = .{}
-enums:
-	Bool = True+False
-"?A" is a shortcut for "A+()"
+enums are like self referential modules:
+Bool = .{
+	True = Self
+	False = Self
+}
 
 classes are like modules, but they can have unimplemented definitions
 we create instances of a class, by implementing all those definitions
@@ -160,3 +159,8 @@ generics:
 	C = .{ X | ... }
 generics bound by an interface:
 	C = .{ X :I | ... }
+"?A" is a shortcut for "Maybe(A)"
+	Maybe = .{ X |
+		Some = { a :X | Self }
+		None = Self
+	}
