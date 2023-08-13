@@ -101,11 +101,12 @@ actor:
 
 modules are files containing definitions
 to make a definition private, append an apostrophe to the end of its name
-the file named "0" is the root module
+the file named "0.jina" is the root module
 the root module can contain the main function
-to access a module, just use its path relative to the directory containing the root module:
-	m' = ..file'name
-	m' = .."dir/file'name"
+packages are directories containing a root module
+to access a module or a package, just use its path relative to the package directory:
+	m' = ..module'or'package
+	m' = .."dir/module'or'package"
 too access modules in packages (protocol can be gnunet, git or local):
 	m' = .."protocol://address'of'project'dir//major'version/dir/file"
 
