@@ -11,6 +11,9 @@ https://github.com/koto-lang/koto
 https://github.com/PistonDevelopers/dyon
 https://github.com/jfecher/ante
 
+https://stackoverflow.com/questions/26983355/is-there-a-way-to-combine-multiple-traits-in-order-to-define-a-new-trait
+https://www.reddit.com/r/rust/comments/13a1tlr/multiple_dependent_trait_implementations/
+
 crates are not signed:
 https://github.com/rust-lang/crates.io/issues/75
 https://theupdateframework.com/
