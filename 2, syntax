@@ -108,7 +108,7 @@ to access a module or a package, just use its path relative to the package direc
 	m' = ..module'or'package
 	m' = .."dir/module'or'package"
 too access modules in packages (protocol can be gnunet, git or local):
-	m' = .."protocol://address'of'project'dir//major'version/dir/file"
+	m' = .."protocol://address'of'project'dir?version=1.0/dir/file"
 
 enums are like self referential modules:
 Bool = .{
