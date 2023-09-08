@@ -39,5 +39,5 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 
-in Jina mutable variable, when captured in async functions, will be copied
+in Jina mutable variables, when captured in async functions, will be copied
 so we can't mutate the environment of an async function; all mutations will be synchronous

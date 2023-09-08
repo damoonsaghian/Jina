@@ -57,6 +57,10 @@ records can be matched on smaller records:
 taged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 
+mutating a record:
+	r! = a: 1, b: 2, c: 3
+	r.a = 10
+
 record extension:
 	(a: 1, b: 2)..(c: 3, d: 4)
 or:
