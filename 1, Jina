@@ -12,6 +12,12 @@ memory management:
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
+in Jina:
+, numbers are small and have fixed size, so they will always be copied into variables
+, strings, arrays, maps, records, functions and actors are generally referenced by variables
+	and when captured in async functions, they will be reference counted
+	though when they are small they may be copied
+
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -33,12 +39,5 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 
-in Jina:
-, numbers are small and have fixed size, so they will always be copied into variables
-, strings, arrays, maps, records, functions and actors are immutable,
-	and they are generally referenced by variables (when they are small they may be copied)
-	when captured in async functions, they will be reference counted
-, there are three mutable types: boxes, mutable arrays, mutable maps
-	they are always referenced by variables
-	when captured in async functions, they will be copied
-	so we can't mutate the environment of an async function; all mutations will be synchronous
+in Jina mutable variable, when captured in async functions, will be copied
+so we can't mutate the environment of an async function; all mutations will be synchronous
