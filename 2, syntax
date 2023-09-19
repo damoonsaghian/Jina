@@ -112,9 +112,7 @@ actor:
 	a.do { b :B || ... }
 
 modules are files containing definitions
-public definition are accessable from inside and outside of the module: a' = ...
-public'only definition are accessable only from outside of the module: a'' = ...
-	they are typically paired with a private definition
+public definition are accessable from outside of the module: a' = ...
 the file named "0.jina" is the root module
 the root module can contain the main function
 packages are directories containing a root module
@@ -122,7 +120,7 @@ to access a module or a package, just use its path relative to the package direc
 	m = ..module'or'package
 	m = .."dir/module'or'package"
 too access modules in packages (protocol can be gnunet, git or local):
-	m = .."protocol://address'of'project'dir?version=1.0/dir/file"
+	m = .."protocol://address'of'project'dir/dir/file"
 
 class:
 	C = #
@@ -135,6 +133,7 @@ class:
 		m: { self!, x :X | :Y
 			...
 		}
+to make a field private, put an apostrphe at the start of its name
 to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
 	i = S..(a: x, b: y)
 	i = S. a: x b: y
@@ -149,10 +148,15 @@ interfaces:
 			; default implementation
 		}}
 interface inheritance:
-	I3 := I1. I2. # ...
+	I3 = I1. I2. # ...
 
 a class that implements some interfaces:
 	C :I1..I2 = # ...
+
+Jina uses composition instead of inheritance
+thus, a GObject class eg "X", in Jina, is a (final) class "X" plus an interface "X'i"
+the interface contains all the instance methods of the corresponding GObject class, plus a "base" method
+	base = { self | :X ... }	
 
 generics:
 	C = { X | ... }
