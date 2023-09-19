@@ -1,5 +1,4 @@
-Jina is a "rustic" programming language with sane memory management, actors, and a coherent syntax,
-	that compiles to Rust
+Jina is a programming language with sane memory management, actors, and a coherent syntax
 
 Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
@@ -14,8 +13,9 @@ memory management:
 
 in Jina:
 , numbers are small and have fixed size, so they will always be copied into variables
-, records have fixed size, they will be copied if they are small, and are inside immutable variables
-	otherwise referenced by variables
+, records have fixed size
+	they will be copied into variables,	if they are small, and are inside immutable variables
+	otherwise they will be referenced by variables
 , all other types (strings, arrays, maps, functions, ...) are referenced by variables
 refernces will be reference counted if captured in async functions
 
@@ -42,3 +42,5 @@ to deal with it, programming languages choose different approaches:
 
 in Jina mutable variables, when captured in async functions, will be copied
 so we can't mutate the environment of an async function; all mutations will be synchronous
+
+Jina compiles to GObject based C

@@ -1,13 +1,7 @@
-apt-get install cargo gnunet
+apt-get install gcc gnunet
 
 project_dir="$(dirname "$0")"
-mkdir -p "$project_dir/.cache/cargo"
-cd "$project_dir/.cache/cargo"
+mkdir -p "$project_dir/.cache/gcc"
 
-[ -L Cargo.toml ] || {
-	rm -f Cargo.toml
-	ln -s ../../cargo.toml Cargo.toml
-}
-
-cargo build --release
-cp release/jina /usr/local/bin/
+gcc -o "$project_dir/.cache/gcc/jina" "$project_dir/src/0.c"
+cp "$project_dir/.cache/gcc/jina" /usr/local/bin/
