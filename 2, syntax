@@ -152,11 +152,21 @@ interface inheritance:
 
 a class that implements some interfaces:
 	C :I1..I2 = # ...
+to implement an interface privately:
+	C :I' = # ...
 
 Jina uses composition instead of inheritance
-thus, a GObject class eg "X", in Jina, is a (final) class "X" plus an interface "X'i"
+thus in Jina, a GObject class translates to a (final) class "G" plus an interface "G'i"
 the interface contains all the instance methods of the corresponding GObject class, plus a "base" method
-	base = { self | :X ... }	
+	base = { self | :G ... }
+to implement "G'i":
+	C :G'i = #
+		base'field: G
+		...
+		base: { self | :G self.base'field }
+		...
+if the first field is of type "G", the "base" method will be automatically generated,
+	no need to write it manually
 
 generics:
 	C = { X | ... }
