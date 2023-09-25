@@ -67,10 +67,10 @@ or:
 	(a: 1, b: 2). (c: 3, d: 4)
 the above behaves like:
 	(a: 1, b: 2, c: 3, d: 4)
-masking fields is possible if the new field is a subtype of the old one
-	(a: 1, b: Int). (b: 2, c: 3)
+masking fields:
+	(a: 1, b: 2). (b: 3, c: 4)
 which behaves like:
-	(a: 1, b: 2, c: 3)
+	(a: 1, b: 3, c: 4)
 
 function:
 	f = { a :A , b :B | :C ... }
@@ -122,15 +122,18 @@ to access a module or a package, just use its path relative to the package direc
 too access modules in packages (protocol can be gnunet, git or local):
 	m = .."protocol://address'of'project'dir/dir/file"
 
-class:
+class are records with methods (functions which their first argument is "self"):
 	C = #
 		a: A
-		b: B
+		b:: B. 1 ; field with default value
 		new: { a :A | :C
 			b = ...
 			a: a, b: b
 		}
-		m: { self!, x :X | :Y
+		m1: { self, x :X | :Y
+			...
+		}
+		m2: { self! |
 			...
 		}
 to make a field private, put an apostrphe at the start of its name
@@ -143,10 +146,10 @@ when calling a method, the "self" argument is skiped:
 
 interfaces:
 	I = #
-		m1: {{ self, x :X | :Y }}
-		m2: {{ self! |
+		m1: Func (self, x: X) Y
+		m2: ::{ self! |
 			; default implementation
-		}}
+		}
 interface inheritance:
 	I3 = I1. I2. # ...
 

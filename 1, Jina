@@ -43,4 +43,4 @@ to deal with it, programming languages choose different approaches:
 in Jina mutable variables, when captured in async functions, will be copied
 so we can't mutate the environment of an async function; all mutations will be synchronous
 
-Jina compiles to GObject based C
+Jina compiles to GLib based C
