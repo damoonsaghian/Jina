@@ -74,10 +74,18 @@ which behaves like:
 
 function:
 	f = { a :A , b :B | :C ... }
+determining default values for parameters:
+	f = { a :: 1 | :B ... }
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
+
+note that each function has a unique type
+but all functions implement the "Func(I, O)" interface ("I" being the input type, and "O" the output type)
+why "Func" is an interface, and not a simple generic type like "Array" for example
+because functions are contravariant in input types, and covariant in output types
+"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
 
 { f x y } can be written as: \\ f x y
 
@@ -136,7 +144,7 @@ class are records with methods (functions which their first argument is "self"):
 		m2: { self! |
 			...
 		}
-to make a field private, put an apostrphe at the start of its name
+to make a field private, put an apostrophe at the start of its name
 to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
 	i = S..(a: x, b: y)
 	i = S. a: x b: y
@@ -147,7 +155,7 @@ when calling a method, the "self" argument is skiped:
 interfaces:
 	I = #
 		m1: Func (self, x: X) Y
-		m2: ::{ self! |
+		m2:: { self! |
 			; default implementation
 		}
 interface inheritance:
@@ -158,10 +166,9 @@ a class that implements some interfaces:
 to implement an interface privately:
 	C :I' = # ...
 
-Jina uses composition instead of inheritance
-thus in Jina, a GObject class translates to a (final) class "G" plus an interface "G'i"
+in Jina, a GObject class translates to a (final) class "G" plus an interface "G'i"
 the interface contains all the instance methods of the corresponding GObject class, plus a "base" method
-	base = { self | :G ... }
+	base: : Func self G
 to implement "G'i":
 	C :G'i = #
 		base'field: G
