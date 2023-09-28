@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char **argv) {
@@ -18,9 +19,9 @@ int main(int argc, char **argv) {
 	use libgirepository to check type consistency of external code
 	generate C code in ".cache/jina"
 	compile changed C files to object files:
-		gcc -c "$project_dir"/.cache/jina/{changed,c,files}
+		system("gcc -c \"$project_dir\"/.cache/jina/{changed,c,files}")
 	then link object files
-		gcc -o program_name *.o
+		system("gcc -o program_name *.o")
 	*/
 	
 	exit(EXIT_SUCCESS);
