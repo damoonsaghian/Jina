@@ -44,17 +44,15 @@ in Jina mutable variables, when captured in async functions, will be copied
 so we can't mutate the environment of an async function; all mutations will be synchronous
 
 types show us what we can do with the data, ie which operations are valid
-the class hierarchy designs (like the one in Java) is problematic
-	"http://ptgmedia.pearsoncmg.com/images/020163371x/items/item33.html"
-also it leads to the problem of generic types not being covariant
-	"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
+inheritance leads to the problems of covariance and contravariance
+"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
 i feel that this problem was the motivation behind dynamic typing (another bad design)
-to solve this problem, some languages like Rust introduse two kind of types:
-, concrete types (like final classes in Java) can be instantiated, but cannot have subtypes
-, abstract types (like abstract classes in Java) cannot be instantiated, but can have subtypes
+to solve this problem, some languages like Rust use composition instead of inheritance:
+, concrete types can be instantiated, but cannot have subtypes
+, abstract types cannot be instantiated, but can have subtypes
 
 in Jina, the only difference between types and normal values, is that, types are not their own subtypes
 as you will see, all the complexities of type systems, including the one mentioned above,
 	will be naturally resolved in Jina
 
-Jina compiles to GLib based C
+Jina compiles to C code

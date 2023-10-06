@@ -127,10 +127,10 @@ packages are directories containing a root module
 to access a module or a package, just use its path relative to the package directory:
 	m = ..module'or'package
 	m = .."dir/module'or'package"
-too access modules in packages (protocol can be gnunet, git or local):
+too access modules in packages (protocol can be gnunet, git or lib):
 	m = .."protocol://address'of'project'dir/dir/file"
 
-class are records with methods (functions which their first argument is "self"):
+classes are records with methods (functions which their first argument is "self"):
 	C = #
 		a: A
 		b:: B. 1 ; field with default value
@@ -144,7 +144,7 @@ class are records with methods (functions which their first argument is "self"):
 		m2: { self! |
 			...
 		}
-to make a field private, put an apostrophe at the start of its name
+to make a field private, put an apostrophe at the end of its name
 to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
 	i = S..(a: x, b: y)
 	i = S. a: x b: y
