@@ -75,17 +75,11 @@ which behaves like:
 function:
 	f = { a :A , b :B | :C ... }
 determining default values for parameters:
-	f = { a :: 1 | :B ... }
+	f = { a = 1 | :B ... }
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
-
-note that each function has a unique type
-but all functions implement the "Func(I, O)" interface ("I" being the input type, and "O" the output type)
-why "Func" is an interface, and not a simple generic type like "Array" for example
-because functions are contravariant in input types, and covariant in output types
-"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
 
 { f x y } can be written as: \\ f x y
 

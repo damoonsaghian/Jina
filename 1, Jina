@@ -1,4 +1,4 @@
-Jina is a programming language with sane memory management, actors, and a coherent syntax
+Jina is a programming language with sane memory management, actors, and a coherent syntax, that compiles to C
 
 Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
@@ -18,6 +18,8 @@ in Jina:
 	otherwise they will be referenced by variables
 , all other types (strings, arrays, maps, functions, ...) are referenced by variables
 refernces will be reference counted if captured in async functions
+
+a variable containing another variable: compile'time reference counting
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
@@ -46,13 +48,12 @@ so we can't mutate the environment of an async function; all mutations will be s
 types show us what we can do with the data, ie which operations are valid
 inheritance leads to the problems of covariance and contravariance
 "https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
+"https://stackoverflow.com/questions/7266596/why-avoid-subtyping"
 i feel that this problem was the motivation behind dynamic typing (another bad design)
-to solve this problem, some languages like Rust use composition instead of inheritance:
+to solve this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
 
 in Jina, the only difference between types and normal values, is that, types are not their own subtypes
 as you will see, all the complexities of type systems, including the one mentioned above,
 	will be naturally resolved in Jina
-
-Jina compiles to C code
