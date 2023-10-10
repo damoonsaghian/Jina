@@ -1,4 +1,4 @@
-apt-get install gcc gnunet
+apt-get install gcc
 
 project_dir="$(dirname "$0")"
 mkdir -p "$project_dir/.cache/gcc"

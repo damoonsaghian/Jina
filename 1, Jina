@@ -5,9 +5,9 @@ at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
 memory management:
-, in synchronous parts, it can be done at compile time
-, in asynchronous parts, reference counting is used
-"http://aardappel.github.io/lobster/memory_management.html"
+, in synchronous parts: compile'time reference counting
+	"http://aardappel.github.io/lobster/memory_management.html"
+, in asynchronous parts: runtime reference counting is used
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
@@ -19,7 +19,7 @@ in Jina:
 , all other types (strings, arrays, maps, functions, ...) are referenced by variables
 refernces will be reference counted if captured in async functions
 
-a variable containing another variable: compile'time reference counting
+a variable containing another variable: 
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic

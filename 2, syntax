@@ -160,35 +160,25 @@ a class that implements some interfaces:
 to implement an interface privately:
 	C :I' = # ...
 
-in Jina, a GObject class translates to a (final) class "G" plus an interface "G'i"
-the interface contains all the instance methods of the corresponding GObject class, plus a "base" method
-	base: : Func self G
-to implement "G'i":
-	C :G'i = #
-		base'field: G
-		...
-		base: { self | :G self.base'field }
-		...
-if the first field is of type "G", the "base" method will be automatically generated,
-	no need to write it manually
-
 generics:
-	C = { X | ... }
+	C = { X | # ... }
 generics bound by an interface:
-	C = { X :I | ... }
+	C = { X :I | # ... }
 
 enums:
 	Bool = #
-		True: Bool. 'true
-		False: Bool. 'false
+		flag': String
+		true: Bool. flag: 'true
+		false: Bool. flag: 'false
 		...
-	True = Bool.True
-	False = Bool.False
+	True = Bool.true
+	False = Bool.false
 "?A" is a shortcut for "Maybe(A)":
 	Maybe = { X | #
-		Some: Maybe(X). 'some X
-		None: Maybe(X). 'none
+		flag': String
+		some: { X | { x :X | Maybe(X). flag: 'some x } }
+		none: { X | Maybe(X). flag: 'none }
 		...
 	}
-	Some = { X | Maybe(X).Some }
-	None = { X | Maybe(X).None }
+	Some = { X | { x :X | Maybe(X).some x } }
+	None = { X | Maybe(X).none }

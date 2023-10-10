@@ -28,31 +28,8 @@ int main(int argc, char **argv) {
 		system("gcc -o program_name *.o")
 	*/
 	
-	/*
-	for a class "ClassName" in a Jina file module "mod.jina" create these two files:
-	, a header file named "mod-class-name.h":
-		#pragma once
-		#include <glib-object.h>
-		G_BEGIN_DECLS
-		
-		// type declaration
-		#define MOD_TYPE_CLASS_NAME mod_class_name_get_type()
-		G_DECLARE_FINAL_TYPE (ModeClassName, mode_class_name, MOD, CLASS_NAME, GObject)
-		
-		// method definitions
-		ModClassName *mod_class_name_new (void);
-		
-		G_END_DECLS
-	, a file named "mod-class-name.c":
-		#include "mod-class-name.h"
-		
-		struct _ModClassName {
-			GObject parent_instance;
-			// other members, including private data
-		};
-		
-		G_DEFINE_TYPE (ModClassName, mode_class_name, G_TYPE_OBJECT)
-	*/
+	// if a module is imported using gnunet or git, see if they are installed
+	// and if not, ask the user to install them first, then exit with error
 	
 	return EXIT_SUCCESS;
 }
