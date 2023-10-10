@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	compile C files to object files:
 		system("gcc -c \"$project_dir\"/.cache/jina/{all,c,files}")
 	then link object files
-		system("gcc -o program_name *.o")
+		system("gcc -o \"$project_dir\"/.cache/jina/bin *.o")
 	*/
 	
 	// if a module is imported using gnunet or git, see if they are installed
