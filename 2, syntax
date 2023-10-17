@@ -114,15 +114,15 @@ actor:
 	a.do { b :B || ... }
 
 modules are files containing definitions
-public definition are accessable from outside of the module: a' = ...
+private definition are not accessable from outside of the module: a' = ...
 the file named "0.jina" is the root module
 the root module can contain the main function
 packages are directories containing a root module
 to access a module or a package, just use its path relative to the package directory:
-	m = ..module'or'package
-	m = .."dir/module'or'package"
+	m' = ..module'or'package
+	m' = .."dir/module'or'package"
 too access modules in packages (protocol can be gnunet, git or lib):
-	m = .."protocol://address'of'project'dir/dir/file"
+	m' = .."protocol://address'of'project'dir/dir/file"
 
 classes are records with methods (functions which their first argument is "self"):
 	C = #

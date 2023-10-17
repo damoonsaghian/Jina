@@ -6,6 +6,7 @@ int main(int argc, char **argv) {
 	char *project_dir = argv[1]
 	
 	if (project_dir == NULL) {
+		// tcc compiler
 		printf("interactive Jina is not yet implemented");
 		return EXIT_SUCCESS;
 	}
@@ -16,16 +17,24 @@ int main(int argc, char **argv) {
 	/*
 	fill the table of identifiers (module identifiers and local ones) and their types
 	check for type consistency of Jina code
-	use libgirepository to check type consistency with external code
+	type consistency between modules, as well as between Jina and C code, will be checked too
 	remove all "*.c" files
 	move all "*.o" files to ".cache/jina/objects" directory
 		for each unchanged jina file, move the corresponding object file to ".cache/jina" directory
 		remove ".cache/jina/objects" directory
-	generate C code in ".cache/jina"
+	for each changed Jina file, generate a C file in ".cache/jina"
 	compile C files to object files:
-		system("gcc -c \"$project_dir\"/.cache/jina/{all,c,files}")
-	then link object files
-		system("gcc -o \"$project_dir\"/.cache/jina/bin *.o")
+		system("gcc -c \"$project_dir\"/.cache/jina/*.c")
+	for libs:
+		system("gcc -c -fPIC \"$project_dir\"/.cache/jina/*.c")
+	then link object files:
+	, for programs (there is a file named "0.jina" in the project directory):
+		system("gcc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o")
+	, for libraries:
+		system("gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o")
+		system("cp \"$project_dir\"/.cache/jina/libo /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}")
+		system("ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj")
+		system("ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so")
 	*/
 	
 	// if a module is imported using gnunet or git, see if they are installed
