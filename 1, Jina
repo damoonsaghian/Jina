@@ -12,14 +12,11 @@ memory management:
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 in Jina:
-, numbers are small and have fixed size, so they will always be copied into variables
-, records have fixed size
-	they will be copied into variables,	if they are small, and are stored in immutable variables
-	otherwise they will be referenced by variables
-, all other types (strings, arrays, maps, functions, ...) are referenced by variables
-refernces will be reference counted if captured in async functions
+, numbers will always be copied into variables
+, other types (string, arrays, maps, records, and functions) will be referenced by variables
+immutable references will be reference counted if captured in async functions
 
-a variable containing another variable: 
+a variable containing another variable: weak references will be used for the internal one
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
@@ -53,7 +50,3 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to solve this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
-
-in Jina, the only difference between types and normal values, is that, types are not their own subtypes
-as you will see, all the complexities of type systems, including the one mentioned above,
-	will be naturally resolved in Jina

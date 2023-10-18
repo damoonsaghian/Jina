@@ -16,7 +16,7 @@ type annotation:
 mutable variable:
 	v !T = ...
 	v! = ...
-assignment:
+assignment to mutable variables:
 	v .= ...
 
 integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
@@ -60,17 +60,6 @@ taged fields can be matched on untaged ones, if the name of variables match:
 mutating a record:
 	r! = a: 1, b: 2, c: 3
 	r.a = 10
-
-record extension:
-	(a: 1, b: 2)..(c: 3, d: 4)
-or:
-	(a: 1, b: 2). (c: 3, d: 4)
-the above behaves like:
-	(a: 1, b: 2, c: 3, d: 4)
-masking fields:
-	(a: 1, b: 2). (b: 3, c: 4)
-which behaves like:
-	(a: 1, b: 3, c: 4)
 
 function:
 	f = { a :A , b :B | :C ... }
@@ -124,13 +113,15 @@ to access a module or a package, just use its path relative to the package direc
 too access modules in packages (protocol can be gnunet, git or lib):
 	m' = .."protocol://address'of'project'dir/dir/file"
 
-classes are records with methods (functions which their first argument is "self"):
-	C = #
+structs:
+	S := #
 		a: A
-		b:: B. 1 ; field with default value
-		new: { a :A | :C
-			b = ...
-			a: a, b: b
+		b:: 1 ; field with default value
+defining methods:
+	S = #
+		new: { b :Int | :S
+			a = ...
+			S. a b
 		}
 		m1: { self, x :X | :Y
 			...
@@ -138,47 +129,37 @@ classes are records with methods (functions which their first argument is "self"
 		m2: { self! |
 			...
 		}
-to make a field private, put an apostrophe at the end of its name
-to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
-	i = S..(a: x, b: y)
+an instance of a struct:
 	i = S. a: x b: y
-	i = S.new a: x
+	i = S. a: x ; using the default value
+	i = S.new b: y
 when calling a method, the "self" argument is skiped:
 	i.m x
 
+singletons:
+	True := ()
+	False := ()
+	True = True.()
+	False = False.()
+unions:
+	Bool := True + False
+"?A" is a shortcut for "A+None", where "None" is a singleton:
+	None := ()
+	None = None.()
+
 interfaces:
-	I = #
+	I := #
 		m1: Func (self, x: X) Y
 		m2:: { self! |
 			; default implementation
 		}
 interface inheritance:
-	I3 = I1. I2. # ...
+	I3 = I1*I2*# ...
 
-a class that implements some interfaces:
-	C :I1..I2 = # ...
-to implement an interface privately:
-	C :I' = # ...
+implementing interfaces:
+	S :I1*I2 = # ...
 
 generics:
-	C = { X | # ... }
+	G := X | # ...
 generics bound by an interface:
-	C = { X :I | # ... }
-
-enums:
-	Bool = #
-		flag': String
-		true: Bool. flag: 'true
-		false: Bool. flag: 'false
-		...
-	True = Bool.true
-	False = Bool.false
-"?A" is a shortcut for "Maybe(A)":
-	Maybe = { X | #
-		flag': String
-		some: { X | { x :X | Maybe(X). flag: 'some x } }
-		none: { X | Maybe(X). flag: 'none }
-		...
-	}
-	Some = { X | { x :X | Maybe(X).some x } }
-	None = { X | Maybe(X).none }
+	G := X :I | # ...
