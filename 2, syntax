@@ -22,36 +22,43 @@ assignment to mutable variables:
 integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
 floating point numbers: F32, F64
 
-strings are immutable, and encoded in UTF8
-	s :String = "abc def"
-one word string:
-	'abc
-string interpolation: "abc{x}"
-
 array:
 	a :Array(Int) = [1, 2, 3]
 indexing:
 	a_1
-maps are like arrays, but indexed using strings instead of integers:
-	m :Map(Int) = ["a": 1, "b": 2, "c": 3]
+mutating arrays:
+	a != [1, 2, 3]
+	a.put 0 at: 0 ; [0, 2, 3]
+	a.put 4 at: 3 ; [0, 2, 3, 4]
+dictionaries are like arrays, but are indexed using strings instead of integers:
+	m :Dict(Int) = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
+indexing:
+	m_'a
 
-array of strings:
+strings are arrays of "I8" values
+strings can be written using a UTF8 encoded representation:
+	s :String = "abc def"
+one word string:
+	'abc
+string interpolation: "abc{x}"
+indexing strings is not really meaningful
+thus it's better to split long strings into array of single'line strings
 	'[
-		line1
-			line2
+		first line
+			second line
 	]
 which is equivalent to:
-	["line1", "\tline2"]
+	["first line", "\tsecond line"]
 
 records:
 	r = a: 1, b: 2, c: 3
 	r :(Int, Int, c: Int) = 1, 2, c: 3
+alternative syntax: # a: 1 b: 2 c: 3
 to access an element:
 	r.a
 	r.0
-alternative syntax: # a: 1 b: 2 c: 3
 records can be matched on smaller records:
 	a, b = 1, 2, 3
 taged fields can be matched on untaged ones, if the name of variables match:
@@ -129,6 +136,8 @@ defining methods:
 		m2: { self! |
 			...
 		}
+to make a method private (accessable only from inside the module), put an apostrophe at the end of its name
+fields with default values can be made private to
 an instance of a struct:
 	i = S. a: x b: y
 	i = S. a: x ; using the default value

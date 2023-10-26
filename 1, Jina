@@ -11,12 +11,13 @@ memory management:
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
-in Jina:
-, numbers will always be copied into variables
-, other types (string, arrays, maps, records, and functions) will be referenced by variables
-immutable references will be reference counted if captured in async functions
+numbers will always be copied into variables; they don't need compile'time/run'time ref counting
+for strings, arrays, and maps, a small portion at the begining, is stored on the stack
+	it will be referenced by variables in sync parts, and copied when captured in async functions
+	thus they don't need compile'time/run'time ref counting, if they are small
 
 a variable containing another variable: weak references will be used for the internal one
+also, the parent is resposible to destroy its children
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic

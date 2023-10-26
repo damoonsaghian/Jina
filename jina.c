@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
+http://crasseux.com/books/ctutorial/
+http://crasseux.com/books/ctutorial/The-form-of-a-C-program.html#The%20form%20of%20a%20C%20program
+https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Data-Types
+https://www.learn-c.org/
+https://en.wikibooks.org/wiki/C_Programming
+https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Character_Class_Test_Library
+https://en.wikibooks.org/wiki/A_Little_C_Primer/C_File-IO_Through_Library_Functions
+https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
+https://viewsourcecode.org/snaptoken/kilo/
+https://github.com/oz123/awesome-c#data-structures
+https://www.geeksforgeeks.org/dynamic-array-in-c/
+https://nullprogram.com/blog/2014/10/21/
+https://nullprogram.com/blog/2015/02/17/
+https://aardappel.github.io/lobster/memory_management.html
+https://github.com/Snaipe/libcsptr
+https://github.com/jeraymond/refcount
+https://github.com/taylordotfish/autoheaders
+*/
+
 int main(int argc, char **argv) {
 	char *project_dir = argv[1]
 	
