@@ -14,7 +14,6 @@ https://en.wikibooks.org/wiki/A_Little_C_Primer/C_File-IO_Through_Library_Functi
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://viewsourcecode.org/snaptoken/kilo/
 https://github.com/oz123/awesome-c#data-structures
-https://www.geeksforgeeks.org/dynamic-array-in-c/
 https://nullprogram.com/blog/2014/10/21/
 https://nullprogram.com/blog/2015/02/17/
 https://aardappel.github.io/lobster/memory_management.html
@@ -37,9 +36,9 @@ int main(int argc, char **argv) {
 	
 	/*
 	fill the table of identifiers (module identifiers and local ones) and their types
-	check for type consistency of Jina code
-	type consistency between modules, as well as between Jina and C code, will be checked too
-	remove all "*.c" files
+		even for c files
+	check for type consistency
+	remove all ".cache/jina/*.c" files
 	move all "*.o" files to ".cache/jina/objects" directory
 		for each unchanged jina file, move the corresponding object file to ".cache/jina" directory
 		remove ".cache/jina/objects" directory

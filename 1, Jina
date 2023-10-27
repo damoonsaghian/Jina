@@ -12,8 +12,8 @@ memory management:
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 numbers will always be copied into variables; they don't need compile'time/run'time ref counting
-for strings, arrays, and maps, a small portion at the begining, is stored on the stack
-	it will be referenced by variables in sync parts, and copied when captured in async functions
+for strings, arrays, and maps, a small starting part is stored on the stack
+	this part will be referenced by variables in sync parts, and copied when captured in async functions
 	thus they don't need compile'time/run'time ref counting, if they are small
 
 a variable containing another variable: weak references will be used for the internal one

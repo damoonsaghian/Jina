@@ -38,13 +38,13 @@ indexing:
 	m_'a
 
 strings are arrays of "I8" values
-strings can be written using a UTF8 encoded representation:
+they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
 one word string:
 	'abc
 string interpolation: "abc{x}"
 indexing strings is not really meaningful
-thus it's better to split long strings into array of single'line strings
+thus it's better to split long strings into an array of single'line strings
 	'[
 		first line
 			second line
@@ -168,7 +168,9 @@ interface inheritance:
 implementing interfaces:
 	S :I1*I2 = # ...
 
-generics:
-	G := X | # ...
-generics bound by an interface:
-	G := X :I | # ...
+generic type:
+	x : :() = ...
+or:
+	x ::() = ...
+generic type bound by an interface:
+	x ::I = ...
