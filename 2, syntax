@@ -27,7 +27,7 @@ array:
 indexing:
 	a_1
 mutating arrays:
-	a != [1, 2, 3]
+	a! = [1, 2, 3]
 	a.put 0 at: 0 ; [0, 2, 3]
 	a.put 4 at: 3 ; [0, 2, 3, 4]
 dictionaries are like arrays, but are indexed using strings instead of integers:
