@@ -1,4 +1,4 @@
-Jina is a programming language with sane memory management, actors, and a coherent syntax, that compiles to C
+Jina is a programming language with sane memory management, actors, and a coherent syntax, that compiles to Nim
 
 Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
@@ -7,16 +7,9 @@ at her funeral, these words were written on a stone above her grave:
 memory management:
 , in synchronous parts: compile'time reference counting
 	"http://aardappel.github.io/lobster/memory_management.html"
+	"https://www.toptal.com/software/eliminating-garbage-collector"
+	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 , in asynchronous parts: runtime reference counting is used
-"https://www.toptal.com/software/eliminating-garbage-collector"
-"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
-
-numbers will always be copied into variables; they don't need compile'time/run'time ref counting
-in the case of arrays, a small part at the start is stored on the stack
-	this part will be referenced by variables in sync parts, and copied when captured in async functions
-	so arrays don't need compile'time/run'time ref counting, if they are small
-
-a variable containing another variable: weak references will be used for the internal one
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
@@ -50,3 +43,5 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to solve this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
+in Jina all types are concrete
+i think abstract types is an unnecessary complexity; we can use composition instead
