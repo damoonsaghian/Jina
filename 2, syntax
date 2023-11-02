@@ -113,6 +113,18 @@ struct:
 	S := #
 		a: A
 		b:: 1 ; field with default value
+defining methods:
+	S = #
+		new: { b :Int | :S
+			a = ...
+			S. a b
+		}
+		m1: { self, x :X | :Y
+			...
+		}
+		m2: { self! |
+			...
+		}
 an instance of a struct:
 	i = S. a: x b: y
 	i = S. a: x ; using the default value
@@ -138,7 +150,7 @@ interface inheritance:
 	i3 := i1*i2*# ...
 
 implementing interfaces:
-	S :: i1*i2
+	S :i1*i2 = # ...
 
 generic types have an apostrophe at the end of their names:
 	x :x' = ...
@@ -148,8 +160,7 @@ any definition (type or value) whose name is the same as the module's name,
 	or the moduls's name plus an extension (that starts with an apostrophe)
 	will be exported (ie is accessable outside of the module)
 to prevent an export, append an apostrophe at the end of its name: a' = ...
-to access the definitions in a module which is inside a directory:
-	dir.definition
+to access the definitions in a module which is inside a directory: dir.definition
 a package is a directory of modules which can be accessed like this (protocol can be gnunet, git or lib):
 	p = package "protocol://address'of'package'directory"
 definitions in "std" package are directly accessable
