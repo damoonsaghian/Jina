@@ -76,10 +76,6 @@ function call:
 	f x y
 which is equivalent to:
 	f(x, y)
-postfix syntax (only possible if "x" does not have a field named "f"):
-	x .f y
-or:
-	x.f y
 
 { f x y } can be written as: \\ f x y
 
@@ -117,7 +113,6 @@ struct:
 	S := #
 		a: A
 		b:: 1 ; field with default value
-fields with default values can be made private (by adding an apostrophe at the end of its name)
 an instance of a struct:
 	i = S. a: x b: y
 	i = S. a: x ; using the default value
@@ -133,16 +128,30 @@ unions:
 	None := ()
 	None = None.()
 
-generic types are written using lower case letters:
-	x :x = ...
+interfaces:
+	i := #
+		m1: Func (self, x: X) Y
+		m2:: { self! |
+			; default implementation
+		}
+interface inheritance:
+	i3 := i1*i2*# ...
+
+implementing interfaces:
+	S :: i1*i2
+
+generic types have an apostrophe at the end of their names:
+	x :x' = ...
 
 modules are files containing definitions
-any type that its name is the same as the module's name (possibly plus an extension starting with an apostrophe),
-	as well as all functions whose first argument is of that type,
+any definition (type or value) whose name is the same as the module's name,
+	or the moduls's name plus an extension (that starts with an apostrophe)
 	will be exported (ie is accessable outside of the module)
-to prevent an export, appent an apostrophe at the end of its name: a' = ...
-the file named "0.jina" is the root module
-the root module can contain the main function
-modules can also be directories containing a root module
-to access modules in packages (protocol can be gnunet, git or lib):
+to prevent an export, append an apostrophe at the end of its name: a' = ...
+to access the definitions in a module which is inside a directory:
+	dir.definition
+a package is a directory of modules which can be accessed like this (protocol can be gnunet, git or lib):
 	p = package "protocol://address'of'package'directory"
+definitions in "std" package are directly accessable
+	this means that "std.Actor" and "Actor" are the same
+packages that contain a file named "0.jina" (which must contain the main function) are program packages
