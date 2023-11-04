@@ -103,8 +103,8 @@ which are equivalent to:
 
 matching:
 	match a {
-		Some. b | ...
-		None | ...
+		b :B | ...
+		:None | ...
 	}
 
 loops:
@@ -160,24 +160,25 @@ which is equivalent to:
 note that to call a field that is a function, we have to use parentheses: (r.f)(x)
 
 interfaces:
-	i := #
+	I := #
 		m1: Func (self, x: X) Y
 		m2:: { self! |
 			; default implementation
 		}
 interface inheritance:
-	i3 := i1..i2..# ...
-
+	I3 := I1..I2..# ...
 defining the methods of a struct that implements some interfaces:
 	S = #
 		...
-	..i1.
+	.. I1.
 		...
-	..i2.
+	.. I2.
 		...
 
-generic types are written with small letters and an apostrophe at the end:
-	S := a: x' b: x'
+generics:
+	G := X | a: X b: B
+interface bounded generics:
+	G := X :I | a: X b: B
 
 singletons:
 	True := ()
