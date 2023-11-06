@@ -11,6 +11,11 @@ memory management:
 	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 , in asynchronous parts: runtime reference counting is used
 
+any heap reference keeps the address of the actor, that it originates from
+only this original actor can destroy the reference
+other actros just send messages
+so we do not need atomic reference counting
+
 numbers will always be copied into variables; they don't need compile'time/run'time ref counting
 in the case of arrays, a small part at the start is stored on the stack
 	this part will be referenced by variables in sync parts, and copied when captured in async functions
@@ -39,7 +44,7 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 
-in Jina mutable variables, when captured in async functions, will be copied
+in Jina, mutable variables will be copied, when captured in async functions
 so we can't mutate the environment of an async function; all mutations will be synchronous
 
 types show us what we can do with the data, ie which operations are valid
@@ -50,3 +55,4 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to avoid this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
+Jina acheives the same, without splitting the types into two kinds
