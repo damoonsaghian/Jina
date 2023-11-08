@@ -29,12 +29,14 @@ http://re2c.org/index.html
 https://github.com/orangeduck/mpc
 */
 
-void generate_export_file(char *source_file_path) {}
+void generate_header_file(char *source_file_path) {
+	// https://github.com/taylordotfish/autoheaders
+}
 
 void compile_jina2c(char *jina_file_path) {
 	/*
 	fill the table of identifiers (module identifiers and local ones) and their types
-	check for type consistency
+	check for type consistency in the module, and with header files
 	compile to c
 	*/
 	
@@ -42,20 +44,15 @@ void compile_jina2c(char *jina_file_path) {
 	// and if not, ask the user to install them first, then exit with error
 }
 
-void generate_header_file(char *export_file_path) {}
-
 int main(int argc, char **argv) {
-	if (argv[1] == "export") {
-		generate_export_file(argv[2]);
-		return EXIT_SUCCESS;
+	if (argv[1] == "header") {
+		generate_header_file(argv[2]);
 	} else if (argv[1] == "compile") {
 		compile_jina2c(argv[2]);
-		return EXIT_SUCCESS;
-	} else if (argv[1] == "header") {
-		generate_header();
-		return EXIT_SUCCESS;
+	} else {
+		printf("usage: jinac export|compile|header <file>")
+		return EXIT_FAILURE;
 	}
 	
-	printf("usage: jinac export|compile|header <file>")
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
