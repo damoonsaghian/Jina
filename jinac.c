@@ -53,6 +53,4 @@ int main(int argc, char **argv) {
 		printf("usage: jinac export|compile|header <file>")
 		return EXIT_FAILURE;
 	}
-	
-	return EXIT_SUCCESS;
 }

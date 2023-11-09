@@ -55,4 +55,8 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to avoid this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
+
 Jina acheives the same, without splitting the types into two kinds
+in Jina, the only difference between types and normal values, is that, types are not their own subtypes
+as you will see, all the complexities of type systems, including the one mentioned above,
+	will be naturally resolved in Jina

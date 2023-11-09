@@ -91,8 +91,8 @@ which is equivalent to:
 { f x y } can be written as: \\ f x y
 
 if'else:
-	if condition {...} {...}
-	if condition {...} \\ if c {...} \\ if c {...} {...}
+	condition.then {...} {...}
+	condition.then {...} \\ c.then {...} \\ c.then {...} {...}
 
 and or:
 	True & False
@@ -102,16 +102,13 @@ which are equivalent to:
 	True .or {False}
 
 matching:
-	match a {
+	{
 		b :B | ...
 		:None | ...
-	}
+	} a
 
 loops:
-	loop { ... break ... }
-	while {condition} { ... }
-	for iterator { x | ... }
-which is equivalent to:
+	{condition}.while { ... }
 	iterator.for'each { x | ... }
 
 async function:
@@ -134,14 +131,12 @@ definitions in "std" package are directly accessable
 	this means that "std.Actor" and "Actor" are the same
 packages that contain a file named "0.jina" (which must contain the main function) are program packages
 
-structs:
-	S := #
+classes are records with methods (functions which their first argument is "self"):
+	C = #
 		a: A
 		b:: B. 1 ; field with default value
-defining methods:
-	S = #
 		new: { a :A |
-			S. a
+			C. a
 		}
 		m1: { self, x :X | :Y
 			...
@@ -149,28 +144,27 @@ defining methods:
 		m2: { self! |
 			...
 		}
-private fields and methods (which can't be accessed from outside of the module),
+private fields (which can't be accessed from outside of the module),
 	are indicated by puting an apostrophe at the end of their names
-to create an instance of a struct:
-	s :S = a: x b: y
-	s = S. a: x b: y
-	s = S.new a: x
-calling a method:
-	s.m x
-which is equivalent to:
-	S.m s x
-note that to call a field that is a function, we have to use parentheses: (r.f)(x)
+to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
+	c = C..(a: x, b: y)
+	c = C. a: x b: y
+	c = C.new a: x
+fields with default values can be omited:
+	c = C. a: x
+when calling a method, the "self" argument is skiped:
+	c.m x
 
 interfaces:
-	I := #
+	I = #
 		m1: Func (self, x: X) Y
 		m2:: { self! |
 			; default implementation
 		}
 interface inheritance:
-	I3 := I1..I2..# ...
-defining the methods of a struct that implements some interfaces:
-	S = #
+	I3 = I1..I2..# ...
+a class that implements some interfaces:
+	C = #
 		...
 	.. I1.
 		...
@@ -178,17 +172,16 @@ defining the methods of a struct that implements some interfaces:
 		...
 
 generics:
-	G := X | a: X b: B
-interface bounded generics:
-	G := X :I | a: X b: B
+	C = { X | # ... }
+generics bound by an interface:
+	C = { X :I | # ... }
 
-singletons:
-	True := ()
-	False := ()
-	True = True.()
-	False = False.()
-unions:
-	Bool := True + False
-"?A" is a shortcut for "A+None", where "None" is a singleton:
-	None := ()
-	None = None.()
+enums:
+E = #
+	[A, B]
+	... ; methods
+
+Boolean type:
+[0, 1]
+
+"?A" is a shortcut for "[A, ()]":
