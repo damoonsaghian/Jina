@@ -20,6 +20,7 @@ assignment to mutable variables:
 	v .= ...
 
 integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
+there is no Boolean type; use "I8" instead: zero acts like false, other values represent true
 floating point numbers: F32, F64
 
 array:
@@ -55,7 +56,7 @@ which is equivalent to:
 records:
 	r = a: 1, b: 2, c: 3
 	r :(Int, Int, c: Int) = 1, 2, c: 3
-alternative syntax: # a: 1 b: 2 c: 3
+alternative syntax: & a: 1 b: 2 c: 3
 to access an element:
 	r.a
 	r.0
@@ -81,27 +82,30 @@ which behaves like:
 
 function:
 	f = { a :A , b :B | :C ... }
-determining default values for parameters:
-	f = { a = 1 | :B ... }
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
 
-{ f x y } can be written as: \\ f x y
+{ f x y } can be written as: || f x y
 
 if'else:
 	condition.then {...} {...}
-	condition.then {...} \\ c.then {...} \\ c.then {...} {...}
+	condition.then {...} || c.then {...} || c.then {...} {...}
 
 and or:
-	True & False
-	True \ False
+	a && b
+	a \\ b
 which are equivalent to:
-	True .and {False}
-	True .or {False}
+	a .and {b}
+	a .or {b}
 
 matching:
+	a # {
+		b :B | ...
+		:None | ...
+	}
+which is equivalent to:
 	{
 		b :B | ...
 		:None | ...
@@ -112,10 +116,10 @@ loops:
 	iterator.for'each { x | ... }
 
 async function:
-	af :Async(A) = { a :A || ... }
+	af :Async(A) = {| a :A | ... }
 actor:
 	a = Actor.new B.new(x, y)
-	a.do { b :B || ... }
+	a.do {| b !B | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -131,12 +135,14 @@ definitions in "std" package are directly accessable
 	this means that "std.Actor" and "Actor" are the same
 packages that contain a file named "0.jina" (which must contain the main function) are program packages
 
-classes are records with methods (functions which their first argument is "self"):
-	C = #
+structs:
+	S := &
 		a: A
 		b:: B. 1 ; field with default value
+defining methods:
+	S = &
 		new: { a :A |
-			C. a
+			S. a
 		}
 		m1: { self, x :X | :Y
 			...
@@ -144,27 +150,29 @@ classes are records with methods (functions which their first argument is "self"
 		m2: { self! |
 			...
 		}
-private fields (which can't be accessed from outside of the module),
+private fields and methods (which can't be accessed from outside of the module),
 	are indicated by puting an apostrophe at the end of their names
-to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
-	c = C..(a: x, b: y)
-	c = C. a: x b: y
-	c = C.new a: x
-fields with default values can be omited:
-	c = C. a: x
-when calling a method, the "self" argument is skiped:
-	c.m x
+to create an instance of a struct:
+	s :S = a: x, b: y
+	s = S. a: x b: y
+	s = S. a: x ; fields with default values can be omited
+	s = S.new a: x
+calling a method:
+	s.m x
+which is equivalent to:
+	S.m s x
+note that to call a field that is a function, we have to use parentheses: (r.f)(x)
 
 interfaces:
-	I = #
+	I := &
 		m1: Func (self, x: X) Y
 		m2:: { self! |
 			; default implementation
 		}
 interface inheritance:
-	I3 = I1..I2..# ...
-a class that implements some interfaces:
-	C = #
+	I3 := I1..I2..& ...
+defining the methods of a struct that implements some interfaces:
+	S = &
 		...
 	.. I1.
 		...
@@ -172,16 +180,17 @@ a class that implements some interfaces:
 		...
 
 generics:
-	C = { X | # ... }
-generics bound by an interface:
-	C = { X :I | # ... }
+	S(X) := a: X, b: X
+bounded generics:
+	S(X :I) := a: X, b: X
+defining methods:
+	S(X) = & ...
 
-enums:
-E = #
-	[A, B]
-	... ; methods
-
-Boolean type:
-[0, 1]
-
-"?A" is a shortcut for "[A, ()]":
+singletons:
+	A'x := ()
+	A'x = A'x.()
+	A'y := ()
+	A'y = A'y.()
+unions:
+	A := A'x \ A'y
+"?A" is a shortcut for "A\()"

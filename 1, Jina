@@ -48,15 +48,10 @@ in Jina, mutable variables will be copied, when captured in async functions
 so we can't mutate the environment of an async function; all mutations will be synchronous
 
 types show us what we can do with the data, ie which operations are valid
-inheritance leads to the problems of covariance and contravariance
-"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
+inheritance is problematic:
 "https://stackoverflow.com/questions/7266596/why-avoid-subtyping"
+"https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
 i feel that this problem was the motivation behind dynamic typing (another bad design)
 to avoid this problem, some languages (eg Rust) use use two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
-
-Jina acheives the same, without splitting the types into two kinds
-in Jina, the only difference between types and normal values, is that, types are not their own subtypes
-as you will see, all the complexities of type systems, including the one mentioned above,
-	will be naturally resolved in Jina
