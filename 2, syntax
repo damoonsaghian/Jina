@@ -19,8 +19,8 @@ mutable variable:
 assignment to mutable variables:
 	v .= ...
 
-integers: I8, I16, I32, I64, Int (which can be 32 or 64 depending on the system)
-floating point numbers: F32, F64
+integers: Int8, Int16, Int32, Int64, Int (which can be 32 or 64 depending on the system)
+floating point numbers: Float32, Float (64 bit)
 
 array:
 	a :Array(Int) = [1, 2, 3]
@@ -37,7 +37,7 @@ when keys are one word strings, this can also be written as:
 indexing:
 	m_'a
 
-strings are arrays of "I8" values
+strings are arrays of "Int8" values
 they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
 one word string:
@@ -122,7 +122,7 @@ actor:
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
-	and possibly an additional extension (that starts with an apostrophe)
+	and possibly an additional extension (a number or a word starting with an apostrophe)
 	will be exported (ie is accessable outside of the module)
 to prevent an export, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
@@ -157,12 +157,13 @@ to create a subtype of a class all fields which are not their own subtypes must 
 when calling a method, the "self" argument is skiped:
 	c.m x
 
-interfaces:
+interfaces are records with virtual methods (functions which their first argument is "sub"):
 	I = &
-		m1: { self, x :X | Y }
-		m2:: { self! |
+		m1: { sub, x :X | Y }
+		m2:: { sub! |
 			; default implementation
 		}
+"sub" is a subtype of a subtype of the interface
 interface inheritance:
 	I3 = I1..I2..& ...
 a class that implements some interfaces:
