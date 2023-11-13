@@ -70,11 +70,9 @@ mutating a record:
 
 record extension:
 	(a: 1, b: 2)..(c: 3, d: 4)
-or:
-	(a: 1, b: 2). c: 3 d: 4
 the above behaves like:
 	(a: 1, b: 2, c: 3, d: 4)
-masking fields:
+masking fields with the same type:
 	(a: 1, b: 2)..(b: 3, c: 4)
 which behaves like:
 	(a: 1, b: 3, c: 4)
@@ -89,6 +87,7 @@ which is equivalent to:
 { f x y } can be written as: || f x y
 
 if'else:
+	condition.then {...} else: {...}
 	condition.then {...} {...}
 	condition.then {...} || c.then {...} || c.then {...} {...}
 
@@ -102,20 +101,19 @@ which are equivalent to:
 matching:
 	a # {
 		b :B | ...
-		:None | ...
+		() | ...
 	}
 which is equivalent to:
 	{
 		b :B | ...
-		:None | ...
+		() | ...
 	} a
 
-loops:
-	{condition}.while { ... }
+loop:
 	iterator.for'each { x | ... }
 
 async function:
-	af :Async(A) = {| a :A | ... }
+	af = {| a :A | ... }
 actor:
 	a = Actor.new B.new(x, y)
 	a.do {| b !B | ... }
@@ -134,12 +132,14 @@ definitions in "std" package are directly accessable
 	this means that "std.Actor" and "Actor" are the same
 packages that contain a file named "0.jina" (which must contain the main function) are program packages
 
-classes are records with methods (functions which their first argument is "self"):
-	C = &
+structs:
+	S := &
 		a: A
 		b:: B. 1 ; field with default value
+defining methods:
+	S = &
 		new: { a :A |
-			C. a
+			S. a
 		}
 		m1: { self, x :X | :Y
 			...
@@ -147,45 +147,45 @@ classes are records with methods (functions which their first argument is "self"
 		m2: { self! |
 			...
 		}
-private fields (which can't be accessed from outside of the module),
+private fields and methods (which can't be accessed from outside of the module),
 	are indicated by puting an apostrophe at the end of their names
-to create a subtype of a class all fields which are not their own subtypes must be masked by a value:
-	c = C..(a: x, b: y)
-	c = C. a: x b: y
-	c = C. a: x ; fields with default values can be omited
-	c = C.new a: x
-when calling a method, the "self" argument is skiped:
-	c.m x
+to create an instance of a struct:
+	s :S = a: x, b: y
+	s = S. a: x b: y
+	s = S. a: x ; fields with default values can be omited
+	s = S.new a: x
+calling a method:
+	s.m x
+which is equivalent to:
+	S.m s x
+this implies that to call a field that is a function, we have to use parentheses: (r.f)(x)
 
-interfaces are records with virtual methods (functions which their first argument is "sub"):
-	I = &
-		m1: { sub, x :X | Y }
-		m2:: { sub! |
+interfaces:
+	I := &
+		m1: { self, x :X | Y }
+		m2:: { self! |
 			; default implementation
 		}
-"sub" is a subtype of a subtype of the interface
 interface inheritance:
-	I3 = I1..I2..& ...
-a class that implements some interfaces:
-	C :I1..I2 = &
+	I3 := I1..I2..& ...
+defining the methods of a struct that implements some interfaces:
+	S = &
 		...
 	.. I1.
 		...
 	.. I2.
 		...
-generics:
-	C = { X | & ... }
-generics bound by an interface:
-	C = { X :I | & ... }
 
-enums:
-	E = &
-		A\B
-		... ; methods
-Boolean:
-	Bool = &
-		0\1
-		...
-	Bool'false = Bool. 0
-	Bool'true = Bool. 1
-"?A" is a shortcut for "A\()"
+generics:
+	S := a: X', b: X'
+bounded generics:
+	S := a: X' :I, b: X'
+
+singletons:
+	Bool'true' := ()
+	Bool'true = Bool'true. ()
+	Bool'false' := ()
+	Bool'false = Bool'false. ()
+unions:
+	Bool := Bool'true \ Bool'false
+type "?A" is a shortcut for "A\()"
