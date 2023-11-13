@@ -1,0 +1,26 @@
+Bool'true' := ()
+Bool'true = Bool'true. ()
+Bool'false' := ()
+Bool'false = Bool'false. ()
+
+Bool := Bool'true \ Bool'false
+
+Bool = &
+	and: { self, rhs :{Bool} | :Bool
+		self # {
+			Bool'false | Bool'false
+			Bool'true | rhs()
+		}
+	}
+	or: { self, rhs :{Bool} | :Bool
+		self # {
+			Bool'true | Bool'true
+			Bool'false | rhs()
+		}
+	}
+	then: { self, then :{X'}, else :{X'} | :X'
+		self # {
+			Bool'true | then()
+			Bool'false | else()
+		}
+	}
