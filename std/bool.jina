@@ -6,19 +6,19 @@ Bool'false = Bool'false. ()
 Bool := Bool'true \ Bool'false
 
 Bool = &
-	and: { self, rhs :{Bool} | :Bool
+	and: { self, other :{Bool} | :Bool
 		self # {
 			Bool'false | Bool'false
 			Bool'true | rhs()
 		}
 	}
-	or: { self, rhs :{Bool} | :Bool
+	or: { self, other :{Bool} | :Bool
 		self # {
 			Bool'true | Bool'true
 			Bool'false | rhs()
 		}
 	}
-	then: { self, then :{X'}, else :{X'} | :X'
+	then: { self, then :{T'}, else :{T'} | :T'
 		self # {
 			Bool'true | then()
 			Bool'false | else()
