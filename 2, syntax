@@ -19,7 +19,7 @@ mutable variable:
 assignment to mutable variables:
 	v .= ...
 
-integers: Int8, Int16, Int32, Int64, Int (which can be 32 or 64 depending on the system)
+integers: Int8, Int32, Int64, Int (which can be 32 or 64 depending on the system), Int'u (unsigned)
 floating point numbers: Float32, Float (64 bit)
 
 array:
@@ -131,6 +131,9 @@ a package is a directory of modules which can be accessed like this (protocol ca
 definitions in "std" package are directly accessable
 	this means that "std.Actor" and "Actor" are the same
 packages that contain a file named "0.jina" (which must contain the main function) are program packages
+
+modules can be written in C too
+if there is a C file with the same name as a Jina file, they will be joined, and work as a single module
 
 structs:
 	S := &

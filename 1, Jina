@@ -1,4 +1,4 @@
-Jina is a programming language with sane memory management, actors, and a coherent syntax, that compiles to C
+Jina is a programming language with sane memory management, actors, and a coherent syntax
 
 Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, started a revolution in Iran
 at her funeral, these words were written on a stone above her grave:
@@ -57,3 +57,6 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to avoid this problem, some languages (eg Rust) introduce two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
+
+Jina compiles to C, and can easily interoperate with existing C libraries
+individual modules can be written entirely or partly in C
