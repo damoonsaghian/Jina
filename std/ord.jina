@@ -1,6 +1,0 @@
-Ord := &
-	is'equal'to: { self, other :Self | Bool }
-	is'less'than: { self, other :Self | Bool }
-	is'less'than'or'equal'to:: { self, other :Self |
-		self < other \\ self == other
-	}
