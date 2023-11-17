@@ -1,4 +1,4 @@
-apt-get install lua5.3 gcc cthreadpool-dev
+apt-get install lua5.3 lua-filesystem gcc cthreadpool-dev
 
 project_dir="$(dirname "$0")"
 

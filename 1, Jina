@@ -58,5 +58,4 @@ to avoid this problem, some languages (eg Rust) introduce two kind of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
 
-Jina compiles to C, and can easily interoperate with existing C libraries
-individual modules can be written entirely or partly in C
+Jina compiles to C, and can easily use existing C libraries
