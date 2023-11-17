@@ -1,0 +1,30 @@
+'{#include <stdio.h>}
+
+File = &
+	open: { path :String, mode :String = "" | :?File
+	}
+	
+	; create a new file for writing (truncating it if it already exists)
+	create: { path :String |
+	}
+	
+	append: {}
+	
+	delete: { path :String |
+	}
+	
+	move: { source'path :String, destination'path :String |
+	}
+	
+	copy: { source'path :String, destination'path :String |
+	}
+	
+	; max_size in megabytes
+	read: {self, max'size :Int | :Array(Int8)
+	}
+
+	write: { self, data :Array(Int8) |
+	}
+
+	close: { self |
+	}

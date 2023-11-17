@@ -1,0 +1,22 @@
+Int = &
+	min: '{}
+	max: '{}
+	
+	to'float: { self |
+		'{}
+	}
+
+.. Num.
+	add: {}
+	mul {}
+	pow: {}
+	abs: {}
+	is'equal'to: {}
+	is'less'than: {}
+	to'string: {}
+
+Int64 =
+
+Int32 =
+
+Int8 =

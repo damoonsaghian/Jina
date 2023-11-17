@@ -1,1 +1,3 @@
-// https://github.com/Pithikos/C-Thread-Pool
+'{#include <cthreadpool/thpool>}
+
+; https://github.com/Pithikos/C-Thread-Pool

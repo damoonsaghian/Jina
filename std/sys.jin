@@ -1,0 +1,23 @@
+'{#include <stdio.h>}
+
+Sys = &
+	print: { message :String |
+	}
+	
+	print'err: { message :String |
+	}
+	
+	read: { :String
+	}
+	
+	exec: { program'name :String, args :String | :(stdin: File, stdout: File)
+	}
+	
+	get'env: { :String
+	}
+	
+	get'args: { :String
+	}
+	
+	get'time: { format :String = "" | :String
+	}

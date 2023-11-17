@@ -1,0 +1,50 @@
+Float = &
+	next'up: { self | :Self
+	}
+	
+	next'down: { self | :Self
+	}
+	
+	cos: { self | :Self
+	}
+	acos: { self | :Self
+	}
+	cosh: { self | :Self
+	}
+	atanh: { self | :Self
+	}
+	sin: { self | :Self
+	}
+	asin: { self | :Self
+	}
+	sinh: { self | :Self
+	}
+	tan: { self | :Self
+	}
+	atan: { self | :Self
+	}
+	atan2: { self | :Self
+	}
+	tanh: { self | :Self
+	}
+	
+	log: { self | :Self
+	}
+	log2: { self | :Self
+	}
+	log10: { self | :Self
+	}
+	
+	e: ; base of the natural logarithm
+	pi:
+	nan:
+	inf:
+
+.. Num.
+	add: {}
+	mul {}
+	pow: {}
+	abs: {}
+	is'equal'to: {}
+	is'less'than: {}
+	to'string: {}
