@@ -11,7 +11,8 @@ https://github.com/amadvance/tommyds/
 ]
 
 Array := &
-	arr: '{void *[]}
+	stack'part': '{void *[]}
+	heap'pointers': '{void *[]}
 	len: Int
 
 Array = &

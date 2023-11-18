@@ -48,3 +48,8 @@ Float = &
 	is'equal'to: {}
 	is'less'than: {}
 	to'string: {}
+	
+	is'eq: {}
+	is'less: {}
+	
+	to'string: {}

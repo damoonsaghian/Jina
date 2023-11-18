@@ -1,7 +1,12 @@
 ; Num interface implemented by all number types (integer, floating point and complex numbers)
 
 Num := Ord..String'rep..&
-	add: { self, other :Self | Self }
-	mul: { self, other :Self | Self }
-	pow: { self, other :Self | Self }
-	abs: { self | Self }
+	add: { self :X', other :X' | X' }
+	neg: { self :X' | X' }
+	sub:: { self :X', other :X' | :X'
+	}
+	mul: { self :X', other :X' | X' }
+	div: { self :X', other :X' | X' }
+	pow:: { self :X', other :X' | :X'
+	}
+	abs: { self :X' | X' }
