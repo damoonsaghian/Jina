@@ -160,22 +160,6 @@ which is equivalent to:
 	S.m s x
 this implies that to call a field that is a function, we have to use parentheses: (r.f)(x)
 
-interfaces:
-	I := &
-		m1: { self, x :X | Y }
-		m2:: { self! |
-			; default implementation
-		}
-interface inheritance:
-	I3 := I1..I2..& ...
-defining the methods of a struct that implements some interfaces:
-	S = &
-		...
-	.. I1.
-		...
-	.. I2.
-		...
-
 generics:
 	S := a: X', b: X'
 bounded generics:
@@ -189,5 +173,21 @@ singletons:
 unions:
 	Bool := Bool'true \ Bool'false
 type "?A" is a shortcut for "A\()"
+
+interfaces:
+	I := &
+		m1: { self :A', x :X | Y }
+		m2:: { self !A' |
+			; default implementation
+		}
+interface inheritance:
+	I3 := I1..I2..& ...
+defining the methods of a struct that implements some interfaces:
+	S = &
+		...
+	.. I1.
+		...
+	.. I2.
+		...
 
 to enter C code: '{...}
