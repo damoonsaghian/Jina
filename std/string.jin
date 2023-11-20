@@ -8,26 +8,36 @@ String = &
 	split:
 	join:
 	
-	find: { self, substring :String | :?Int }
-	contains: { self, substring :Self | :Bool }
+	find: { self, substring :String | :?Int
+	}
+	contains: { self, substring :Self | :Bool
+	}
 	
 	; return string without the given prefix
-	trim'prefix: { self!, prefix :Self | :String }
+	trim'prefix: { self!, prefix :Self | :Self
+	}
 	; return string without the given suffix
-	trim'suffix: { self!, suffix :Self | :String }
+	trim'suffix: { self!, suffix :Self | :Self
+	}
 	; trim ASCII whitespace from the start of the string
-	trim'start: { self! | :String }
+	trim'start: { self! | :Self
+	}
 	; trim ASCII whitespace from the end of the string
-	trim'end: { self! | :String }
+	trim'end: { self! | :Self
+	}
 	; trim ASCII whitespace from the start and end of the string
-	trim: { self! | :String }
+	trim: { self! | :Self
+	}
 	
-	truncate: { self!, max'len :Int | :String }
+	truncate: { self!, max'len :Int | :Self
+	}
 	
 	clear: { self! | Array.clear self }
 	
-	to'lower: { self! | :String }
-	to'upper: { self! | :String }
+	to'lower: { self! | :Self
+	}
+	to'upper: { self! | :Self
+	}
 	
 	to'int: { self | :?Int }
 	to'int64: { self | :?Int64 }
@@ -37,4 +47,4 @@ String = &
 	to'float32: { self | :?Float32 }
 
 String'rep := &
-	to'string = { self | String }
+	to'string = { self :X' | X' }
