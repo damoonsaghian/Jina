@@ -3,9 +3,9 @@ comment line (";" must be the first non'whitespace charactor on the line):
 comment at the end of a line:
 	;; comment
 comment block:
-	;[comment]
-	;[multi'line
-	comment
+	;[
+	braket pairs can be nested: []
+	to write single brakets, put them in double quotes: "]"
 	]
 
 variable definition:
@@ -19,17 +19,18 @@ mutable variable:
 assignment to mutable variables:
 	v .= ...
 
-integers: Int8, Int32, Int64, Int (which can be 32 or 64 depending on the system)
-floating point numbers: Float32, Float (64 bit)
+integers: Int1, Int4, Int8, Int (which can be 4 bytes or 8 bytes depending on the system)
+floating point numbers (8 bytes): Float
 
 array:
 	a :Array(Int) = [1, 2, 3]
 indexing:
 	a_1
+negative index counts from the end of the array
 mutating arrays:
 	a! = [1, 2, 3]
-	a.put 0 at: 0 ; [0, 2, 3]
-	a.put 4 at: 3 ; [0, 2, 3, 4]
+	a.put 0 at: 0 ;; [0, 2, 3]
+	a.put 4 at: 3 ;; [0, 2, 3, 4]
 dictionaries are like arrays, but are indexed using strings instead of integers:
 	m :Dict(Int) = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
@@ -37,14 +38,16 @@ when keys are one word strings, this can also be written as:
 indexing:
 	m_'a
 
-strings are arrays of "Int8" values
+strings are arrays of "Int1" values
 they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
+alternative syntax:
+	s = '(abc def)
 one word string:
 	'abc
 string interpolation: "abc{x}"
 indexing strings is not really meaningful
-thus it's better to split long strings into an array of single'line strings
+it's better to split long strings into an array of single'line strings:
 	'[
 		first line
 			second line
@@ -53,7 +56,7 @@ which is equivalent to:
 	["first line", "\tsecond line"]
 
 records:
-	r = a: 1, b: 2, c: 3
+	r :(a: Int, b: Int, c: Int) = a: 1, b: 2, c: 3
 	r :(Int, Int, c: Int) = 1, 2, c: 3
 alternative syntax: & a: 1 b: 2 c: 3
 to access an element:
@@ -79,14 +82,20 @@ which behaves like:
 
 function:
 	f = { a :A , b :B | :C ... }
+note that the type of above function is:
+	{ a :A , b :B | C }
+this somehow strange type is to avoid contravarient behaviour of function arguments,
+	when we introduce interfaces
 function call:
 	f x y
 which is equivalent to:
 	f(x, y)
+and:
+	(x, y) # f
 
 { f x y } can be written as: || f x y
 
-if'else:
+conditional expression:
 	condition.then {...} else: {...}
 	condition.then {...} {...}
 	condition.then {...} || c.then {...} || c.then {...} {...}
@@ -103,11 +112,6 @@ matching:
 		b :B | ...
 		() | ...
 	}
-which is equivalent to:
-	{
-		b :B | ...
-		() | ...
-	} a
 
 loop:
 	iterator.for'each { x | ... }
@@ -126,8 +130,11 @@ to prevent an export, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 in modules inside a directory, to access other modules in parent directories:
 	root'.dir.Definition
-a package is a directory of modules which can be accessed like this (protocol can be gnunet, git or lib):
-	p = '(protocol://address'of'package'directory)
+a package is a directory of modules
+to use a package in a project, create a ".p" file containing this line (protocol can be gnunet, git or lib):
+	protocol://address'of'package'directory
+then one can use the modules of the package like this:
+	package'filename.Module
 definitions in "std" package are directly accessable
 	this means that "std.Actor" and "Actor" are the same
 packages that contain a file named "0.jina" (which must contain the main function) are program packages

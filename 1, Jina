@@ -9,19 +9,12 @@ memory management:
 	"http://aardappel.github.io/lobster/memory_management.html"
 	"https://www.toptal.com/software/eliminating-garbage-collector"
 	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
-, in asynchronous parts: runtime reference counting is used
-
-any heap reference keeps the address of the actor, that it originates from
-only this original actor can destroy the reference
-other actros just send messages
-so we do not need atomic reference counting
+, in asynchronous parts: runtime reference counting
 
 numbers will always be copied into variables; they don't need compile'time/run'time ref counting
-in the case of arrays, a small part at the start is stored on the stack
+in the case of arrays, dictionaries, and structs, a small part at the begining is stored on the stack
 	this part will be referenced by variables in sync parts, and copied when captured in async functions
-	so arrays don't need heap allocation (and compile'time/run'time ref counting), if they are small
-
-self'referential fields of structures are necessarily private, and use weak references
+	so these types don't need heap allocation (and thus compile'time/run'time ref counting), if they are small
 
 actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
@@ -33,7 +26,7 @@ a data race happens when these three behaviors occur:
 to deal with it, programming languages choose different approaches:
 , abandon concurrency altogether; make single threaded programs
 , implement complicated and error prone lock mechanisms
-, abandon mutability like in pure functional programming; but since mutability is necessary any way,
+, abandon mutability like in pure functional programming; but since at the end, mutability is necessary,
 	a complicated mechanism like monads, linear types, effects, or Clojure reference types, must be used
 	"https://stackoverflow.com/questions/9132346/clojure-differences-between-ref-var-agent-atom-with-examples"
 	"https://clojure-doc.org/articles/language/concurrency_and_parallelism/"
@@ -49,13 +42,12 @@ so we can't mutate the environment of an async function; all mutations will be s
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:
-"https://stackoverflow.com/questions/7266596/why-avoid-subtyping"
 "https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)"
-"https://www.tedinski.com/2018/02/13/inheritance-modularity.html"
 "https://www.tedinski.com/2018/06/26/variance.html"
 i feel that this problem was the motivation behind dynamic typing (another bad design)
-to avoid this problem, some languages (eg Rust) introduce two kind of types:
+to avoid this problem, some languages (eg Rust) have two kinds of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
+Jina does the same, without actually spliting types into two kinds
 
 Jina compiles to C, and can easily use existing C libraries

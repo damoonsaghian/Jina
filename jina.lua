@@ -22,7 +22,6 @@ https://github.com/lanox2d/lanox2d
 ]]
 
 function generate_header_file(source_file_path)
-	-- https://github.com/taylordotfish/autoheaders
 end
 
 function compile_jina2c(jina_file_path) {
@@ -31,6 +30,14 @@ function compile_jina2c(jina_file_path) {
 	check for type consistency in the module, and with header files
 	compile to c
 	]]
+	
+	--[[
+	only the actor can destroy the heap references it creates
+	other actors just send reference counting messages
+	so we do not need atomic reference counting
+	]]
+	
+	-- self'referential fields of structures are necessarily private, and use weak references
 	
 	-- if a module is imported using gnunet or git, see if they are installed
 	-- and if not, ask the user to install them first, then exit with error
@@ -42,8 +49,10 @@ if arg[1] == nil then
 end
 
 --[[
-from .jina and .c files generate header files, and if not equal to the old one overwrite it:
-compile .jina files to .c files
+from .jina generate header files, and overwrite them, if not equal to the old ones (compare their hashes)
+recompile any .jina file whose modification time is newer than the generated .c file
+recompile any .c file that the creation time of it or one of the files included in it,
+	is newer than the generated .o file
 
 gcc -c \"$project_dir\"/.cache/jina/*.c
 to create dynamic libs:
