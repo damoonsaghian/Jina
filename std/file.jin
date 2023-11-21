@@ -1,11 +1,12 @@
 '{#include <stdio.h>}
 
+File :=
+
 File = &
+	; open a file or create it, if it doesn't already exist
 	open: { path :String, mode :String = "" | :?File
-	}
-	
-	; create a new file for writing (truncating it if it already exists)
-	create: { path :String |
+		; #include <fcntl.h>
+		; int fd = open(path, O_RDWR | O_CREAT, 0644);
 	}
 	
 	append: {}
@@ -19,12 +20,18 @@ File = &
 	copy: { source'path :String, destination'path :String |
 	}
 	
-	; max_size in megabytes
-	read: {self, max'size :Int | :Array(Int8)
+	; max_size is in megabytes
+	read: {self, max'size :Int | :Array(Int1)
+		; #include <unistd.h>
+		; read(fd, buf, len);
 	}
 
-	write: { self, data :Array(Int8) |
+	write: { self, data :Array(Int1) |
+		; #include <unistd.h>
+		; write(fd, buf, len);
 	}
 
-	close: { self |
+	destructor: { self |
+		; #include <unistd.h>
+		;   close(fd);
 	}

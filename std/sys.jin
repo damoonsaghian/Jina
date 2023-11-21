@@ -8,6 +8,9 @@ Sys = &
 	}
 	
 	read: { :String
+		; #include <unistd.h>
+		; char s[n]
+		; read(STDIN_FILENO, s, n)
 	}
 	
 	exec: { program'name :String, args :String | :(stdin: File, stdout: File)
