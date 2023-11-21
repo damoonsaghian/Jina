@@ -9,22 +9,18 @@ https://www.learn-c.org/
 https://en.wikibooks.org/wiki/C_Programming
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
-https://viewsourcecode.org/snaptoken/kilo/
 https://nullprogram.com/blog/2014/10/21/
 https://nullprogram.com/blog/2015/02/17/
 https://github.com/Snaipe/libcsptr
 https://github.com/jeraymond/refcount
 
 https://github.com/oz123/awesome-c
-https://github.com/fragglet/c-algorithms
-https://github.com/tboox/tbox
-https://github.com/lanox2d/lanox2d
 ]]
 
 function generate_header_file(source_file_path)
 end
 
-function compile_jina2c(jina_file_path) {
+function compile_jina2c(jina_file_path)
 	--[[
 	fill the table of identifiers (module identifiers and local ones) and their types
 	check for type consistency in the module, and with header files
@@ -38,10 +34,12 @@ function compile_jina2c(jina_file_path) {
 	]]
 	
 	-- self'referential fields of structures are necessarily private, and use weak references
-	
+end
+
+function add_package()
 	-- if a module is imported using gnunet or git, see if they are installed
 	-- and if not, ask the user to install them first, then exit with error
-}
+end
 
 if arg[1] == nil then
 	printf("interactive Jina is not yet implemented")
@@ -51,10 +49,11 @@ end
 --[[
 from .jina generate header files, and overwrite them, if not equal to the old ones (compare their hashes)
 recompile any .jina file whose modification time is newer than the generated .c file
+
 recompile any .c file that the creation time of it or one of the files included in it,
 	is newer than the generated .o file
+gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
 
-gcc -c \"$project_dir\"/.cache/jina/*.c
 to create dynamic libs:
 	gcc -c -fPIC \"$project_dir\"/.cache/jina/*.c
 linking object files:
