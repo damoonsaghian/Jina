@@ -1,0 +1,40 @@
+;[
+lists are implemented in a way that expanding them, and insert/remove in the middle, is efficient
+the storage of a list is devided into equal sized segments
+the first segment is stored on the stack (so small arrays do not need memory allocation)
+there is a field that if it's not NULL, contains the address of an array (on the heap),
+	that keeps addresses and indexes of the following segments (also on the heap)
+	index of a segment is the index of its first element in the whole array
+the destructor method frees the heap portion of the array (if there is any)
+
+https://github.com/amadvance/tommyds/
+]
+
+List := &
+	stack'part': '{void *[]}
+	heap'pointers': '{void *[]}
+	len: Int
+
+List = &
+	new: {}
+	
+	get: { self, index :Int | :X'
+	}
+	
+	append: { self!, element :X' |
+	}
+	
+	extend: { self!, extention ::Iter |
+	}
+	
+	put: { self!, element :X', index :Int |
+	}
+	
+	insert: { self!, index :Int |
+	}
+	
+	trim: { self!, index :Int |
+	}
+	
+	remove: { self!, index :Int |
+	}

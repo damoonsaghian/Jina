@@ -1,3 +1,16 @@
-'{#include <cthreadpool/thpool>}
+Actor := &
+	data': X'
+	messages: Array { .' | .' }
 
-; https://github.com/Pithikos/C-Thread-Pool
+Actor = &
+	new: { data :X' | :Actor(X')
+		; create the event loop
+		'{}
+		Actor. data []
+	}
+	
+	do: { self!, message :{ .' | .' } |
+		; notify that there is a new message
+		'{}
+		self.messages.append message
+	}
