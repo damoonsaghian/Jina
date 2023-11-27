@@ -22,23 +22,18 @@ assignment to mutable variables:
 integers: Int1, Int4, Int8, Int (which can be 4 bytes or 8 bytes depending on the system)
 floating point numbers (8 bytes): Float
 
-array:
-	a :Array(Int) = [1, 2, 3]
+lists:
+	l :List(Int) = [1, 2, 3]
 indexing:
-	a_1
-negative index counts from the end of the array
-mutating arrays:
-	a! = [1, 2, 3]
-	a.put 0 at: 0 ;; [0, 2, 3]
-	a.put 4 at: 3 ;; [0, 2, 3, 4]
-dictionaries are like arrays, but are indexed using strings instead of integers:
-	m :Dict(Int) = ["a": 1, "b": 2, "c": 3]
-when keys are one word strings, this can also be written as:
-	[a: 1, b: 2, c: 3]
-indexing:
-	m_'a
+	l_1
+note that if "l" is a mutable var, then "l' = l_1" would be a mutable var as well
+negative indices count from the end of the list
+mutating lists:
+	l! = [1, 2, 3]
+	l.put 0 index: 0 ;; [0, 2, 3]
+	l.put 4 index: 3 ;; [0, 2, 3, 4]
 
-strings are arrays of "Int1" values
+strings are lists of "Int1" values
 they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
 alternative syntax:
@@ -47,13 +42,20 @@ one word string:
 	'abc
 string interpolation: "abc{x}"
 indexing strings is not really meaningful
-it's better to split long strings into an array of single'line strings:
+it's better to split long strings into a list of single'line strings:
 	'[
 		first line
 			second line
 	]
 which is equivalent to:
 	["first line", "\tsecond line"]
+
+dictionaries are indexed using strings (instead of integers as in lists):
+	d :Dict(Int) = ["a": 1, "b": 2, "c": 3]
+when keys are one word strings, this can also be written as:
+	[a: 1, b: 2, c: 3]
+indexing:
+	d_'a
 
 records:
 	r :(a: Int, b: Int, c: Int) = a: 1, b: 2, c: 3
@@ -126,10 +128,12 @@ modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
 	and possibly an additional extension (a number or a word starting with an apostrophe)
 	will be exported (ie is accessable outside of the module)
-to prevent an export, append an apostrophe at the end of its name: a' = ...
+other definitions are accessable through the module's name: module'name.definition
+to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 in modules inside a directory, to access other modules in parent directories:
-	root'.dir.Definition
+	..dir.Definition
+
 a package is a directory of modules
 to use a package in a project, create a ".p" file containing this line (protocol can be gnunet, git or lib):
 	protocol://address'of'package'directory
@@ -197,4 +201,5 @@ defining the methods of a struct that implements some interfaces:
 	.. I2.
 		...
 
-to enter C code: '{...}
+to enter C code: '{123 ...}
+the number at the begining is the number of bytes needed in stack for the code

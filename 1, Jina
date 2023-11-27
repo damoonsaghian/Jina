@@ -11,12 +11,22 @@ memory management:
 	"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 , in asynchronous parts: runtime reference counting
 
-numbers will always be copied into variables; they don't need compile'time/run'time ref counting
-in the case of arrays, dictionaries, and structs, a small part at the begining is stored on the stack
-	this part will be referenced by variables in sync parts, and copied when captured in async functions
-	so these types don't need heap allocation (and thus compile'time/run'time ref counting), if they are small
+numbers will always be copied into variables
+	they are stored on stack  don't need compile'time/run'time reference counting
+lists, dictionaries, and records are referenced by variables:
+, in immutable variables:
+	if they are small, they will be stored on stack
+	if they are big, they will be stored on the heap, and reference counted at compile'time or runtime
+, in mutable variables, a small part at the begining is stored on the stack
+	this part will be referenced by variables in sync parts, and copied when captured by async functions
+	so these types don't need heap allocation (and thus compile'time/run'time ref counting),
+		as long as they are small
+
+differnt stack sizes for each actor -> allocate stacks on the heap
 
 actors are used to achieve lock'free concurrency
+in Jina actors are preemptive (ie non'blocking), but very light
+
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
 , two or more pointers access the same data at the same time
