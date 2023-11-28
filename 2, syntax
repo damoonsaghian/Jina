@@ -201,5 +201,4 @@ defining the methods of a struct that implements some interfaces:
 	.. I2.
 		...
 
-to enter C code: '{123 ...}
-the number at the begining is the number of bytes needed in stack for the code
+to enter C code: '{...}

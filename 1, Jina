@@ -22,10 +22,8 @@ lists, dictionaries, and records are referenced by variables:
 	so these types don't need heap allocation (and thus compile'time/run'time ref counting),
 		as long as they are small
 
-differnt stack sizes for each actor -> allocate stacks on the heap
-
 actors are used to achieve lock'free concurrency
-in Jina actors are preemptive (ie non'blocking), but very light
+in Jina actors are preemptive, ie they do not block other actors, but they are very light
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:

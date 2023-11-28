@@ -39,25 +39,14 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	actors are very light preemptive processes
-	an OS thread schedules actors to be run in a threadpool
-	current actor jumps (setjmp and longjmp) to scheduler when recieves the signal from scheduler,
+	scheduler thread creates n (number of CPU cores) threads, and spreads actors across them
+	the scheduler periodically pauses these threads, and make the them to jump between their actors
+	in each thread, currently active actor jumps to the scheduler when the signal is recieved from scheduler,
 		and sends the process point of the actor which the scheduler will store
+	setjmp and longjmp
 	https://en.wikipedia.org/wiki/Signal_(IPC)
 	https://man7.org/linux/man-pages/man7/signal.7.html
 	then resumes the next actor (using its stored process point)
-	https://man7.org/linux/man-pages/man3/pthread_attr_setstackaddr.3.html
-	
-	computing the memory size of needed to allocate as the stack of an actor:
-	go through the program, and add the size of all defined variable (the initial size, for lists and the like)
-	in the process, for each function call,
-		store the resulting sum of the function's stack and previous vars
-	return the greatest number
-	
-	for '{} expression the needed stack size must be provided manually
-	
-	pthread_attr_setstacksize()
-	https://unix.stackexchange.com/questions/551491/ulimit-for-stack-size-per-process-or-per-thread-limit
 	]]
 	
 	-- self'referential fields of structures are necessarily private, and use weak references
@@ -91,7 +80,4 @@ linking object files:
 	cp \"$project_dir\"/.cache/jina/libo /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
-
-to set the size of needed stack:
-	-Wl,-z,--stack-size=<number-of-bytes>
 ]]
