@@ -40,13 +40,21 @@ function compile_jina2c(jina_file_path)
 	
 	--[[
 	scheduler thread creates n (number of CPU cores) threads, and spreads actors across them
-	the scheduler periodically pauses these threads, and make the them to jump between their actors
+	the scheduler periodically pauses these threads, and make them to jump between their actors
 	in each thread, currently active actor jumps to the scheduler when the signal is recieved from scheduler,
 		and sends the process point of the actor which the scheduler will store
 	setjmp and longjmp
 	https://en.wikipedia.org/wiki/Signal_(IPC)
 	https://man7.org/linux/man-pages/man7/signal.7.html
-	then resumes the next actor (using its stored process point)
+	https://man7.org/linux/man-pages/man3/pthread_attr_setstackaddr.3.html
+	
+	when an async function is called, a memory block is allocated as its stack
+	https://gcc.gnu.org/onlinedocs/gnat_ugn/Static-Stack-Usage-Analysis.html
+	each function has a stack size which is computed in this way (at compile'time):
+	go through the functions and add the size of all defined variables
+	when a function call in encountered, store the sum of its stack size, and the previous variables
+	at the end we have the sum of the sizes of all variables, plus all the stored values
+	the end result is the maximum of those
 	]]
 	
 	-- self'referential fields of structures are necessarily private, and use weak references
