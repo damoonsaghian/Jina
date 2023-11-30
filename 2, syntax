@@ -86,8 +86,7 @@ function:
 	f = { a :A , b :B | :C ... }
 note that the type of above function is:
 	{ a :A , b :B | C }
-this somehow strange type is to avoid contravarient behaviour of function arguments,
-	when we introduce interfaces
+this somehow strange type is to avoid contravarient behaviour of function arguments, when we introduce interfaces
 function call:
 	f x y
 which is equivalent to:
@@ -118,11 +117,9 @@ matching:
 loop:
 	iterator.for'each { x | ... }
 
-async function:
-	af = {| a :A | ... }
 actor:
 	a = Actor.new B.new(x, y)
-	a.do {| b !B | ... }
+	a.do { b !B | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,

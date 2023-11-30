@@ -12,18 +12,20 @@ memory management:
 , in asynchronous parts: runtime reference counting
 
 numbers will always be copied into variables
-	they are stored on stack  don't need compile'time/run'time reference counting
-lists, dictionaries, and records are referenced by variables:
+	they are stored on stack (thus don't need compile'time/runtime reference counting)
+lists, dictionaries, and records don't need heap allocation as long as they are small:
 , in immutable variables:
 	if they are small, they will be stored on stack
 	if they are big, they will be stored on the heap, and reference counted at compile'time or runtime
 , in mutable variables, a small part at the begining is stored on the stack
-	this part will be referenced by variables in sync parts, and copied when captured by async functions
-	so these types don't need heap allocation (and thus compile'time/run'time ref counting),
-		as long as they are small
+
+variables can be mutable or immutable
+the data contained in variables can be stack or heap
+putting a mutable variable inside an immutable one -> copy or move
+putting a stack data in a heap one -> copy
 
 actors are used to achieve lock'free concurrency
-in Jina actors are preemptive, ie they do not block other actors, but they are very light
+in Jina actors are preemptive (ie they do not block other actors) but very light
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -45,8 +47,9 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 
-in Jina, mutable variables will be copied, when captured in async functions
-so we can't mutate the environment of an async function; all mutations will be synchronous
+in Jina, as shown above, mutable variables will be copied, when captured in immutable functions
+messages are sent to actors via immutable functions
+so in Jina, all mutations will be synchronous
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:
