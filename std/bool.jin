@@ -18,7 +18,7 @@ Bool = &
 			Bool'false | rhs()
 		}
 	}
-	then: { self, then :{T'}, else :{T'} | :T'
+	then: { self, then !{T'}, else !{T'} | :T'
 		self # {
 			Bool'true | then()
 			Bool'false | else()
