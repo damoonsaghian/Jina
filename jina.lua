@@ -2,8 +2,6 @@
 
 --[[
 https://www.geeksforgeeks.org/c-language-introduction
-http://crasseux.com/books/ctutorial/
-http://crasseux.com/books/ctutorial/The-form-of-a-C-program.html
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 https://www.learn-c.org/
 https://en.wikibooks.org/wiki/C_Programming
@@ -34,8 +32,10 @@ function compile_jina2c(jina_file_path)
 	
 	--[[
 	only the actor can destroy the heap references it creates
-	other actors just send reference counting messages
+	other actors just send reference'counting messages
 	so we do not need atomic reference counting
+		
+	self'referential fields of structures are necessarily private, and use weak references
 	]]
 	
 	--[[
@@ -54,6 +54,7 @@ function compile_jina2c(jina_file_path)
 	http://dotat.at/cgi/git/picoro.git/tree
 	https://en.wikibooks.org/wiki/C_Programming/Coroutines
 	https://stackoverflow.com/questions/2560792/multitasking-using-setjmp-longjmp
+	https://coco.luajit.org/portability.html
 	
 	each actor has a stack address, and message queue
 	stacks are allocated using mmap; so the actual allocated memory is only 8KB,
@@ -61,8 +62,6 @@ function compile_jina2c(jina_file_path)
 	https://github.com/edubart/minicoro#virtual-memory-backed-allocator
 	https://en.wikipedia.org/wiki/Mmap
 	]]
-	
-	-- self'referential fields of structures are necessarily private, and use weak references
 end
 
 function add_package()
