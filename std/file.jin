@@ -33,5 +33,5 @@ File = &
 
 	destructor: { self |
 		; #include <unistd.h>
-		;   close(fd);
+		; close(fd);
 	}

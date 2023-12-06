@@ -12,8 +12,11 @@ Int = &
 	bit'xor: {}
 	bit'not: {}
 	shif'l: {}
-	shift'r
+	shift'r: {}
 	
+	; creates a range iterator
+	to: { self, rhs :Self | :':Iter
+	}
 
 .. Num.
 	add: {}
@@ -31,8 +34,8 @@ Int = &
 	
 	to'string: {}
 
-Int64 =
-
-Int32 =
-
 Int8 =
+
+Int4 =
+
+Int1 =

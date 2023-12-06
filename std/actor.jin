@@ -1,6 +1,6 @@
 Actor := &
 	data': X'
-	messages: Array { .' | .' }
+	messages: Array { ' | ' }
 
 Actor = &
 	new: { data :X' | :Actor(X')
@@ -9,7 +9,7 @@ Actor = &
 		Actor. data []
 	}
 	
-	do: { self!, message :{ .' | .' } |
+	do: { self!, message ::{ ' | ' } |
 		; notify that there is a new message
 		'{}
 		self.messages.append message

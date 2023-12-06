@@ -1,4 +1,6 @@
 Iter := &
 	next: { X' }
 	
-	for'each: { self, do !{ iterable :X' | .' } | () }
+	for'each:: { self, do !{ iterable :X' | ' } |
+		'{for () {}}
+	}
