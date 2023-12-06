@@ -45,16 +45,9 @@ function compile_jina2c(jina_file_path)
 		and sends the process point of the actor which the scheduler will store
 	https://en.wikipedia.org/wiki/Signal_(IPC)
 	https://man7.org/linux/man-pages/man7/signal.7.html
+	http://www.fmc-modeling.org/category/projects/apache/amp/A_2_Signals_Alarms.html
 	
-	setjmp and longjmp
-	https://en.wikipedia.org/wiki/Setjmp.h
-	https://manpages.debian.org/stable/manpages-dev/setjmp.3.en.html
-	https://brennan.io/2020/05/24/userspace-cooperative-multitasking/
-	https://fanf.livejournal.com/105413.html
-	http://dotat.at/cgi/git/picoro.git/tree
-	https://en.wikibooks.org/wiki/C_Programming/Coroutines
-	https://stackoverflow.com/questions/2560792/multitasking-using-setjmp-longjmp
-	https://coco.luajit.org/portability.html
+	https://github.com/edubart/minicoro
 	
 	each actor has a stack address, and message queue
 	stacks are allocated using mmap; so the actual allocated memory is only 8KB,
