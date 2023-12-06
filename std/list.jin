@@ -15,16 +15,16 @@ List := &
 List = &
 	new: {}
 	
-	get: { self, index :Int | :X'
+	get: { self ::List(X'), index :Int | ::X'
 	}
 	
-	append: { self!, element :X' |
+	append: { self !List(X'), element :X' |
 	}
 	
-	extend: { self!, extention :':Iter |
+	extend: { self !List(X'), extention :':Iter |
 	}
 	
-	put: { self!, element :X', index :Int |
+	put: { self !List(X'), element :X', index :Int |
 	}
 	
 	insert: { self!, index :Int |
