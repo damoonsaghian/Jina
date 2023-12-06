@@ -4,41 +4,44 @@ Mahsa Jina Amini was a Kurdish girl whose tragic murder by the evil regime, star
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-sane memory management
-"https://www.toptal.com/software/eliminating-garbage-collector"
-"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
+memory management is done in a sane way, by distinguishing 5 kinds of variables:
+, unique variables: definitions and function returns (by default):
+	v :T = ...
+	{ :T }
+, immutable/mutable borrow variables: function parameters (by default):
+	{ x :T, y !T | ... }
+, immutable/mutable reference counted variables must be indicated explicitly:
+	v ::T
+	v !:T
 
-variables has type, mutability, and ownership (owning and borrowing)
-, immutable owning variables (v ::T = ...)
-, mutable owning variables (v !:T = ...)
-, immutable borrowing variables (v :T = ...)
-, mutable borrowing variables (v !T = ...)
+assigning unique var to unique var:
+	, stack type: copy
+	, heap type: if not used in the code that follows, move, otherwise copy
+assigning unique var to immutable/mutable borrow var is possible
+assigning unique var to immutable/mutable reference counted var:
+	, stack type: copy to heap
+	, heap type: if not used in the code that follows, move, otherwise copy
 
-borrowing variable can't exit at the scope of the borrower, so they don't need memory management
+immutable borrow var can only be assigned to immutable borrow var
+mutable borrow var can only be assigned to immutable/mutable borrow var
+borrow variable can't exit at the scope of the borrower, so they don't need memory management
 
-::T -> ::T copy if is a stack type, otherwise move if not use anymore, otherwise clone (reference counted)
-::T -> !:T copy if is a stack type, otherwise move if not use anymore, otherwise copy
-::T ->  :T borrow
-::T ->  !T not possible
+assigning immutable ref counted var to unique var: not possible
+assigning immutable ref counted var to immutable/mutable borrow var is/isn't possible
+assigning immutable ref counted var to immutable ref counted var: increase reference count
+assigning immutable ref counted var to mutable ref counted var: not possible
 
-!:T -> ::T copy if is a stack type, otherwise move if not use anymore, otherwise copy
-!:T -> !:T copy if is a stack type, otherwise move if not use anymore, otherwise clone (reference counted)
-!:T ->  :T borrow
-!:T ->  !T borrow
-
-:T -> ::T not possible
-:T -> !:T not possible
-:T ->  :T borrow
-:T ->  !T not possible
-
-!T -> ::T not possible
-!T -> !:T not possible
-!T ->  :T borrow
-!T ->  !T borrow
+assigning mutable ref counted var to unique var: not possible
+assigning mutable ref counted var to immutable/mutable borrow var: possible
+assigning mutable ref counted var to immutable ref counted var: copy
+assigning mutable ref counted var to mutable ref counted var: increase reference count
 
 numbers are stored on the stack (thus don't need memory management)
 lists and dictionaries are stored on the heap
 small records will be kept on stack, big ones on the heap
+
+"https://www.toptal.com/software/eliminating-garbage-collector"
+"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 actors are used to achieve lock'free concurrency
 in Jina, actors are light'weight, stackful, with a time'slice scheduler (so one actor can't block others)

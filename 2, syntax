@@ -8,19 +8,13 @@ comment block:
 	to write single brakets, put them in double quotes: "]"
 	]
 
-variable definition:
+variable definition (unique by default):
+	v :T = ...
 	v = ...
-immutable owning variable (the default in definitions):
-	v :: T = ...
+immutable and mutable referece counted variables:
 	v ::T = ...
-mutable owning variable:
 	v !:T = ...
-	v! = ...
-immutable borrowing variable (mostly used as function arguments):
-	v :T
-mutable borrowing variable:
-	v !T
-mutating mutable variables:
+mutating mutable variables (unique variables are mutable too):
 	v .= ...
 
 integers: Int1, Int4, Int8, Int (which can be 4 bytes or 8 bytes depending on the system)
@@ -77,9 +71,7 @@ records can be matched on smaller records:
 	a, b = 1, 2, 3
 tagged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
-
 mutating a record:
-	r! = a: 1, b: 2, c: 3
 	r.a = 10
 
 record extension:
@@ -92,9 +84,9 @@ which behaves like:
 	(a: 1, b: 3, c: 4)
 
 function:
-	f = { a :A , b :B | ::C ... }
+	f = { a :A , b !B | :C ... }
 note that the type of above function is:
-	f ::{ a :A , b :B | C }
+	f :{ a :A , b !B | C }
 this somehow strange type is to avoid contravarient behaviour of function arguments, when we introduce interfaces
 function call:
 	f x y
@@ -137,8 +129,6 @@ any definition whose name is the module's name, with the first letter capitalize
 other definitions are accessable through the module's name: module'name.definition
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
-in modules inside a directory, to access other modules in parent directories:
-	..dir.Definition
 
 a package is a directory of modules
 to use a package in a project, create a ".p" file containing this line (protocol can be gnunet, git or lib):
@@ -158,7 +148,7 @@ defining methods:
 		new: { a :A |
 			S. a
 		}
-		m1: { self, x :X | ::Y
+		m1: { self, x :X | :Y
 			...
 		}
 		m2: { self! |
@@ -180,7 +170,7 @@ this implies that to call a field that is a function, we have to use parentheses
 generics:
 	S := a: X', b: X'
 bounded generics:
-	S := a: X' :I, b: X'
+	S := a: X':I, b: X'
 
 singletons:
 	Bool'true' := ()
@@ -207,5 +197,6 @@ defining the methods of a struct that implements some interfaces:
 	.. I2.
 		...
 
-to directly enter C code (a powerful but unsafe feature):
+to directly enter C code:
 	'{...}
+beware: with great power comes great resposibility
