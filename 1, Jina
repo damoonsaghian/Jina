@@ -44,8 +44,6 @@ small records will be kept on stack, big ones on the heap
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 actors are used to achieve lock'free concurrency
-in Jina, actors are light'weight, stackful, with a time'slice scheduler (so one actor can't block others)
-
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
 , two or more pointers access the same data at the same time
