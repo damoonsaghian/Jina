@@ -39,21 +39,8 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	scheduler thread creates n (number of CPU cores) threads, and spreads actors across them
-	the scheduler periodically pauses these threads, and make them to jump between their actors
-	in each thread, currently active actor jumps to the scheduler when the signal is recieved from scheduler,
-		and sends the process point of the actor which the scheduler will store
-	https://en.wikipedia.org/wiki/Signal_(IPC)
-	https://man7.org/linux/man-pages/man7/signal.7.html
-	http://www.fmc-modeling.org/category/projects/apache/amp/A_2_Signals_Alarms.html
-	
-	https://github.com/edubart/minicoro
-	
-	each actor has a stack address, and message queue
-	stacks are allocated using mmap; so the actual allocated memory is only 8KB,
-		which can grow up to 8MB (a limit to prevent infinite loops)
-	https://github.com/edubart/minicoro#virtual-memory-backed-allocator
-	https://en.wikipedia.org/wiki/Mmap
+	only IO and iteration can block thread
+	so just implement non'blocking IO and iteration, and use cooperative coroutines
 	]]
 end
 
