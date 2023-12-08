@@ -3,16 +3,36 @@
 --[[
 https://www.geeksforgeeks.org/c-language-introduction
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+http://crasseux.com/books/ctutorial/
+https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+http://nethack4.org/blog/building-c.html
 https://www.learn-c.org/
 https://en.wikibooks.org/wiki/C_Programming
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
+https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://nullprogram.com/blog/2014/10/21/
 https://nullprogram.com/blog/2015/02/17/
 https://github.com/Snaipe/libcsptr
 https://github.com/jeraymond/refcount
 https://github.com/oz123/awesome-c
+
+https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/dirent.h
+https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/sys/stat.h
+https://en.wikibooks.org/wiki/C_Programming/stdio.h
+https://en.wikipedia.org/wiki/Unistd.h
+
+c closures
+	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
+http://blog.pkh.me/p/20-templating-in-c.html
+https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
+
+c coroutines using static variable
+
 ]]
+
+-- https://lunarmodules.github.io/luafilesystem/
+-- https://lunarmodules.github.io/luafilesystem/manual.html
 
 function generate_header_file(source_file_path)
 end
@@ -41,11 +61,14 @@ function compile_jina2c(jina_file_path)
 	--[[
 	only IO and iteration can block thread
 	so just implement non'blocking IO and iteration, and use cooperative coroutines
+	
+	use mutexes to hold list of actors
+	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	]]
 end
 
 function add_package()
-	-- if a module is imported using gnunet or git, see if they are installed
+	-- if a module is imported using gnunet or git, see if gnunet/git is installed
 	-- and if not, ask the user to install them first, then exit with error
 end
 
