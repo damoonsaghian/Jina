@@ -60,7 +60,8 @@ function compile_jina2c(jina_file_path)
 	
 	--[[
 	only IO and iteration can block thread
-	so just implement non'blocking IO and iteration, and use cooperative coroutines
+	so just implement non'blocking IO and iteration, by deviding the heavy computation,
+		into multiple messages set to the corresponding actor
 	
 	use mutexes to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
