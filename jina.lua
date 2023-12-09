@@ -2,7 +2,6 @@
 
 --[[
 https://www.geeksforgeeks.org/c-language-introduction
-https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 http://crasseux.com/books/ctutorial/
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 http://nethack4.org/blog/building-c.html
@@ -26,9 +25,6 @@ c closures
 	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 http://blog.pkh.me/p/20-templating-in-c.html
 https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
-
-c coroutines using static variable
-
 ]]
 
 -- https://lunarmodules.github.io/luafilesystem/
@@ -48,6 +44,8 @@ function compile_jina2c(jina_file_path)
 	if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
 	otherwise use the first word as the function's name
 	if it's a definition, add it to the table of local definition which contains their types
+	
+	https://github.com/ceu-lang/ceu
 	]]
 	
 	--[[
@@ -62,8 +60,14 @@ function compile_jina2c(jina_file_path)
 	only IO and iteration can block thread
 	so just implement non'blocking IO and iteration, by deviding the heavy computation,
 		into multiple messages set to the corresponding actor
+	https://medium.com/ing-blog/how-does-non-blocking-io-work-under-the-hood-6299d2953c74
 	
-	use mutexes to hold list of actors
+	'{#include <uv.h>}
+	'{#include <uv/threadpool.h>}
+	; https://github.com/libuv/libuv
+	; https://docs.libuv.org/en/v1.x/
+	
+	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	]]
 end
