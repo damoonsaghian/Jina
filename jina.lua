@@ -62,10 +62,19 @@ function compile_jina2c(jina_file_path)
 		into multiple messages set to the corresponding actor
 	https://medium.com/ing-blog/how-does-non-blocking-io-work-under-the-hood-6299d2953c74
 	
-	'{#include <uv.h>}
-	'{#include <uv/threadpool.h>}
-	; https://github.com/libuv/libuv
-	; https://docs.libuv.org/en/v1.x/
+	message processing loop: it runs messages across a fixed number of threads (equal to CPU cores),
+		and then waits for events, which includes I/O events, and "message received" event
+	after registering a message run "event_active()" for message received event
+	https://stackoverflow.com/questions/7645217/user-triggered-event-in-libevent
+	#include <event.h>
+	
+	similarly, other event loops (eg GUI loops) can be integrated easily
+	just run the GUI event loop in a separate thread, then create a libevent event, add it with event_add(),
+		and then activate it using event_active(), whenever a GUI event is raised in the GUI event loop
+	GUI event will have the heighest proirity
+	
+	after running calling the init function, if the list of actors isn't empty,
+		enter the message processing loop
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
@@ -100,4 +109,6 @@ linking object files:
 	cp \"$project_dir\"/.cache/jina/libo /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
+
+the produced binary will at least need libc and libevent-core dynamic libraries on the system
 ]]
