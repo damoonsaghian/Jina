@@ -57,27 +57,21 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	only IO and iteration can block thread
-	so just implement non'blocking IO and iteration, by deviding the heavy computation,
-		into multiple messages set to the corresponding actor
-	https://medium.com/ing-blog/how-does-non-blocking-io-work-under-the-hood-6299d2953c74
-	
-	message processing loop: it runs messages across a fixed number of threads (equal to CPU cores),
-		and then waits for events, which includes I/O events, and "message received" event
-	after registering a message run "event_active()" for message received event
-	https://stackoverflow.com/questions/7645217/user-triggered-event-in-libevent
-	#include <event.h>
-	
-	similarly, other event loops (eg GUI loops) can be integrated easily
-	just run the GUI event loop in a separate thread, then create a libevent event, add it with event_add(),
-		and then activate it using event_active(), whenever a GUI event is raised in the GUI event loop
-	GUI event will have the heighest proirity
-	
-	after running calling the init function, if the list of actors isn't empty,
-		enter the message processing loop
+	after calling the init function, create a fixed number of threads (equal to the number of CPU cores),
+		and then run the scheduler
+	each thread runs a loop in which it executes the messages
+	if there is no message left the thread sleeps
+	when there is no actors in the list, and all threads are asleep, the program exits
+	when a thread takes long to process a message (because of doing I/O or heavy computation),
+		the scheduler thread sends a signal to the blocked thread,
+		and the signal handler in the blocked thread calls "setjmp()" and then starts to run another message
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
+	
+	there can be two lists of actors: UI actors, and other actors
+	only when there is no messages for UI actors, we go after other actors
+	this way the UI remains resposive, even when the number of actors is extremely heigh
 	]]
 end
 
