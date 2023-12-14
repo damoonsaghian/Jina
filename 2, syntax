@@ -131,8 +131,10 @@ to hide the internals of a definition, append an apostrophe at the end of its na
 to access the definitions in a module which is inside a directory: dir.Definition
 
 a package is a directory of modules
-to use a package in a project, create a ".p" file containing this line (protocol can be gnunet, git or lib):
+to use a package in a project, create a ".p" file containing these lines:
+, URL lines which will be tried in the given order (protocol can be gnunet, git or lib):
 	protocol://address'of'package'directory
+, the public key which if protocol is git or gnunet, will be used to check the downloaded signature
 then one can use the modules of the package like this:
 	package'file'name.Module
 definitions in "std" package are directly accessable; there is no need for a ".p" file

@@ -62,9 +62,16 @@ function compile_jina2c(jina_file_path)
 	each thread runs a loop in which it executes the messages
 	if there is no message left the thread sleeps
 	when there is no actors in the list, and all threads are asleep, the program exits
+	
+	a blocking message does not block other actors
 	when a thread takes long to process a message (because of doing I/O or heavy computation),
 		the scheduler thread sends a signal to the blocked thread,
-		and the signal handler in the blocked thread calls "setjmp()" and then starts to run another message
+		and the signal handler in the blocked thread loops over all remaining messages,
+		before going back to the message that was taking long
+	https://en.wikipedia.org/wiki/C_signal_handling
+	https://stackoverflow.com/questions/66987029/can-a-read-or-write-system-call-continue-where-it-left-off-after-being-inter
+	wrap every call of "malloc" and "free" in "sigblock/sigsetmask" 
+	https://man7.org/linux/man-pages/man7/signal-safety.7.html
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
