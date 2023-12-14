@@ -4,7 +4,8 @@ Actor := &
 
 Actor = &
 	new: { data :X' | :Actor(X')
-		; create the event loop
+		; register the actor
+		; use a static variable to hold its state
 		'{}
 		Actor. data []
 	}

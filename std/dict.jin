@@ -10,5 +10,7 @@ https://github.com/plar/go-adaptive-radix-tree
 
 another option was linear hashing
 https://en.wikipedia.org/wiki/Linear_hashing
+http://www.cs.emory.edu/~cheung/Courses/554/Syllabus/3-index/linear-hashing-new1.html
+https://github.com/amadvance/tommyds/blob/master/tommyds/tommyhashlin.h
 but iteration over hash tables, which may be needed in some situations, is not efficient
 ]
