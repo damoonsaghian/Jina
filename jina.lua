@@ -60,25 +60,23 @@ function compile_jina2c(jina_file_path)
 	after calling the init function, create a fixed number of threads (equal to the number of CPU cores),
 		and then run the scheduler
 	each thread runs a loop in which it executes the messages
-	if there is no message left the thread sleeps
+	if there is no message left, the thread sleeps
+	sleep threads will be removed if the number of threads is more than the number of CPU cores
 	when there is no actors in the list, and all threads are asleep, the program exits
 	
+	actors provide a non'blocking API
+		https://medium.com/ing-blog/how-does-non-blocking-io-work-under-the-hood-6299d2953c74
+		https://unixism.net/loti/async_intro.html
 	a blocking message does not block other actors
-	when a thread takes long to process a message (because of doing I/O or heavy computation),
-		the scheduler thread sends a signal to the blocked thread,
-		and the signal handler in the blocked thread loops over all remaining messages,
-		before going back to the message that was taking long
-	https://en.wikipedia.org/wiki/C_signal_handling
-	https://stackoverflow.com/questions/66987029/can-a-read-or-write-system-call-continue-where-it-left-off-after-being-inter
-	wrap every call of "malloc" and "free" in "sigblock/sigsetmask" 
-	https://man7.org/linux/man-pages/man7/signal-safety.7.html
+	when a thread takes long to process a message (because of doing I/O or a CPU intensive task),
+		the scheduler thread creates a new thread
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	
 	there can be two lists of actors: UI actors, and other actors
 	only when there is no messages for UI actors, we go after other actors
-	this way the UI remains resposive, even when the number of actors is extremely heigh
+	in this way, the UI remains resposive, even when the number of actors is extremely large
 	]]
 end
 
