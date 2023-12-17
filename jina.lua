@@ -57,19 +57,17 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	after calling the init function, create a fixed number of threads (equal to the number of CPU cores),
-		and then run the scheduler
-	each thread runs a loop in which it executes the messages
-	if there is no message left, the thread sleeps
-	sleep threads will be removed if the number of threads is more than the number of CPU cores
-	when there is no actors in the list, and all threads are asleep, the program exits
+	after calling the init function, create a fixed number of threads (equal to the number of CPU cores minus one)
+	each thread runs a loop in which it precesses the messages
+	and then run one loop in the current thread too
+	if there are no messages left:
+	, if all the other threads are asleep, exit the program
+	, otherwise just put the current thread to sleep
+	when a message is registered, a SIGINT signal will be sent to all threads to wake up the slept ones
 	
-	actors provide a non'blocking API
-		https://medium.com/ing-blog/how-does-non-blocking-io-work-under-the-hood-6299d2953c74
-		https://unixism.net/loti/async_intro.html
-	a blocking message does not block other actors
-	when a thread takes long to process a message (because of doing I/O or a CPU intensive task),
-		the scheduler thread creates a new thread
+	iterators and files (I/O) can block, so they are implemented as actors with timeouts (using alarm)
+	when a thread starts to process a message of these actors, it unmasks SIGALRM,
+		and upon receiving the signal, reregisters the message, and then returns
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
