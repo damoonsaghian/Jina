@@ -115,12 +115,17 @@ matching:
 		() | ...
 	}
 
-loop:
-	iterator.for'each { x | ... }
-
 actor:
 	a = Actor.new B.new(x, y)
 	a.do { b !B | ... }
+
+iteration:
+	iterator.for'each { x | ... }
+iterators are actors that asynchronously run the iterator step by step
+so unlike loops, they can't block the execution thread
+
+for the same reason blocking I/O is avoided too
+files are actors that use "liburing" to do non'blocking I/O
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -131,11 +136,13 @@ to hide the internals of a definition, append an apostrophe at the end of its na
 to access the definitions in a module which is inside a directory: dir.Definition
 
 a package is a directory of modules
-to use a package in a project, create a ".p" file containing these lines:
-, URL lines which will be tried in the given order (protocol can be gnunet, git or lib):
+to use a package in a project, create a ".p" file
+".p" files contain URL lines (protocol can be gnunet, git or lib):
 	protocol://address'of'package'directory
-, the public key which if protocol is git or gnunet, will be used to check the downloaded signature
-then one can use the modules of the package like this:
+URL line will be tried in the given order, until one is available
+if the protocol is git or gnunet, the following line must contain a public key,
+	will be used to check the given signature
+to use the a module inside a package:
 	package'file'name.Module
 definitions in "std" package are directly accessable; there is no need for a ".p" file
 packages that contain a file named "0.jina" (which must contain the init function) are program packages

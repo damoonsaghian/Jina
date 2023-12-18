@@ -67,8 +67,6 @@ to deal with it, programming languages choose different approaches:
 in Jina, as shown above, mutable variables will be copied, when captured in immutable functions
 messages are sent to actors via immutable functions
 so in Jina, all mutations will be synchronous
-the subtle point is that for immutable closures, it's not necessary to run them synchronously
-	since they can't affect their environment
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:
