@@ -58,12 +58,15 @@ function compile_jina2c(jina_file_path)
 	
 	--[[
 	after calling the init function, create a fixed number of threads (equal to the number of CPU cores minus one),
-		then run a loop which processes the messages
-	also each thread runs a loop which processes the messages
-	if there are no messages left:
-	, if all the other threads are asleep, exit the program
-	, otherwise just put the current thread to sleep
-	when a message is registered, a SIGINT signal will be sent to all threads to wake up the slept ones
+		then run the main loop
+	each thread runs a loop which processes the messages
+		if there are no messages left, it goes to sleep (sigwait)
+	the main loop also processes the messages
+	but after each loop:
+	, if there is are no messages left, it calls io_ring wait
+	, otherwise, it calls io_uring bach no'wait
+	when a message is registered, a signal will be sent to all threads to wake up the slept ones,
+		and also a dummy request will be submited to io_ring to wake it up
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
