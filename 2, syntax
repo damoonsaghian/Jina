@@ -121,8 +121,6 @@ actor:
 
 iteration:
 	iterator.for'each { x | ... }
-also there is an actor iterator that can be used for heavy computations that may block the thread
-for actor iterators, the closure given to "for'each" must be immutable
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
