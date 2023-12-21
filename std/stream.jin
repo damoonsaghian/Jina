@@ -1,2 +1,0 @@
-; streams are iterable self calling actors
-; also, integer ranges can be created using streams
