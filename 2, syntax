@@ -121,6 +121,9 @@ actor:
 
 iteration:
 	iterator.for'each { x | ... }
+note that iterators are actually actors, each iteration is run asynchronously
+thus unlike loops (there is none in Jina) even extremely long iterators can't block the thread
+of course, there is a catch; the closure given to "for'each" is immutable (it can't mutate its environment)
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,

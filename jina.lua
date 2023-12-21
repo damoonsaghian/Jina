@@ -57,16 +57,26 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	after calling the init function, create a fixed number of threads (equal to the number of CPU cores minus one),
-		then run the main loop
-	each thread runs a loop which processes the messages
-		if there are no messages left, it goes to sleep (sigwait)
-	the main loop also processes the messages
-	but after each loop:
-	, if there is are no messages left, it calls io_ring wait
-	, otherwise, it calls io_uring bach no'wait
+	after calling the init function, create a fixed number of threads (the number is explained in the following)
+	each thread runs a loop that processes the messages
+	there are two kinds of loops:
+	, plain loops: after each loop, if there are no messages left, it goes to sleep (sigwait)
+	, I/O loops: after each loop, if there is are no messages left, it calls waiting I/O event processing function
+		otherwise, it calls non'waiting I/O event processing function
+	the primary thread always runs an I/O loop
 	when a message is registered, a signal will be sent to all threads to wake up the slept ones,
-		and also a dummy request will be submited to io_ring to wake it up
+		and also a dummy I/O request will be submited to wake up the I/O loops
+	
+	to implement an I/O backend just define these three functions:
+	, event submiting function
+	, non'waiting event processing function (batch)
+	, waiting event processing function
+	the I/O backend used in std is implemented using liburing and wayland
+		https://gaultier.github.io/blog/wayland_from_scratch.html
+	one can implement an I/O backend using glib2 and gtk4 for example
+	multiple I/O backends can work at the same time, by using multiple I/O loops
+	available I/O backends must be put in a global list
+	total number of threads is the maximum between number of CPU cores, and number of I/O backends
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
