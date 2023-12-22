@@ -4,8 +4,7 @@ Actor := &
 
 Actor = &
 	new: { data :X' | :Actor(X')
-		; register the actor
-		; use a static variable to hold its state
+		; add a pointer in the global list of actors
 		'{}
 		Actor. data []
 	}

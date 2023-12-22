@@ -4,9 +4,7 @@ File :=
 
 File = &
 	; open a file or create it, if it doesn't already exist
-	open: { path :String, mode :String = "" | :?File
-		; #include <fcntl.h>
-		; int fd = open(path, O_RDWR | O_CREAT, 0644);
+	open: { path :String, mode :String = "", cb ::{ f :?File } |
 	}
 	
 	append: {}
@@ -21,7 +19,7 @@ File = &
 	}
 	
 	; max_size is in megabytes
-	read: {self, max'size :Int | :Array(Int1)
+	read: {self, max'size :Int, cb ::{ buf :Array(Int1) } |
 		; #include <unistd.h>
 		; read(fd, buf, len);
 	}

@@ -35,3 +35,6 @@ List = &
 	
 	remove: { self!, index :Int |
 	}
+	
+	iter: { self ::List(X') | :Iter(X')
+	}
