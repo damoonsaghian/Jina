@@ -1,9 +1,16 @@
-apt-get install lua5.3 lua-filesystem gcc liburing-dev
+apt-get install cargo
 
 project_dir="$(dirname "$0")"
 
-cp "$project_dir/jina.lua" /usr/local/bin/jina
-chmod +x /usr/local/bin/jina
+mkdir -p "$project_dir/.cache/cargo"
+cd "$project_dir/.cache/cargo"
+[ -L Cargo.toml ] || {
+	rm -f Cargo.toml
+	ln -s ../../cargo.toml Cargo.toml
+}
+cargo build --release
+
+cp release/jina /usr/local/bin/
 
 mkdir -p /usr/local/lib/jina/
 cp -r "$project_dir"/std/* /usr/local/lib/jina/
