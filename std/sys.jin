@@ -1,19 +1,14 @@
-'{#include <stdio.h>}
-
 Sys = &
-	print: { message :String |
+	print: {| message :String |
 	}
 	
-	print'err: { message :String |
+	print'err: {| message :String |
 	}
 	
-	read: { | :String
-		; #include <unistd.h>
-		; char s[n]
-		; read(STDIN_FILENO, s, n)
+	read: {| | :String
 	}
 	
-	exec: { program'name :String, args :String | :(stdin: File, stdout: File)
+	exec: {| program'name :String, args :String | :(stdin: File, stdout: File)
 	}
 	
 	get'env: { | :String
@@ -23,5 +18,4 @@ Sys = &
 	}
 	
 	get'time: { format :String = "" | :String
-		; sys/time.h
 	}

@@ -1,13 +1,8 @@
-Iter' := Actor index: Int poll: { index :Int | ?X' }
+Iter := &
+	next: {
+	}
+	
+	for'each:: {|
+	}
 
-Iter = &
-	new: { poll ::{ index :Int | ?X' } | :Iter(X')
-		Actor.new index: 0 poll
-	}
-	
-	range: { start :Int, end :Int | :Iter(Int)
-		Iter.new { index | index + 1 }
-	}
-	
-	each: { self, do ::{ elem :X' | ' } |
-	}
+Iter'range =

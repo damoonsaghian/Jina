@@ -7,10 +7,7 @@ there is a field that contains the address of an array (on the heap),
 https://github.com/amadvance/tommyds/
 ]
 
-List := &
-	stack'part': '{void *[]}
-	heap'pointers': '{void *[]}
-	len: Int
+List :=
 
 List = &
 	new: {}
@@ -21,13 +18,13 @@ List = &
 	append: { self !List(X'), element :X' |
 	}
 	
-	extend: { self !List(X'), extention :':Iter |
+	extend: { self !List(X'), extention :':Iter(X') |
 	}
 	
 	put: { self !List(X'), element :X', index :Int |
 	}
 	
-	insert: { self!, index :Int |
+	insert: { self !List(X'), element :X', index :Int |
 	}
 	
 	trim: { self!, index :Int |
@@ -35,6 +32,5 @@ List = &
 	
 	remove: { self!, index :Int |
 	}
-	
-	iter: { self ::List(X') | :Iter(X')
-	}
+.. Iter(X').
+	next: {}

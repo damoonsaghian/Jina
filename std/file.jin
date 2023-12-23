@@ -1,35 +1,24 @@
-'{#include <stdio.h>}
-
 File :=
 
 File = &
 	; open a file or create it, if it doesn't already exist
-	open: { path :String, mode :String = "", cb ::{ f :?File } |
+	open: {| path :String, mode :String = "" | :?File
 	}
 	
 	append: {}
 	
-	delete: { path :String |
+	delete: {| path :String |
 	}
 	
-	move: { source'path :String, destination'path :String |
+	move: {| source'path :String, destination'path :String |
 	}
 	
-	copy: { source'path :String, destination'path :String |
+	copy: {| source'path :String, destination'path :String |
 	}
 	
 	; max_size is in megabytes
-	read: {self, max'size :Int, cb ::{ buf :Array(Int1) } |
-		; #include <unistd.h>
-		; read(fd, buf, len);
+	read: {| self, max'size :Int | :Array(Int1)
 	}
 
-	write: { self, data :Array(Int1) |
-		; #include <unistd.h>
-		; write(fd, buf, len);
-	}
-
-	destructor: { self |
-		; #include <unistd.h>
-		; close(fd);
+	write: {| self, data :Array(Int1) |
 	}
