@@ -18,18 +18,11 @@ https://github.com/rust-lang/rfcs/pull/3403
 https://github.com/trustification/rust-rfcs/blob/sigstore-rfc/text/0000-sigstore-integration.md
 */
 
-fn compile_jina2c(jina_file_path) {
-	// recompile any .jina file whose modification time is newer than the generated .rs file
+// if there is no command line arguments run interactive Jina
+
+// recompile any .jina file whose modification time is newer than the generated .rs file
 	
-	// self'referential fields of structures are necessarily private, and use weak references
-}
+// self'referential fields of structures are necessarily private, and use weak references
 
-fn add_package() {
-	// if a module is imported using gnunet or git, see if gnunet/git is installed
-	// and if not, ask the user to install them first, then exit with error
-}
-
-if arg[1] == nil {
-	printf("interactive Jina is not yet implemented");
-	quit(1);
-}
+// if a module is imported using gnunet or git, see if gnunet/git is installed
+// and if not, ask the user to install them first, then exit with error
