@@ -15,7 +15,7 @@ Int = &
 	shift'r: {}
 	
 	; creates a range iterator
-	to: { self, rhs :Int | :Iter'range
+	to: { self, rhs :Int | :Iter(Int)
 	}
 
 .. Num.

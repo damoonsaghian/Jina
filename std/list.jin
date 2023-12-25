@@ -18,7 +18,7 @@ List = &
 	append: { self !List(X'), element :X' |
 	}
 	
-	extend: { self !List(X'), extention :':Iter(X') |
+	extend: { self !List(X'), extention :List(X') |
 	}
 	
 	put: { self !List(X'), element :X', index :Int |
@@ -32,5 +32,6 @@ List = &
 	
 	remove: { self!, index :Int |
 	}
-.. Iter(X').
-	next: {}
+	
+	iter: { self ::List(X') | :Iter(X')
+	}

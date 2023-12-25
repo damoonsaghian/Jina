@@ -1,21 +1,25 @@
+'{#include <stdio.h>}
+
 Sys = &
-	print: {| message :String |
+	print: { message :String |
 	}
 	
-	print'err: {| message :String |
+	print'err: { message :String |
 	}
 	
-	read: {| | :String
+	read: { cb ::{} | :String
+		; read from stdin (non'blocking io)
 	}
 	
-	exec: {| program'name :String, args :String | :(stdin: File, stdout: File)
+	exec: { program'name :String, args :String | :(stdin: File, stdout: File)
 	}
 	
-	get'env: { | :String
+	get'env: { :String
 	}
 	
-	get'args: { | :String
+	get'args: { :String
 	}
 	
 	get'time: { format :String = "" | :String
+		; sys/time.h
 	}

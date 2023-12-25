@@ -1,24 +1,32 @@
+'{#include <stdio.h>}
+
 File :=
 
 File = &
 	; open a file or create it, if it doesn't already exist
-	open: {| path :String, mode :String = "" | :?File
+	open: { path :String, mode :String = "", cb ::{ f :?File | () } |
+		; create an empty actor that will call "cb" when the file is open
 	}
 	
 	append: {}
 	
-	delete: {| path :String |
+	delete: { path :String, cb ::{} = {} |
 	}
 	
-	move: {| source'path :String, destination'path :String |
+	move: { source'path :String, destination'path :String, cb ::{} = {} |
 	}
 	
-	copy: {| source'path :String, destination'path :String |
+	copy: { source'path :String, destination'path :String, cb ::{} = {} |
 	}
 	
 	; max_size is in megabytes
-	read: {| self, max'size :Int | :Array(Int1)
+	read: {self, max'size :Int, cb ::{ buf :Array(Int1) } |
 	}
 
-	write: {| self, data :Array(Int1) |
+	write: { self, data :Array(Int1), cb ::{} = {} |
+	}
+
+	destructor: { self |
+		; #include <unistd.h>
+		; close(fd);
 	}
