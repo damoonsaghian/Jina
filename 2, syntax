@@ -95,14 +95,6 @@ which is equivalent to:
 and:
 	(x, y) # f
 
-async functions:
-	{| a ::A , b !:B | :C
-		future.;
-		...
-	}
-when the above async function is called, the return type is: Future(C)
-dot+semicolon means await
-
 { f x y } can be written as: || f x y
 
 conditional expression:
@@ -123,9 +115,13 @@ matching:
 		() | ...
 	}
 
+actor:
+	a = Actor.new B.new(x, y)
+	a.do { b !B | ... }
+
 iterators:
-	iter.for'each { x || ... }
-note that each iteration is run asynchronously
+	iter.each { x | ... }
+note that iterators are actually actors, and each iteration runs asynchronously
 thus unlike loops (which doesn't exist in Jina), even extremely long iterators can't block the running thread
 there is a catch though: the above closure is immutable (ie it can't mutate its environment)
 
@@ -207,5 +203,6 @@ defining the methods of a struct that implements some interfaces:
 	.. I2.
 		...
 
-to directly enter Rust code:
+to directly enter C code:
 	'{...}
+beware: with great power comes great resposibility
