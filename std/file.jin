@@ -1,4 +1,4 @@
-'{#include <stdio.h>}
+'{#include <uv.h>}
 
 File :=
 
@@ -27,6 +27,5 @@ File = &
 	}
 
 	destructor: { self |
-		; #include <unistd.h>
-		; close(fd);
+		; close the file descriptor
 	}

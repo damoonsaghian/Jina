@@ -1,4 +1,7 @@
-'{#include <stdio.h>}
+'{
+	#include <stdio.h>
+	#include <uv.h>
+}
 
 Sys = &
 	print: { message :String |
