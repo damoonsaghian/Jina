@@ -14,7 +14,6 @@ https://nullprogram.com/blog/2014/10/21/
 https://libcello.org/
 https://github.com/oz123/awesome-c
 
-https://verdagon.dev/blog/generational-references
 only the actor can destroy the heap references it creates
 	other actors just send reference'counting messages
 	so we do not need atomic reference counting
