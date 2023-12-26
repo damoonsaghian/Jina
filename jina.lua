@@ -12,6 +12,7 @@ https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://nullprogram.com/blog/2014/10/21/
 https://libcello.org/
+https://github.com/oz123/awesome-c
 
 https://verdagon.dev/blog/generational-references
 only the actor can destroy the heap references it creates
@@ -22,21 +23,11 @@ https://nullprogram.com/blog/2015/02/17/
 https://github.com/Snaipe/libcsptr
 https://github.com/jeraymond/refcount
 
-https://github.com/oz123/awesome-c
-
-https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/dirent.h
-https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/sys/stat.h
-https://en.wikibooks.org/wiki/C_Programming/stdio.h
-https://en.wikipedia.org/wiki/Unistd.h
-
 c closures
 	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 http://blog.pkh.me/p/20-templating-in-c.html
 https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
 ]]
-
--- https://lunarmodules.github.io/luafilesystem/
--- https://lunarmodules.github.io/luafilesystem/manual.html
 
 function generate_header_file(source_file_path)
 end
@@ -53,7 +44,11 @@ function compile_jina2c(jina_file_path)
 	otherwise use the first word as the function's name
 	if it's a definition, add it to the table of local definition which contains their types
 	
+	https://lunarmodules.github.io/luafilesystem/
+	https://lunarmodules.github.io/luafilesystem/manual.html
+	
 	https://github.com/ceu-lang/ceu
+	https://github.com/edubart/nelua-lang/tree/master
 	]]
 	
 	--[[
