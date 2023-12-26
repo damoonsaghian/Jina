@@ -1,4 +1,4 @@
-apt-get install lua5.3 lua-filesystem gcc liburing-dev
+apt-get install lua5.3 lua-filesystem gcc libuv1-dev
 
 project_dir="$(dirname "$0")"
 

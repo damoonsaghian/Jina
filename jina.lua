@@ -11,9 +11,17 @@ https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://nullprogram.com/blog/2014/10/21/
+https://libcello.org/
+
+https://verdagon.dev/blog/generational-references
+only the actor can destroy the heap references it creates
+	other actors just send reference'counting messages
+	so we do not need atomic reference counting
+self'referential fields of structures are necessarily private, and use weak references
 https://nullprogram.com/blog/2015/02/17/
 https://github.com/Snaipe/libcsptr
 https://github.com/jeraymond/refcount
+
 https://github.com/oz123/awesome-c
 
 https://en.wikibooks.org/wiki/C_Programming/POSIX_Reference/dirent.h
@@ -49,11 +57,7 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	only the actor can destroy the heap references it creates
-	other actors just send reference'counting messages
-	so we do not need atomic reference counting
-		
-	self'referential fields of structures are necessarily private, and use weak references
+	
 	]]
 	
 	--[[
@@ -71,15 +75,10 @@ function compile_jina2c(jina_file_path)
 	, event submiting function
 	, non'waiting event processing function (batch)
 	, waiting event processing function
-	the I/O backend used in std is implemented using liburing and wayland
-		https://github.com/axboe/liburing
-		https://unixism.net/loti/tutorial/index.html
-		https://unixism.net/loti/ref-iouring/io_uring_enter.html
-		https://www.mankier.com/7/io_uring
-		https://gaultier.github.io/blog/wayland_from_scratch.html
-	one can implement an I/O backend using glib2 and gtk4 for example
+	the I/O backend used in std is implemented using libuv
+	one can implement an I/O backend using glib2 for example
 	multiple I/O backends can work at the same time, by using multiple I/O loops
-	available I/O backends must be put in a global list
+	available I/O backends will be put in a global list
 	total number of threads is the maximum between number of CPU cores, and number of I/O backends
 	
 	use mutexes or atomics to hold list of actors
