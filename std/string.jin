@@ -39,9 +39,9 @@ String = &
 	}
 	
 	to'int: { self | :?Int }
+	to'int64: { self | :?Int64 }
+	to'int32: { self | :?Int32 }
 	to'int8: { self | :?Int8 }
-	to'int4: { self | :?Int4 }
-	to'int1: { self | :?Int1 }
 	to'float: { self | :?Float }
 
 String'rep := &
