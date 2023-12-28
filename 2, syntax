@@ -23,7 +23,6 @@ integer notations:
 	0b01 ;; binary
 	0o01234567 ;; octal
 	0h0123456789abcdef ;; hexadecimal
-	0a ;; UTF8 code number of character "a"
 floating point numbers (8 bytes): Float
 
 lists:
