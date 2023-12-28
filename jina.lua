@@ -46,12 +46,8 @@ function compile_jina2c(jina_file_path)
 	https://lunarmodules.github.io/luafilesystem/
 	https://lunarmodules.github.io/luafilesystem/manual.html
 	
-	https://github.com/ceu-lang/ceu
-	https://github.com/edubart/nelua-lang/tree/master
-	]]
-	
-	--[[
-	
+	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
+	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 	]]
 	
 	--[[
