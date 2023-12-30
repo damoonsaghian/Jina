@@ -10,22 +10,24 @@ https://en.wikibooks.org/wiki/C_Programming
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
-https://nullprogram.com/blog/2014/10/21/
 https://libcello.org/
-https://github.com/oz123/awesome-c
 
 only the actor can destroy the heap references it creates
 	other actors just send reference'counting messages
 	so we do not need atomic reference counting
 self'referential fields of structures are necessarily private, and use weak references
 https://nullprogram.com/blog/2015/02/17/
-https://github.com/Snaipe/libcsptr
 https://github.com/jeraymond/refcount
+https://snai.pe/posts/c-smart-pointers
+	https://github.com/Snaipe/libcsptr
 
 c closures
 	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 http://blog.pkh.me/p/20-templating-in-c.html
 https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
+
+https://github.com/Microsoft/mimalloc
+libmimalloc-dev
 ]]
 
 function generate_header_file(source_file_path)
@@ -48,6 +50,11 @@ function compile_jina2c(jina_file_path)
 	
 	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
+	
+	#include <stdlib.h>
+	#include <stdint.h>
+	
+	int main(int argc, char* argv[]) {}
 	]]
 	
 	--[[
