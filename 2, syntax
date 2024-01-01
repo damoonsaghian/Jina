@@ -17,13 +17,16 @@ immutable and mutable referece counted variables:
 mutating mutable variables (unique variables are mutable too):
 	v .= ...
 
-integers: Int8, Int32, Int64, Int (which can be 32 or 64 bits depending on the system)
+integers: Int (mapped to "int" in C), Int8 (mapped to "signed char" in C), Int'c (mapped to "char" in C)
 integer notations:
 	123'456'789 ;; easier to read
-	0b01 ;; binary
-	0o01234567 ;; octal
-	0h0123456789abcdef ;; hexadecimal
-floating point numbers (64 bits): Float
+	0b101010 ;; binary
+	0o76543210 ;; octal
+	0h90abcdef ;; hexadecimal
+	'a' :Int'c ;; ASCII character "a"
+	'\n' ;; ASCII escape character "\n"
+	'\(', '\[', '\{'
+floating point numbers: Float (mapped to "double" in C)
 
 lists:
 	l :List(Int) = [1, 2, 3]
@@ -35,7 +38,7 @@ mutating lists:
 	l.put 0 index: 0 ;; [0, 2, 3]
 	l.put 4 index: 3 ;; [0, 2, 3, 4]
 
-strings are lists of "Int8" values
+strings are lists of "Int'c" values
 they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
 alternative syntax:

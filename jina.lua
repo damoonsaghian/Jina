@@ -1,7 +1,6 @@
 #!/bin/lua5.3
 
 --[[
-https://www.geeksforgeeks.org/c-language-introduction
 http://crasseux.com/books/ctutorial/
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 http://nethack4.org/blog/building-c.html
