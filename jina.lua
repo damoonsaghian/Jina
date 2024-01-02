@@ -57,25 +57,17 @@ function compile_jina2c(jina_file_path)
 	]]
 	
 	--[[
-	after calling the init function, create a fixed number of threads (the number is explained in the following)
+	after calling the init function, create a fixed number of threads (as many as CPU cores),
+		and then run libuv loop
 	each thread runs a loop that processes the messages
-	there are two kinds of loops:
-	, plain loops: after each loop, if there are no messages left, it goes to sleep (sigwait)
-	, I/O loops: after each loop, if there is are no messages left, it calls waiting I/O event processing function
-		otherwise, it calls non'waiting I/O event processing function
-	the primary thread always runs an I/O loop
-	when a message is registered, a signal will be sent to all threads to wake up the slept ones,
-		and also a dummy I/O request will be submited to wake up the I/O loops
+	after each loop, if there are no messages left, it goes to sleep (sigwait)
+	when a message is registered, a signal will be sent to all threads to wake up the slept ones
 	
-	to implement an I/O backend just define these three functions:
-	, event submiting function
-	, non'waiting event processing function (batch)
-	, waiting event processing function
-	the I/O backend used in std is implemented using libuv
-	one can implement an I/O backend using glib2 for example
-	multiple I/O backends can work at the same time, by using multiple I/O loops
-	available I/O backends will be put in a global list
-	total number of threads is the maximum between number of CPU cores, and number of I/O backends
+	in the main thread (libuv loop), a timer checks counters of other threads,
+		and if a thread is blocked, and the number of non'blocked threads is not more than CPU cores,
+		create a new thread
+	the new thread only loops for a limited time, after which it checks the number of non'blocked threads
+		if it is equal or more than CPU cores, then the thread will be removed
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
