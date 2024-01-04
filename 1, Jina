@@ -14,6 +14,8 @@ memory management is done in a sane way, by distinguishing 5 kinds of variables:
 	v ::T
 	v !:T
 
+note that in Jina, mutability and reference kinds are properties of variables, not types
+
 assigning unique var to unique var:
 	, stack type: copy
 	, heap type: if not used in the code that follows, move, otherwise copy
@@ -67,6 +69,8 @@ to deal with it, programming languages choose different approaches:
 in Jina, as shown above, mutable variables will be copied, when captured in immutable functions
 messages are sent to actors via immutable functions
 so in Jina, all mutations will be synchronous
+
+immutable functions with null return can be called asynchronously, since they can't affect their environment
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:

@@ -28,6 +28,10 @@ integer notations:
 	'\(', '\[', '\{'
 floating point numbers: Float (mapped to "double" in C)
 
+note that in Jina minus sign is a unary operator
+there is no "x - y"; instead write "x + -y"
+"-x" is equivalent to "x.neg()"
+
 lists:
 	l :List(Int) = [1, 2, 3]
 indexing:
@@ -110,6 +114,8 @@ and or:
 which are equivalent to:
 	a .and {b}
 	a .or {b}
+not:
+	-a
 
 matching:
 	a # {

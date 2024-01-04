@@ -25,6 +25,13 @@ c closures
 http://blog.pkh.me/p/20-templating-in-c.html
 https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
 
+string literals and functions in C are stored in code
+https://stackoverflow.com/questions/3473765/string-literal-in-c
+https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
+
+record type:
+struct {}
+
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
 ]]
@@ -51,19 +58,18 @@ function compile_jina2c(jina_file_path)
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 	
 	#include <stdlib.h>
-	#include <stdint.h>
 	
 	int main(int argc, char* argv[]) {}
 	]]
 	
 	--[[
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
-		and then run libuv loop
+		and then run glib2 event loop
 	each thread runs a loop that processes the messages
 	after each loop, if there are no messages left, it goes to sleep (sigwait)
 	when a message is registered, a signal will be sent to all threads to wake up the slept ones
 	
-	in the main thread (libuv loop), a timer checks counters of other threads,
+	in the main thread (glib2 event loop), a timer checks counters of other threads,
 		and if a thread is blocked, and the number of non'blocked threads is not more than CPU cores,
 		create a new thread
 	the new thread only loops for a limited time, after which it checks the number of non'blocked threads
