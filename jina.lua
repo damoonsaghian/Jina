@@ -15,10 +15,7 @@ only the actor can destroy the heap references it creates
 	other actors just send reference'counting messages
 	so we do not need atomic reference counting
 self'referential fields of structures are necessarily private, and use weak references
-https://nullprogram.com/blog/2015/02/17/
-https://github.com/jeraymond/refcount
-https://snai.pe/posts/c-smart-pointers
-	https://github.com/Snaipe/libcsptr
+https://docs.gtk.org/glib/reference-counting.html
 
 c closures
 	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
@@ -58,6 +55,8 @@ function compile_jina2c(jina_file_path)
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 	
 	#include <stdlib.h>
+	#include <glib-2.0/glib.h>
+	; https://packages.debian.org/bookworm/amd64/libglib2.0-dev/filelist
 	
 	int main(int argc, char* argv[]) {}
 	]]
@@ -68,15 +67,23 @@ function compile_jina2c(jina_file_path)
 	each thread runs a loop that processes the messages
 	after each loop, if there are no messages left, it goes to sleep (sigwait)
 	when a message is registered, a signal will be sent to all threads to wake up the slept ones
+	https://docs.gtk.org/glib/main-loop.html
+	https://docs.gtk.org/glib/struct.MainLoop.html
+	https://docs.gtk.org/glib/threads.html
+	https://docs.gtk.org/glib/struct.Thread.html
+	https://docs.gtk.org/glib/struct.ThreadPool.html
+	https://docs.gtk.org/glib/struct.MainContext.html
 	
 	in the main thread (glib2 event loop), a timer checks counters of other threads,
 		and if a thread is blocked, and the number of non'blocked threads is not more than CPU cores,
 		create a new thread
+	https://docs.gtk.org/glib/struct.Timer.html
 	the new thread only loops for a limited time, after which it checks the number of non'blocked threads
 		if it is equal or more than CPU cores, then the thread will be removed
 	
 	use mutexes or atomics to hold list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
+	https://docs.gtk.org/glib/struct.RWLock.html
 	
 	there can be two lists of actors: UI actors, and other actors
 	only when there is no messages for UI actors, we go after other actors
