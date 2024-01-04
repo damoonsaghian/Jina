@@ -1,5 +1,10 @@
+'{#include <glib-2.0/glib/garray.h>}
+
 ;[
-for now just use glib2 vectors
+for now just use glib2 array
+https://docs.gtk.org/glib/struct.Array.html
+https://docs.gtk.org/glib/struct.ByteArray.html
+https://docs.gtk.org/glib/struct.PtrArray.html
 
 maybe in the future:
 lists are implemented in a way that expanding them, and insert/remove in the middle, is efficient

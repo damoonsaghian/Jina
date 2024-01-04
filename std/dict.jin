@@ -1,5 +1,9 @@
+'{#include <glib-2.0/glib/ghash.h>}
+
 ;[
 for now just use glib2 hashtables
+https://docs.gtk.org/glib/struct.HashTable.html
+https://docs.gtk.org/glib/struct.HashTableIter.html
 
 maybe in the future we can implement dicts using adaptive radix tree
 https://en.wikipedia.org/wiki/Radix_tree
