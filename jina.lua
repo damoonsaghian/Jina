@@ -26,8 +26,12 @@ string literals and functions in C are stored in code
 https://stackoverflow.com/questions/3473765/string-literal-in-c
 https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
 
-record type:
-struct {}
+records:
+struct rec__tags__typenames {...}
+, tags: tags sorted alphabetically, separated with an underline
+	if no tags, use numbers
+, typenames: names of the coressponding types, separated with an underline
+https://stackoverflow.com/questions/17720223/c-typedef-struct-name-vs-typedef-struct-name
 
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
@@ -52,7 +56,11 @@ function compile_jina2c(jina_file_path)
 	https://lunarmodules.github.io/luafilesystem/manual.html
 	
 	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
-	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
+		https://github.com/edubart/nelua-lang/blob/master/lualib/nelua/ccompiler.lua
+		https://github.com/edubart/nelua-lang/blob/master/lualib/nelua/cgenerator.lua
+		https://github.com/edubart/nelua-lang/tree/master/lib
+	https://github.com/ceu-lang/ceu/tree/master/src/lua
+		https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 	
 	#include <stdlib.h>
 	#include <glib-2.0/glib.h>
@@ -63,7 +71,7 @@ function compile_jina2c(jina_file_path)
 	
 	--[[
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
-		and then run glib2 event loop
+		and then run the main loop
 	each thread runs a loop that processes the messages
 	after each loop, if there are no messages left, it goes to sleep (sigwait)
 	when a message is registered, a signal will be sent to all threads to wake up the slept ones
@@ -74,20 +82,15 @@ function compile_jina2c(jina_file_path)
 	https://docs.gtk.org/glib/struct.ThreadPool.html
 	https://docs.gtk.org/glib/struct.MainContext.html
 	
-	in the main thread (glib2 event loop), a timer checks counters of other threads,
-		and if a thread is blocked, and the number of non'blocked threads is not more than CPU cores,
-		create a new thread
-	https://docs.gtk.org/glib/struct.Timer.html
-	the new thread only loops for a limited time, after which it checks the number of non'blocked threads
-		if it is equal or more than CPU cores, then the thread will be removed
+	the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
+	, a heavy computation that blocks its thread, can't make the UI lag
+	, the UI remains resposive, even when the number of non'UI actors is extremely large
+	the main loop runs messages of UI actors, and then polls (non'waiting) more events (glib2)
+		if there is no more messages for UI actors, wait for events
 	
-	use mutexes or atomics to hold list of actors
+	use mutexes or atomics to hold the list of actors
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	https://docs.gtk.org/glib/struct.RWLock.html
-	
-	there can be two lists of actors: UI actors, and other actors
-	only when there is no messages for UI actors, we go after other actors
-	in this way, the UI remains resposive, even when the number of actors is extremely large
 	]]
 end
 
