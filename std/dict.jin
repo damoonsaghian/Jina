@@ -1,5 +1,7 @@
 ;[
-adaptive radix tree
+for now just use glib2 hashtables
+
+maybe in the future we can implement dicts using adaptive radix tree
 https://en.wikipedia.org/wiki/Radix_tree
 https://github.com/armon/libart
 https://www.the-paper-trail.org/post/art-paper-notes/

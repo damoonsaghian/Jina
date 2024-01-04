@@ -12,12 +12,21 @@ Bool = &
 			Bool'true | rhs()
 		}
 	}
+	
 	or: { self, other :{Bool} | :Bool
 		self # {
 			Bool'true | Bool'true
 			Bool'false | rhs()
 		}
 	}
+	
+	neg: { self | :Bool
+		self # {
+			Bool'true | Bool'false
+			Bool'false | Bool'true
+		}
+	}
+	
 	then: { self, then !{T'}, else !{T'} | :T'
 		self # {
 			Bool'true | then()

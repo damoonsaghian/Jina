@@ -1,4 +1,7 @@
 ;[
+for now just use glib2 vectors
+
+maybe in the future:
 lists are implemented in a way that expanding them, and insert/remove in the middle, is efficient
 the storage of a list is devided into equal sized segments
 there is a field that contains the address of an array (on the heap),

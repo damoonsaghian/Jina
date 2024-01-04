@@ -10,26 +10,31 @@ Int = &
 	bit'and: {}
 	bit'or: {}
 	bit'xor: {}
-	bit'not: {}
-	shif'l: {}
+	bit'neg: {}
+	shift'l: {}
 	shift'r: {}
 	
 	; creates a range iterator
 	to: { self, rhs :Int | :Iter(Int)
 	}
+	
+	neg: { self | :Int
+		'{return -self}
+	}
+	
+	to'float: { self |
+		'{return (double)self}
+	}
 
 .. Num.
 	add: {}
 	mul: {}
-	div: { self, divisor :Self | :Float
+	div: { self, divisor :Int | :Float
 	}
 	pow: {}
 	abs: {}
-	is'equal'to: {}
-	is'less'than: {}
-	to'string: {}
 	
-	is'eq: {}
+	is'equal: {}
 	is'less: {}
 	
 	to'string: {}

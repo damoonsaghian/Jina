@@ -1,7 +1,7 @@
 ; Num interface implemented by all number types (integer, floating point and complex numbers)
 
 Num := Ord..String'rep..&
-	add: { self :X', other :X' | X' }
+	add: { self :X':Num, other :X' | X' }
 	neg: { self :X' | X' }
 	sub:: { self :X', other :X' | :X'
 	}

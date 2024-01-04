@@ -1,55 +1,56 @@
 Float = &
-	next'up: { self | :Self
+	next'up: { self | :Float
 	}
 	
-	next'down: { self | :Self
+	next'down: { self | :Float
 	}
 	
-	cos: { self | :Self
+	cos: { self | :Float
 	}
-	acos: { self | :Self
+	acos: { self | :Float
 	}
-	cosh: { self | :Self
+	cosh: { self | :Float
 	}
-	atanh: { self | :Self
+	atanh: { self | :Float
 	}
-	sin: { self | :Self
+	sin: { self | :Float
 	}
-	asin: { self | :Self
+	asin: { self | :Float
 	}
-	sinh: { self | :Self
+	sinh: { self | :Float
 	}
-	tan: { self | :Self
+	tan: { self | :Float
 	}
-	atan: { self | :Self
+	atan: { self | :Float
 	}
-	atan2: { self | :Self
+	atan2: { self | :Float
 	}
-	tanh: { self | :Self
+	tanh: { self | :Float
 	}
 	
-	log: { self | :Self
+	log: { self | :Float
 	}
-	log2: { self | :Self
+	log2: { self | :Float
 	}
-	log10: { self | :Self
+	log10: { self | :Float
 	}
 	
 	e: ; base of the natural logarithm
 	pi:
 	nan:
 	inf:
+	
+	neg: { self | :Float
+		'{return -self}
+	}
 
 .. Num.
 	add: {}
 	mul {}
 	pow: {}
 	abs: {}
-	is'equal'to: {}
-	is'less'than: {}
-	to'string: {}
 	
-	is'eq: {}
+	is'equal: {}
 	is'less: {}
 	
 	to'string: {}
