@@ -31,7 +31,7 @@ struct rec__tags__typenames {...}
 , tags: tags sorted alphabetically, separated with an underline
 	if no tags, use numbers
 , typenames: names of the coressponding types, separated with an underline
-https://stackoverflow.com/questions/17720223/c-typedef-struct-name-vs-typedef-struct-name
+https://stackoverflow.com/questions/48445629/is-a-redeclaration-of-an-untagged-structure-a-compatible-type
 
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
