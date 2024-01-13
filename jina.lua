@@ -26,12 +26,9 @@ string literals and functions in C are stored in code
 https://stackoverflow.com/questions/3473765/string-literal-in-c
 https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
 
-records:
-struct rec__tags__typenames {...}
-, tags: tags sorted alphabetically, separated with an underline
-	if no tags, use numbers
-, typenames: names of the coressponding types, separated with an underline
-https://stackoverflow.com/questions/48445629/is-a-redeclaration-of-an-untagged-structure-a-compatible-type
+records and modules are implemented similarly:
+record_name__field_name
+module_name__var_name
 
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
