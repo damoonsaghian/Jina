@@ -25,7 +25,6 @@ integer notations:
 	0h90abcdef ;; hexadecimal
 	'a' :Int'c ;; ASCII character "a"
 	'\n' ;; ASCII escape character "\n"
-	'\(', '\[', '\{'
 floating point numbers: Float (mapped to "double" in C)
 
 note that in Jina minus sign is a unary operator
@@ -45,17 +44,15 @@ mutating lists:
 strings are lists of "Int'c" values
 they can be written using a UTF8 encoded representation inside double quotes:
 	s :String = "abc def"
-alternative syntax:
-	s = '(abc def)
 one word string:
 	'abc
 string interpolation: "abc{x}"
 indexing strings is not really meaningful
 it's better to split long strings into a list of single'line strings:
-	'[
-		first line
-			second line
-	]
+	""
+	first line
+		second line
+	""
 which is equivalent to:
 	["first line", "\tsecond line"]
 
@@ -209,5 +206,5 @@ defining the methods of a struct that implements some interfaces:
 		...
 
 to directly enter C code:
-	'{...}
+	;{...}
 beware: with great power comes great resposibility
