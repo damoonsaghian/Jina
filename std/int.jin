@@ -1,6 +1,6 @@
 Int = &
-	min: '{}
-	max: '{}
+	min: ;{}
+	max: ;{}
 	
 	to'float: { self |
 		'{}
@@ -19,11 +19,11 @@ Int = &
 	}
 	
 	neg: { self | :Int
-		'{return -self}
+		;{ return -self }
 	}
 	
 	to'float: { self |
-		'{return (double)self}
+		;{ return (double)self }
 	}
 
 .. Num.
@@ -39,8 +39,6 @@ Int = &
 	
 	to'string: {}
 
-Int64 =
-
-Int32 =
-
 Int8 =
+
+Int'c =

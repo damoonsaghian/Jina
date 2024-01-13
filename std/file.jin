@@ -1,4 +1,4 @@
-'{#include <glib-2.0/gio/gio.h>}
+;{ #include <glib-2.0/gio/gio.h> }
 ; https://docs.gtk.org/gio/
 ; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
@@ -22,7 +22,7 @@ File = &
 	}
 	
 	; max_size is in megabytes
-	read: {self, max'size :Int, cb ::{ buf :Array(Int1) } |
+	read: { self, max'size :Int, cb ::{ buf :Array(Int1) } |
 	}
 
 	write: { self, data :Array(Int1), cb ::{} = {} |

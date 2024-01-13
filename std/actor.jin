@@ -5,13 +5,13 @@ Actor := &
 Actor = &
 	new: { data :X' | :Actor(X')
 		; add a pointer in the global list of actors
-		'{}
+		;{}
 		Actor. data []
 	}
 	
 	do: { self!, message ::{ :X' | } |
 		; notify that there is a new message
-		'{}
+		;{}
 		self.messages.append message
 	}
 	

@@ -41,7 +41,7 @@ Float = &
 	inf:
 	
 	neg: { self | :Float
-		'{return -self}
+		;{ return -self }
 	}
 
 .. Num.
