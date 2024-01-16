@@ -39,4 +39,6 @@ Int = &
 	
 	to'string: {}
 
+Int32 =
+
 Int8 =
