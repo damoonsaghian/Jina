@@ -17,19 +17,14 @@ immutable and mutable referece counted variables:
 mutating mutable variables (unique variables are mutable too):
 	v .= ...
 
-integers: Int (mapped to "int" in C), Int8 (mapped to "signed char" in C), Int'c (mapped to "char" in C)
-integer notations:
-	123'456'789 ;; easier to read
-	0b101010 ;; binary
-	0o76543210 ;; octal
-	0h90abcdef ;; hexadecimal
-	'a' :Int'c ;; ASCII character "a"
-	'\n' ;; ASCII escape character "\n"
-floating point numbers: Float (mapped to "double" in C)
-
-note that in Jina minus sign is a unary operator
-there is no "x - y"; instead write "x + -y"
-"-x" is equivalent to "x.neg()"
+integers: Int (signed 64 bits), Int32 (signed 32 bits), Int8 (signed 8 bits)
+integer literals:
+	1'234'567'890 ;; using apostrophe to make it easier to read
+	0X123456789abcdef0 ;; hexadecimal Int
+	0x11223344 ;; hexadecimal Int32
+	0'a ;; UTF8 code corresponding to the character "a" (Int32 value)
+	0ff ;; hexadecimal byte (Int8 value)
+floating point numbers: Float (64 bits)
 
 lists:
 	l :List(Int) = [1, 2, 3]
@@ -41,13 +36,11 @@ mutating lists:
 	l.put 0 index: 0 ;; [0, 2, 3]
 	l.put 4 index: 3 ;; [0, 2, 3, 4]
 
-strings are lists of "Int'c" values
-they can be written using a UTF8 encoded representation inside double quotes:
+strings (UTF8):
 	s :String = "abc def"
 one word string:
 	'abc
 string interpolation: "abc{x}"
-indexing strings is not really meaningful
 it's better to split long strings into a list of single'line strings:
 	""
 	first line
@@ -207,4 +200,4 @@ defining the methods of a struct that implements some interfaces:
 
 to directly enter C code:
 	;{...}
-beware: with great power comes great resposibility
+beware! with great power comes great resposibility

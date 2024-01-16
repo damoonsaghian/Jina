@@ -1,11 +1,8 @@
 #!/bin/lua5.3
 
 --[[
-http://crasseux.com/books/ctutorial/
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 http://nethack4.org/blog/building-c.html
-https://www.learn-c.org/
-https://en.wikibooks.org/wiki/C_Programming
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
@@ -107,15 +104,15 @@ recompile any .jina file whose modification time is newer than the generated .c 
 
 recompile any .c file that the creation time of it or one of the files included in it,
 	is newer than the generated .o file
-gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
+cc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
 
 to create dynamic libs:
-	gcc -c -fPIC \"$project_dir\"/.cache/jina/*.c
+	cc -c -fPIC \"$project_dir\"/.cache/jina/*.c
 linking object files:
 , for programs (there is a file named "0.jina" in the project directory):
-	gcc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
+	cc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
 , for libraries:
-	gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
+	cc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
 	cp \"$project_dir\"/.cache/jina/libo /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
