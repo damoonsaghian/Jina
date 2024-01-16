@@ -1,5 +1,11 @@
 ; Num interface implemented by all number types (integer, floating point and complex numbers)
 
+;[
+minus operator:
+, unary: "-x" is equivalent to "x.neg()"
+, binary: "x - y" is equivalent to "x.sub(y)"
+]
+
 Num := Ord..String'rep..&
 	add: { self :X':Num, other :X' | X' }
 	neg: { self :X' | X' }
