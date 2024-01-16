@@ -19,10 +19,9 @@ mutating mutable variables (unique variables are mutable too):
 
 integers: Int (signed 64 bits), Int32 (signed 32 bits), Int8 (signed 8 bits)
 integer literals:
-	1'234'567'890 ;; using apostrophe to make it easier to read
-	0X123456789abcdef0 ;; hexadecimal Int
-	0x11223344 ;; hexadecimal Int32
-	0'a ;; UTF8 code corresponding to the character "a" (Int32 value)
+	1'234'567'890 ;; Int by default
+	0x11223344 ;; Int32 by default (hexadecimal)
+	'a' ;; UTF8 code corresponding to the character "a" (Int32 value)
 	0ff ;; hexadecimal byte (Int8 value)
 floating point numbers: Float (64 bits)
 
@@ -40,6 +39,12 @@ strings (UTF8):
 	s :String = "abc def"
 one word string:
 	'abc
+note that:
+	'a :String
+	'a'b :String
+	'a' :Int32
+	'\n' :Int32
+	'ab' ;; invalid syntax
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	""
