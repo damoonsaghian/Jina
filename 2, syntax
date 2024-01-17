@@ -16,12 +16,12 @@ immutable and mutable referece counted variables:
 	v !:T = ...
 mutating mutable variables (unique variables are mutable too):
 	v .= ...
+	v.set(...)
 
-integers: Int (signed 64 bits), Int32 (signed 32 bits), Int8 (signed 8 bits)
+integers: Int (signed 64 bits), Int8 (signed 8 bits)
 integer literals:
-	1'234'567'890 ;; Int by default
-	0x11223344 ;; Int32 by default (hexadecimal)
-	'a' ;; UTF8 code corresponding to the character "a" (Int32 value)
+	1'234'567'890
+	0x123456789abcdef0 ;; hexadecimal
 	0ff ;; hexadecimal byte (Int8 value)
 floating point numbers: Float (64 bits)
 
@@ -34,17 +34,13 @@ mutating lists:
 	l! = [1, 2, 3]
 	l.put 0 index: 0 ;; [0, 2, 3]
 	l.put 4 index: 3 ;; [0, 2, 3, 4]
+initial value of lists will be kept on stack
+heap allocation will be used only when the lists needs to grow beyond its initial size
 
-strings (UTF8):
+strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
 one word string:
 	'abc
-note that:
-	'a :String
-	'a'b :String
-	'a' :Int32
-	'\n' :Int32
-	'ab' ;; invalid syntax
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	""
@@ -73,6 +69,7 @@ records can be matched on smaller records:
 tagged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 mutating a record:
+	r.a .= 10
 	r.a = 10
 
 record extension:
