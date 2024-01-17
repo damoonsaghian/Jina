@@ -38,7 +38,7 @@ Int = &
 	is'less: {}
 	
 	to'string: {}
-
-Int32 =
+	
+	set: {}
 
 Int8 =

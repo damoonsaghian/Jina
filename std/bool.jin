@@ -33,3 +33,5 @@ Bool = &
 			Bool'false | else()
 		}
 	}
+	
+	set: {}

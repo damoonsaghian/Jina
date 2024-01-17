@@ -16,3 +16,4 @@ Num := Ord..String'rep..&
 	pow:: { self :X', other :X' | :X'
 	}
 	abs: { self :X' | X' }
+	set: {}

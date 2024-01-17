@@ -54,3 +54,5 @@ Float = &
 	is'less: {}
 	
 	to'string: {}
+	
+	set: {}

@@ -43,6 +43,8 @@ String = &
 	to'int32: { self | :?Int32 }
 	to'int8: { self | :?Int8 }
 	to'float: { self | :?Float }
+	
+	set: {}
 
 String'rep := &
 	to'string: { self :X' | X' }
