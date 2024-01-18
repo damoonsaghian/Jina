@@ -2,10 +2,6 @@ Int = &
 	min: ;{}
 	max: ;{}
 	
-	to'float: { self |
-		'{}
-	}
-	
 	; bitwise operations
 	bit'and: {}
 	bit'or: {}
@@ -17,28 +13,33 @@ Int = &
 	; creates a range iterator
 	to: { self, rhs :Int | :Iter(Int)
 	}
-	
-	neg: { self | :Int
-		;{ return -self }
-	}
-	
+		
 	to'float: { self |
 		;{ return (double)self }
 	}
 
 .. Num.
 	add: {}
-	mul: {}
-	div: { self, divisor :Int | :Float
+	
+	neg: { self | :Int
+		;{ return -self }
 	}
+	
+	mul: {}
+	
+	div: { self, divisor :Int | :Int
+	}
+	
 	pow: {}
+	
 	abs: {}
 	
 	is'equal: {}
+	
 	is'less: {}
 	
 	to'string: {}
-	
-	set: {}
+
+Int32 =
 
 Int8 =

@@ -11,9 +11,18 @@ Num := Ord..String'rep..&
 	neg: { self :X' | X' }
 	sub:: { self :X', other :X' | :X'
 	}
+	
 	mul: { self :X', other :X' | X' }
 	div: { self :X', other :X' | X' }
 	pow:: { self :X', other :X' | :X'
 	}
+	
 	abs: { self :X' | X' }
-	set: {}
+	is'equal: {}
+	is'less: {}
+	
+	to'string: {}
+	
+	set:: { self !X' |
+		;{ }
+	}

@@ -39,7 +39,6 @@ String = &
 	}
 	
 	to'int: { self | :?Int }
-	to'int64: { self | :?Int64 }
 	to'int32: { self | :?Int32 }
 	to'int8: { self | :?Int8 }
 	to'float: { self | :?Float }

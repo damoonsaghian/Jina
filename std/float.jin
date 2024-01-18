@@ -39,20 +39,24 @@ Float = &
 	pi:
 	nan:
 	inf:
-	
-	neg: { self | :Float
-		;{ return -self }
-	}
 
 .. Num.
 	add: {}
+	
+	neg: { self | :Int
+		;{ return -self }
+	}
+	
 	mul {}
+	
+	div: {}
+	
 	pow: {}
+	
 	abs: {}
 	
 	is'equal: {}
+	
 	is'less: {}
 	
 	to'string: {}
-	
-	set: {}
