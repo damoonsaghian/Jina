@@ -18,12 +18,15 @@ mutating mutable variables (unique variables are mutable too):
 	v .= ...
 	v.set(...)
 
-integers: Int (signed 64 bits), Int8 (signed 8 bits)
+integers:
+, signed 64 bits: Int
+, unsigned 32 bits: Int32
+, unsigned 8 bits: Int8
 integer literals:
 	1'234'567'890
-	0x123456789abcdef0 ;; hexadecimal
-	0ff ;; hexadecimal byte (Int8 value)
-floating point numbers: Float (64 bits)
+	0'ffff'ffff ;; Int32 (hexadecimal)
+	0ff ;; Int8
+floating point numbers (64 bits): Float
 
 lists:
 	l :List(Int) = [1, 2, 3]
