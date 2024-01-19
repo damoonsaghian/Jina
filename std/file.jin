@@ -22,10 +22,10 @@ File = &
 	}
 	
 	; max_size is in megabytes
-	read: { self, max'size :Int, cb ::{ buf :Array(Int1) } |
+	read: { self, max'size :Num8, cb ::{ buf :Array(Num1) } |
 	}
 
-	write: { self, data :Array(Int1), cb ::{} = {} |
+	write: { self, data :Array(Num1), cb ::{} = {} |
 	}
 
 	destructor: { self |

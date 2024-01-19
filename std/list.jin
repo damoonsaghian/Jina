@@ -23,7 +23,7 @@ List :=
 List = &
 	new: {}
 	
-	get: { self ::List(X'), index :Int | ::X'
+	get: { self ::List(X'), index :Num8 | ::X'
 	}
 	
 	append: { self !List(X'), element :X' |
@@ -32,16 +32,16 @@ List = &
 	extend: { self !List(X'), extention :List(X') |
 	}
 	
-	put: { self !List(X'), element :X', index :Int |
+	put: { self !List(X'), element :X', index :Num8 |
 	}
 	
-	insert: { self !List(X'), element :X', index :Int |
+	insert: { self !List(X'), element :X', index :Num8 |
 	}
 	
-	trim: { self!, index :Int |
+	trim: { self!, index :Num8 |
 	}
 	
-	remove: { self!, index :Int |
+	remove: { self!, index :Num8 |
 	}
 	
 	iter: { self ::List(X') | :Iter(X')

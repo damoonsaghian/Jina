@@ -1,4 +1,4 @@
-String := Array(Int8)
+String := Array(Num1)
 
 String = &
 	; change array methods to respect UTF8 encoding
@@ -9,7 +9,7 @@ String = &
 	split:
 	join:
 	
-	find: { self, substring :String | :?Int
+	find: { self, substring :String | :?Num8
 	}
 	contains: { self, substring :Self | :Bool
 	}
@@ -28,7 +28,7 @@ String = &
 	trim: { self! |
 	}
 	
-	truncate: { self!, max'len :Int |
+	truncate: { self!, max'len :Num8 |
 	}
 	
 	clear: { self! | Array.clear self }
@@ -38,10 +38,7 @@ String = &
 	to'upper: { self! |
 	}
 	
-	to'int: { self | :?Int }
-	to'int32: { self | :?Int32 }
-	to'int8: { self | :?Int8 }
-	to'float: { self | :?Float }
+	to'num: { self | :?Num }
 	
 	set: {}
 

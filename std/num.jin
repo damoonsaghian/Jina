@@ -6,9 +6,8 @@ minus operator:
 , binary: "x - y" is equivalent to "x.sub(y)"
 ]
 
-Num := Ord..String'rep..&
+Num'i := Ord..String'rep..&
 	add: { self :X':Num, other :X' | X' }
-	neg: { self :X' | X' }
 	sub:: { self :X', other :X' | :X'
 	}
 	
@@ -17,7 +16,6 @@ Num := Ord..String'rep..&
 	pow:: { self :X', other :X' | :X'
 	}
 	
-	abs: { self :X' | X' }
 	is'equal: {}
 	is'less: {}
 	
@@ -26,3 +24,109 @@ Num := Ord..String'rep..&
 	set:: { self !X' |
 		;{ }
 	}
+
+Num = &
+	next'up: { self | :Num
+	}
+	
+	next'down: { self | :Num
+	}
+	
+	neg: { self :X' | X' }
+	
+	abs: { self :X' | X' }
+	
+	cos: { self | :Num
+	}
+	acos: { self | :Num
+	}
+	cosh: { self | :Num
+	}
+	atanh: { self | :Num
+	}
+	sin: { self | :Num
+	}
+	asin: { self | :Num
+	}
+	sinh: { self | :Num
+	}
+	tan: { self | :Num
+	}
+	atan: { self | :Num
+	}
+	atan2: { self | :Num
+	}
+	tanh: { self | :Num
+	}
+	
+	log: { self | :Num
+	}
+	log2: { self | :Num
+	}
+	log10: { self | :Num
+	}
+	
+	e: ; base of the natural logarithm
+	pi:
+	nan:
+	inf:
+
+.. Num'i.
+	add: {}
+	
+	neg: { self | :Num
+		;{ return -self }
+	}
+	
+	mul {}
+	
+	div: {}
+	
+	pow: {}
+	
+	is'equal: {}
+	
+	is'less: {}
+	
+	to'string: {}
+
+Num8 = &
+	min: ;{}
+	max: ;{}
+	
+	; bitwise operations
+	bit'and: {}
+	bit'or: {}
+	bit'xor: {}
+	bit'neg: {}
+	shift'l: {}
+	shift'r: {}
+	
+	; creates a range iterator
+	to: { self, rhs :Num8 | :Iter(Num8)
+	}
+		
+	to'num: { self | :Num
+		;{ return (double)self }
+	}
+
+.. Num'i.
+	add: {}
+	
+	mul: {}
+	
+	div: {}
+	
+	pow: {}
+	
+	is'equal: {}
+	
+	is'less: {}
+	
+	to'string: {}
+
+Num4 =
+
+Num2 =
+
+Num1 =
