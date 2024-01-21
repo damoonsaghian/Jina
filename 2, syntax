@@ -20,17 +20,14 @@ mutating mutable variables (unique variables are mutable too):
 
 numbers:
 , floating point 64 bits: Num
-, floating point 32 bits: Num32
-, floating point 128 bits: Num128
-, unsigned integer 64 bits: Num8
-, unsigned integer 32 bits: Num4
-, unsigned integer 16 bits: Num2
-, unsigned integer 8 bits: Num1
-integer literals:
-	1'234'567'890 ;; Num value
-	0x1234'5678'9abc'def0 ;; hexadecimal (Num8 value)
-	012 ;; Num1 value
-floating point numbers are decimal if supported, otherwise they are binary
+, floating point 32 bits (short): Num's
+, floating point 128 bits (long): Num'l
+, unsigned integer 64 bits (8 bytes): Num8
+, unsigned integer 32 bits (4 bytes): Num4
+, unsigned integer 16 bits (2 bytes): Num2
+, unsigned integer 8 bits (1 byte): Num1
+unsigned integers can be written in hexadecimal format:
+	0x1234'5678'9abc'def0
 
 lists:
 	l :List(Int) = [1, 2, 3]

@@ -2,6 +2,7 @@
 
 --[[
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+https://en.cppreference.com/w/c
 http://nethack4.org/blog/building-c.html
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
@@ -99,7 +100,7 @@ if arg[1] == nil then
 end
 
 --[[
-from .jina generate header files, and overwrite them, if not equal to the old ones (compare their hashes)
+from .jina files generate header files, and overwrite them, if not equal to the old ones (compare their hashes)
 recompile any .jina file whose modification time is newer than the generated .c file
 
 recompile any .c file that the creation time of it or one of the files included in it,
@@ -113,9 +114,9 @@ linking object files:
 	cc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
 , for libraries:
 	cc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
-	cp \"$project_dir\"/.cache/jina/libo /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
+	cp \"$project_dir\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
 
-the produced binary will at least need libc and libevent-core dynamic libraries on the system
+the produced binary will at least need libc and glib2 dynamic libraries on the system
 ]]
