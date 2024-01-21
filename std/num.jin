@@ -1,12 +1,16 @@
-; Num interface implemented by all number types (integer, floating point and complex numbers)
-
 ;[
 minus operator:
 , unary: "-x" is equivalent to "x.neg()"
 , binary: "x - y" is equivalent to "x.sub(y)"
 ]
 
-Num'i := Ord..String'rep..&
+;[
+floating point numbers are decimal if supported, otherwise they are binary
+for some calculations, the operands must first be casted to 80 bit float, and the result casted back to 64 bits
+https://en.wikipedia.org/wiki/Extended_precision
+]
+
+Numeric := Ord..String'rep..&
 	add: { self :X':Num, other :X' | X' }
 	sub:: { self :X', other :X' | :X'
 	}
@@ -71,7 +75,7 @@ Num = &
 	nan:
 	inf:
 
-.. Num'i.
+.. Numeric.
 	add: {}
 	
 	neg: { self | :Num
@@ -89,6 +93,10 @@ Num = &
 	is'less: {}
 	
 	to'string: {}
+
+Num's =
+
+Num'l =
 
 Num8 = &
 	min: ;{}
@@ -110,7 +118,7 @@ Num8 = &
 		;{ return (double)self }
 	}
 
-.. Num'i.
+.. Numeric.
 	add: {}
 	
 	mul: {}
