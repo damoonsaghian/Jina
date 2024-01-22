@@ -6,6 +6,8 @@ minus operator:
 
 ;[
 floating point numbers are decimal if supported, otherwise they are binary
+	#ifdef __STDC_IEC_60559_DFP__
+	_Decimal32, _Decimal64, _Decimal128
 for some calculations, the operands must first be casted to 80 bit float, and the result casted back to 64 bits
 https://en.wikipedia.org/wiki/Extended_precision
 ]
