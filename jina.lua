@@ -105,18 +105,21 @@ recompile any .jina file whose modification time is newer than the generated .c 
 
 recompile any .c file that the creation time of it or one of the files included in it,
 	is newer than the generated .o file
-cc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
+gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
 
-to create dynamic libs:
-	cc -c -fPIC \"$project_dir\"/.cache/jina/*.c
 linking object files:
 , for programs (there is a file named "0.jina" in the project directory):
-	cc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
+	gcc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
 , for libraries:
-	cc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
+	gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
 	cp \"$project_dir\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
+
+to create dynamic libs:
+	gcc -shared -fPIC -o lib.so \"$project_dir\"/.cache/jina/*.c
+to link against a dynamic library called "lib" in the system lib path:
+	gcc -llib -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
 
 the produced binary will at least need libc and glib2 dynamic libraries on the system
 ]]
