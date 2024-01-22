@@ -26,8 +26,13 @@ numbers:
 , unsigned integer 32 bits (4 bytes): Num4
 , unsigned integer 16 bits (2 bytes): Num2
 , unsigned integer 8 bits (1 byte): Num1
-unsigned integers can be written in hexadecimal format:
-	0x1234'5678'9abc'def0
+literal numbers:
+	1'234'567'890 ;; Num
+	123's ;; Num's
+	123'l ;; Num'l
+	123u8 ;; Num8
+	1.23p4 ;; scientific notation
+	0x1234'5678'9abc'def0 ;; hexadecimal
 
 lists:
 	l :List(Int) = [1, 2, 3]
