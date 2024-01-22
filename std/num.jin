@@ -10,6 +10,12 @@ if possible, do direct computations for decimal floating points (without convert
 	_Decimal32, _Decimal64, _Decimal128
 for some calculations, the operands must first be casted to 80 bit float, and the result casted back to 64 bits
 https://en.wikipedia.org/wiki/Extended_precision
+any floating-point expression may be contracted, that is,
+	calculated as if all intermediate results have infinite range and precision
+	(unless #pragma STDC FP_CONTRACT is off)
+cast and assignment strip away any extraneous range and precision
+	this models the action of storing a value from an extended'precision FPU register,
+	into a standard'sized memory location
 ]
 
 Numeric := Ord..String'rep..&
