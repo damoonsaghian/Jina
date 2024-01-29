@@ -3,7 +3,6 @@
 --[[
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 https://en.cppreference.com/w/c
-http://nethack4.org/blog/building-c.html
 https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
@@ -83,7 +82,7 @@ function compile_jina2c(jina_file_path)
 	the main loop runs messages of UI actors, and then polls (non'waiting) more events (glib2)
 		if there is no more messages for UI actors, wait for events
 	
-	use mutexes or atomics to hold the list of actors
+	use mutexes to hold the list of actors and their message queues
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	https://docs.gtk.org/glib/struct.RWLock.html
 	]]
@@ -100,7 +99,10 @@ if arg[1] == nil then
 end
 
 --[[
-from .jina files generate header files, and overwrite them, if not equal to the old ones (compare their hashes)
+from .jina files generate header files
+if there is an old header file (remained from the last compilation),
+	and it's not equal to the new one (compare their hashes), overwrite the old one
+	otherwise just keep the old one
 recompile any .jina file whose modification time is newer than the generated .c file
 
 recompile any .c file that the creation time of it or one of the files included in it,
