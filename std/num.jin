@@ -2,20 +2,9 @@
 minus operator:
 , unary: "-x" is equivalent to "x.neg()"
 , binary: "x - y" is equivalent to "x.sub(y)"
-]
 
-;[
-if possible, do direct computations for decimal floating points (without converting them to binary)
-	#ifdef __STDC_IEC_60559_DFP__
-	_Decimal32, _Decimal64, _Decimal128
-for some calculations, the operands must first be casted to 80 bit float, and the result casted back to 64 bits
-https://en.wikipedia.org/wiki/Extended_precision
-any floating-point expression may be contracted, that is,
-	calculated as if all intermediate results have infinite range and precision
-	(unless #pragma STDC FP_CONTRACT is off)
-cast and assignment strip away any extraneous range and precision
-	this models the action of storing a value from an extended'precision FPU register,
-	into a standard'sized memory location
+https://flintlib.org/
+https://flintlib.org/doc/fmpz.html
 ]
 
 Numeric := Ord..String'rep..&
@@ -23,12 +12,14 @@ Numeric := Ord..String'rep..&
 	sub:: { self :X', other :X' | :X'
 	}
 	
+	neg: { self :X' | X' }
+	abs: { self :X' | X' }
+	
 	mul: { self :X', other :X' | X' }
 	div: { self :X', other :X' | X' }
 	pow:: { self :X', other :X' | :X'
 	}
 	
-	is'equal: {}
 	is'less: {}
 	
 	to'string: {}
@@ -43,10 +34,6 @@ Num = &
 	
 	next'down: { self | :Num
 	}
-	
-	neg: { self :X' | X' }
-	
-	abs: { self :X' | X' }
 	
 	cos: { self | :Num
 	}
@@ -78,11 +65,12 @@ Num = &
 	log10: { self | :Num
 	}
 	
-	e: ; base of the natural logarithm
-	pi:
 	nan:
 	inf:
-
+	
+	e: ; base of the natural logarithm
+	pi:
+	
 .. Numeric.
 	add: {}
 	
@@ -90,25 +78,25 @@ Num = &
 		;{ return -self }
 	}
 	
+	abs:
+	
 	mul {}
 	
 	div: {}
 	
 	pow: {}
 	
-	is'equal: {}
-	
 	is'less: {}
 	
 	to'string: {}
 
-Num's =
+Num'z =
 
-Num'l =
-
-Num8 = &
+Num1 = &
 	min: ;{}
 	max: ;{}
+	
+	is'equal: {}
 	
 	; bitwise operations
 	bit'and: {}
@@ -119,15 +107,19 @@ Num8 = &
 	shift'r: {}
 	
 	; creates a range iterator
-	to: { self, rhs :Num8 | :Iter(Num8)
+	to: { self, rhs :Num1 | :Iter(Num1)
 	}
 		
-	to'num: { self | :Num
+	to'z: { self | :Num'z
 		;{ return (double)self }
 	}
 
 .. Numeric.
 	add: {}
+	
+	neg:
+	
+	abs:
 	
 	mul: {}
 	
@@ -135,14 +127,12 @@ Num8 = &
 	
 	pow: {}
 	
-	is'equal: {}
-	
 	is'less: {}
 	
 	to'string: {}
 
-Num4 =
-
 Num2 =
 
-Num1 =
+Num4 =
+
+Num8 =
