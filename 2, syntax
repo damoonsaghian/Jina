@@ -19,20 +19,16 @@ mutating mutable variables (unique variables are mutable too):
 	v.set(...)
 
 numbers:
-, floating point 64 bits: Num
-, floating point 32 bits (short): Num's
-, floating point 128 bits (long): Num'l
-, unsigned integer 64 bits (8 bytes): Num8
-, unsigned integer 32 bits (4 bytes): Num4
-, unsigned integer 16 bits (2 bytes): Num2
+, floating point with mid-rad interval arithmetics: Num
+, multi'precision integer: Num'z
 , unsigned integer 8 bits (1 byte): Num1
+, unsigned integer 16 bits (2 bytes): Num2
+, unsigned integer 32 bits (4 bytes): Num4
+, unsigned integer 64 bits (8 bytes): Num8
 literal numbers:
-	1'234'567'890 ;; Num
-	123's ;; Num's
-	123'l ;; Num'l
-	123u8 ;; Num8
-	1.23p4 ;; scientific notation
-	0x1234'5678'9abc'def0 ;; hexadecimal
+	1'234'567'890 ;; can be Num, Num'l, Num'z, Num4, or Num8
+	0x1234'5678'9abc'def0 ;; can be Num'l, Num'z, or Num8
+	1.23p4 ;; can be Num or Num'l
 
 lists:
 	l :List(Int) = [1, 2, 3]
