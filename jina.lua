@@ -98,17 +98,40 @@ if arg[1] == nil then
 	quit(1)
 end
 
+local lfs = require "lfs"
+
+local project_dir = arg[1]
+
+-- compile Jina to C
+for jina_file_name in lfs.dir(project_dir) do
+	if jina_file_name:find(".jin$") then break end
+	
+	local jina_file_path = project_dir.."/"..file_name
+	local c_file_path = project_dir.."/.cache/jina/"..jina_file_name:gsub(".jin$", ".c")
+	
+	generate_header_file(jina_file_path)
+	-- if there is an old header file (remained from the last compilation),
+	-- and it's not equal to the new one (compare their hashes), overwrite the old one
+	-- otherwise just keep the old one
+	
+	local jina_file_mod_time = lfs.attributes(jina_file_path).modification
+	local c_file_mod_time = lfs.attributes(c_file_path).modification
+	if jina_file_mod_time > c_file_mod_time then compile_jina2c(jina_file_path) end
+end
+
+-- compile C
+for c_file_name in lfs.dir(project_dir.."/.cache/jina") do
+	local c_file_path = project_dir.."/.cache/jina/"..c_file_name
+	local object_file_path = project_dir.."/.cache/jina/"..c_file_name:gsub(".c$", ".o")
+	local c_file_mod_time = lfs.attributes(c_file_path).modification
+	local object_file_mod_time = lfs.attributes(object_file_path).modification
+	
+	-- recompile any .c file that the creation time of it or one of the files included in it,
+	-- is newer than the generated .o file
+	-- gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
+end
+
 --[[
-from .jina files generate header files
-if there is an old header file (remained from the last compilation),
-	and it's not equal to the new one (compare their hashes), overwrite the old one
-	otherwise just keep the old one
-recompile any .jina file whose modification time is newer than the generated .c file
-
-recompile any .c file that the creation time of it or one of the files included in it,
-	is newer than the generated .o file
-gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
-
 linking object files:
 , for programs (there is a file named "0.jina" in the project directory):
 	gcc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
