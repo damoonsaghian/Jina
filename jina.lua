@@ -15,9 +15,9 @@ self'referential fields of structures are necessarily private, and use weak refe
 https://docs.gtk.org/glib/reference-counting.html
 
 c closures
-	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
+https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
+
 http://blog.pkh.me/p/20-templating-in-c.html
-https://stackoverflow.com/questions/13716913/default-value-for-struct-member-in-c
 
 string literals and functions in C are stored in code
 https://stackoverflow.com/questions/3473765/string-literal-in-c
@@ -104,10 +104,10 @@ local project_dir = arg[1]
 
 -- compile Jina to C
 for jina_file_name in lfs.dir(project_dir) do
-	if jina_file_name:find(".jin$") then break end
+	if not jina_file_name:find("%.jin$") then break end
 	
 	local jina_file_path = project_dir.."/"..file_name
-	local c_file_path = project_dir.."/.cache/jina/"..jina_file_name:gsub(".jin$", ".c")
+	local c_file_path = project_dir.."/.cache/jina/"..jina_file_name:gsub("%.jin$", ".c")
 	
 	generate_header_file(jina_file_path)
 	-- if there is an old header file (remained from the last compilation),
@@ -119,16 +119,27 @@ for jina_file_name in lfs.dir(project_dir) do
 	if jina_file_mod_time > c_file_mod_time then compile_jina2c(jina_file_path) end
 end
 
+local os = require ""
+
 -- compile C
 for c_file_name in lfs.dir(project_dir.."/.cache/jina") do
 	local c_file_path = project_dir.."/.cache/jina/"..c_file_name
-	local object_file_path = project_dir.."/.cache/jina/"..c_file_name:gsub(".c$", ".o")
 	local c_file_mod_time = lfs.attributes(c_file_path).modification
+	
+	local included_files = {}
+	local included_files_mod_times = {}
+	
+	local object_file_path = project_dir.."/.cache/jina/"..c_file_name:gsub("%.c$", ".o")
 	local object_file_mod_time = lfs.attributes(object_file_path).modification
 	
-	-- recompile any .c file that the creation time of it or one of the files included in it,
-	-- is newer than the generated .o file
-	-- gcc -Wall -Wextra -pedantic -c \"$project_dir\"/.cache/jina/file-name.c
+	-- if the modification time of the C file or one of the files included in it,
+	-- is newer than the object file, recompile it
+	local mod_times = included_files_mod_times.append(c_file_mod_time)
+	for mod_time in mod_times do
+		if mod_time > object_file_mod_time then
+			os.execute("gcc -Wall -Wextra -pedantic -c "..c_file_path)
+		end
+	end
 end
 
 --[[
