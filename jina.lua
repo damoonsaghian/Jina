@@ -1,4 +1,4 @@
-#!/bin/lua5.3
+#!/bin/lua
 
 --[[
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
@@ -95,41 +95,53 @@ end
 
 if arg[1] == nil then
 	printf("interactive Jina is not yet implemented")
-	quit(1)
+	os.exit()
 end
 
-local lfs = require "lfs"
+local pl = require "pl"
 
-local project_dir = arg[1]
+local project_path = arg[1]
+local root_path = project_path
+if lfs.attributes(project_path.."/src", "mode") == "directory" then
+	root_path = project_path.."/src"
+end
+local is_lib = true
 
 -- compile Jina to C
-for jina_file_name in lfs.dir(project_dir) do
-	if not jina_file_name:find("%.jin$") then break end
-	
-	local jina_file_path = project_dir.."/"..file_name
-	local c_file_path = project_dir.."/.cache/jina/"..jina_file_name:gsub("%.jin$", ".c")
-	
-	generate_header_file(jina_file_path)
-	-- if there is an old header file (remained from the last compilation),
-	-- and it's not equal to the new one (compare their hashes), overwrite the old one
-	-- otherwise just keep the old one
-	
-	local jina_file_mod_time = lfs.attributes(jina_file_path).modification
-	local c_file_mod_time = lfs.attributes(c_file_path).modification
-	if jina_file_mod_time > c_file_mod_time then compile_jina2c(jina_file_path) end
+pl.makepath(project_path.."/.cache/jina/c")
+for jina_file_name in lfs.dir(root_path) do
+	if lfs.attributes(jina_file_name, "mode") == "file" and jina_file_name:find("%.jin$") then
+		if jina_file_name:find("^0%.jin$") then is_lib = false end
+		
+		local jina_file_path = project_path.."/"..file_name
+		local c_file_path = project_path.."/.cache/jina/c/"..jina_file_name:gsub("%.jin$", ".c")
+		
+		generate_header_file(jina_file_path)
+		-- if there is an old header file (remained from the last compilation),
+		-- and it's not equal to the new one (compare their hashes), overwrite the old one
+		-- otherwise just keep the old one
+		
+		local jina_file_mod_time = lfs.attributes(jina_file_path).modification
+		local c_file_mod_time = lfs.attributes(c_file_path).modification
+		if jina_file_mod_time > c_file_mod_time then compile_jina2c(jina_file_path) end
+	elseif lfs.attributes(file, "mode") == "directory" then
+		for jina_file_name in lfs.dir(project_path) do
+		end
+	end
 end
 
 local os = require ""
 
--- compile C
-for c_file_name in lfs.dir(project_dir.."/.cache/jina") do
-	local c_file_path = project_dir.."/.cache/jina/"..c_file_name
+-- compile C files to object files
+pl.makepath(project_path.."/.cache/jina/o")
+for c_file_name in lfs.dir(project_path.."/.cache/jina/c") do
+	local c_file_path = project_path.."/.cache/jina/c/"..c_file_name
 	local c_file_mod_time = lfs.attributes(c_file_path).modification
 	
 	local included_files = {}
 	local included_files_mod_times = {}
 	
-	local object_file_path = project_dir.."/.cache/jina/"..c_file_name:gsub("%.c$", ".o")
+	local object_file_path = project_path.."/.cache/jina/o/"..c_file_name:gsub("%.c$", ".o")
 	local object_file_mod_time = lfs.attributes(object_file_path).modification
 	
 	-- if the modification time of the C file or one of the files included in it,
@@ -142,20 +154,23 @@ for c_file_name in lfs.dir(project_dir.."/.cache/jina") do
 	end
 end
 
---[[
-linking object files:
-, for programs (there is a file named "0.jina" in the project directory):
-	gcc -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
-, for libraries:
-	gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_dir\"/.cache/jina/lib \"$project_dir\"/.cache/jina/*.o
-	cp \"$project_dir\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
+-- link object files
+-- the created binary will at least need glib2 and flint dynamic libraries on the system
+if is_lib then
+	--[[
+	gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_path\"/.cache/jina/lib \"$project_path\"/.cache/jina/*.o
+	cp \"$project_path\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
-
-to create dynamic libs:
-	gcc -shared -fPIC -o lib.so \"$project_dir\"/.cache/jina/*.c
-to link against a dynamic library called "lib" in the system lib path:
-	gcc -llib -o \"$project_dir\"/.cache/jina/bin \"$project_dir\"/.cache/jina/*.o
-
-the produced binary will at least need libc and glib2 dynamic libraries on the system
-]]
+	
+	to create dynamic libs:
+		os.execute("gcc -shared -fPIC -o lib.so "..project_path.."/.cache/jina/*.c")
+	to link against a dynamic library called "lib" in the system lib path:
+		gcc -llib -o \"$project_path\"/.cache/jina/bin \"$project_path\"/.cache/jina/*.o
+	
+	link object files in test directory, and run the created executable
+	]]
+else
+	os.execute("gcc -o "..project_path.."/.cache/jina/0 "..project_path.."/.cache/jina/*.o")
+	os.execute(project_path.."/.cache/jina/0")
+end

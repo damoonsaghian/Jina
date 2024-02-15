@@ -1,4 +1,4 @@
-apt-get install lua5.3 lua-filesystem gcc libglib2.0-dev libflint-dev
+apt-get install lua lua-penlight gcc libglib2.0-dev libflint-dev
 
 project_dir="$(dirname "$0")"
 
