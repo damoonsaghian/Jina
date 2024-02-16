@@ -39,7 +39,7 @@ function generate_header_file(jina_file_path, h_file_path)
 	-- otherwise just keep the old one
 end
 
-function compile_jina2c(jina_file_path, c_file_path)
+function generate_c_file(jina_file_path, c_file_path)
 	--[[
 	fill the table of module identifiers and their types
 	check for type consistency in the module, and with header files
@@ -117,46 +117,44 @@ dir.makepath(c_dir_path)
 dir.makepath(o_dir_path)
 local is_lib = true
 
--- compile Jina files to C files
-for jina_file_path in dir.getallfiles(src_dir_path, "%.jin$") do
-	if file_name:find("^0%.jin$") then is_lib = false end
-	
+-- generate C files
+dir.getallfiles(src_dir_path, "%.jin$"):foreach(function (jina_file_path)
 	local jina_file_relpath = path.relpath(jina_file_path, src_dir_path)
 	
-	local h_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)..".h")
+	if jina_file_relpath == "0.jin" then is_lib = false end
+	
+	local h_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)) .. ".h"
 	generate_header_file(jina_file_path, h_file_path)
 	
-	local c_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)..".c")
-	local jina_file_mod_time = path.getmtime(jina_file_path)
+	local c_file_path = path.splitext(h_file_path) .. ".c"
+	local jina_file_modtime = path.getmtime(jina_file_path)
 	local c_file_modtime = path.getmtime(c_file_path)
 	if jina_file_modtime > c_file_modtime then
 		compile_jina2c(jina_file_path, c_file_path)
 	end
-end
+end)
 
 -- compile C files to object files
-for c_file_path in dir.getallfiles(c_dir_path, "%.c$") do
-	-- if for the c file, there is no corresponding jina file, delete it and its header file, then break
-	
-	local c_file_modtime = path.getmtime(c_file_path)
-	
-	local included_files = {}
-	local included_files_modtimes = {}
+dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
+	-- if for the c file, there is no corresponding jina file, delete it and its header file, then return
 	
 	local c_file_relpath = path.relpath(c_file_path, src_dir_path)
 	local o_file_name = c_file_relpath:gsub("%.c$", ".o"):gsub(path.sep, "__")
-	
 	local o_file_path = path.join(o_dir_path, o_file_name)
 	local o_file_modtime = path.getmtime(o_file_path)
 	
+	local modtimes = { path.getmtime(c_file_path) }
+	-- find the modification times of all included files, and add them to the list
+	
 	-- if the modification time of the C file or one of the files included in it,
 	-- is newer than the object file, recompile it
-	for modtime in included_files_modtimes.append(c_file_modtime) do
+	for _, modtime in ipairs(modtimes) do
 		if modtime > o_file_modtime then
 			os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
+			break
 		end
 	end
-end
+end)
 
 -- link object files
 -- the created binary will at least need glib2 and flint dynamic libraries on the system
@@ -175,6 +173,6 @@ if is_lib then
 	link object files in test directory, and run the created executable
 	]]
 else
-	os.execute("gcc -o "..project_path.."/.cache/jina/0 "..project_path.."/.cache/jina/*.o")
+	os.execute("gcc -o "..path.join(project_path, "/.cache/jina/0 ")..project_path.."/.cache/jina/o/*.o")
 	os.execute(project_path.."/.cache/jina/0")
 end
