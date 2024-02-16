@@ -31,10 +31,15 @@ https://github.com/Microsoft/mimalloc
 libmimalloc-dev
 ]]
 
-function generate_header_file(source_file_path)
+function generate_header_file(jina_file_path, h_file_path)
+	-- generate header and store it in a var
+	-- generate its hash
+	-- if there is an old header file (remained from the last compilation),
+	-- and it's not equal to the new one (compare their hashes), overwrite the old one
+	-- otherwise just keep the old one
 end
 
-function compile_jina2c(jina_file_path)
+function compile_jina2c(jina_file_path, c_file_path)
 	--[[
 	fill the table of module identifiers and their types
 	check for type consistency in the module, and with header files
@@ -98,58 +103,57 @@ if arg[1] == nil then
 	os.exit()
 end
 
-local pl = require "pl"
+local path = require "pl/path"
+local dir = require "pl/dir"
 
-local project_path = arg[1]
-local root_path = project_path
-if lfs.attributes(project_path.."/src", "mode") == "directory" then
-	root_path = project_path.."/src"
+local project_dir_path = arg[1]
+local src_dir_path = path.join(project_dir_path, "src")
+if not path.isdir(src_dir_path) then
+	src_dir_path = project_dir_path
 end
+local c_dir_path = path.join(project_dir_path, ".cache/jina/c")
+local o_dir_path = path.join(project_dir_path, ".cache/jina/o")
+dir.makepath(c_dir_path)
+dir.makepath(o_dir_path)
 local is_lib = true
 
--- compile Jina to C
-pl.makepath(project_path.."/.cache/jina/c")
-for jina_file_name in lfs.dir(root_path) do
-	if lfs.attributes(jina_file_name, "mode") == "file" and jina_file_name:find("%.jin$") then
-		if jina_file_name:find("^0%.jin$") then is_lib = false end
-		
-		local jina_file_path = project_path.."/"..file_name
-		local c_file_path = project_path.."/.cache/jina/c/"..jina_file_name:gsub("%.jin$", ".c")
-		
-		generate_header_file(jina_file_path)
-		-- if there is an old header file (remained from the last compilation),
-		-- and it's not equal to the new one (compare their hashes), overwrite the old one
-		-- otherwise just keep the old one
-		
-		local jina_file_mod_time = lfs.attributes(jina_file_path).modification
-		local c_file_mod_time = lfs.attributes(c_file_path).modification
-		if jina_file_mod_time > c_file_mod_time then compile_jina2c(jina_file_path) end
-	elseif lfs.attributes(file, "mode") == "directory" then
-		for jina_file_name in lfs.dir(project_path) do
-		end
+-- compile Jina files to C files
+for jina_file_path in dir.getallfiles(src_dir_path, "%.jin$") do
+	if file_name:find("^0%.jin$") then is_lib = false end
+	
+	local jina_file_relpath = path.relpath(jina_file_path, src_dir_path)
+	
+	local h_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)..".h")
+	generate_header_file(jina_file_path, h_file_path)
+	
+	local c_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)..".c")
+	local jina_file_mod_time = path.getmtime(jina_file_path)
+	local c_file_modtime = path.getmtime(c_file_path)
+	if jina_file_modtime > c_file_modtime then
+		compile_jina2c(jina_file_path, c_file_path)
 	end
 end
 
-local os = require ""
-
 -- compile C files to object files
-pl.makepath(project_path.."/.cache/jina/o")
-for c_file_name in lfs.dir(project_path.."/.cache/jina/c") do
-	local c_file_path = project_path.."/.cache/jina/c/"..c_file_name
-	local c_file_mod_time = lfs.attributes(c_file_path).modification
+for c_file_path in dir.getallfiles(c_dir_path, "%.c$") do
+	-- if for the c file, there is no corresponding jina file, delete it and its header file, then break
+	
+	local c_file_modtime = path.getmtime(c_file_path)
 	
 	local included_files = {}
-	local included_files_mod_times = {}
+	local included_files_modtimes = {}
 	
-	local object_file_path = project_path.."/.cache/jina/o/"..c_file_name:gsub("%.c$", ".o")
-	local object_file_mod_time = lfs.attributes(object_file_path).modification
+	local c_file_relpath = path.relpath(c_file_path, src_dir_path)
+	local o_file_name = c_file_relpath:gsub("%.c$", ".o"):gsub(path.sep, "__")
+	
+	local o_file_path = path.join(o_dir_path, o_file_name)
+	local o_file_modtime = path.getmtime(o_file_path)
 	
 	-- if the modification time of the C file or one of the files included in it,
 	-- is newer than the object file, recompile it
-	local mod_times = included_files_mod_times.append(c_file_mod_time)
-	for mod_time in mod_times do
-		if mod_time > object_file_mod_time then
-			os.execute("gcc -Wall -Wextra -pedantic -c "..c_file_path)
+	for modtime in included_files_modtimes.append(c_file_modtime) do
+		if modtime > o_file_modtime then
+			os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
 		end
 	end
 end
