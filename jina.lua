@@ -68,6 +68,8 @@ function generate_c_file(jina_file_path, c_file_path)
 	int main(int argc, char* argv[]) {}
 	]]
 	
+	-- packages are included as system files (using "<>")
+	
 	--[[
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
 		and then run the main loop
@@ -115,41 +117,52 @@ local c_dir_path = path.join(project_dir_path, ".cache/jina/c")
 local o_dir_path = path.join(project_dir_path, ".cache/jina/o")
 dir.makepath(c_dir_path)
 dir.makepath(o_dir_path)
-local is_lib = true
 
 -- generate C files
 dir.getallfiles(src_dir_path, "%.jin$"):foreach(function (jina_file_path)
-	local jina_file_relpath = path.relpath(jina_file_path, src_dir_path)
+	local relpath_wo_ext, _ = path.splitext(
+		path.relpath(jina_file_path, src_dir_path)
+	)
 	
-	if jina_file_relpath == "0.jin" then is_lib = false end
-	
-	local h_file_path = path.join(c_dir_path, path.splitext(jina_file_relpath)) .. ".h"
+	local h_file_path = path.join(c_dir_path, relpath_wo_ext..".h")
 	generate_header_file(jina_file_path, h_file_path)
 	
-	local c_file_path = path.splitext(h_file_path) .. ".c"
-	local jina_file_modtime = path.getmtime(jina_file_path)
-	local c_file_modtime = path.getmtime(c_file_path)
-	if jina_file_modtime > c_file_modtime then
+	local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
+	local jina_file_mtime = path.getmtime(jina_file_path)
+	local c_file_mtime = path.getmtime(c_file_path)
+	if jina_file_mtime > c_file_mtime then
 		compile_jina2c(jina_file_path, c_file_path)
 	end
 end)
 
+local dlinks = "glib2,flint"
+
 -- compile C files to object files
 dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
-	-- if for the c file, there is no corresponding jina file, delete it and its header file, then return
+	local relpath_wo_ext, _ = path.splitext(
+		path.relpath(c_file_path, c_dir_path)
+	)
 	
-	local c_file_relpath = path.relpath(c_file_path, src_dir_path)
-	local o_file_name = c_file_relpath:gsub("%.c$", ".o"):gsub(path.sep, "__")
+	-- if for the C file, there is no corresponding jina file, delete it and its header file, then return
+	local jina_file_path = path.join(src_dir_path, relpath_wo_ext..".jin")
+	if not path.isfile(jina_file_path) then
+		os.remove(c_file_path)
+		os.remove(path.join(c_dir_path, relpath_wo_ext)..".h")
+		return
+	end
+	
+	local o_file_name = relpath_wo_ext:gsub(path.sep, "__") .. ".o"
 	local o_file_path = path.join(o_dir_path, o_file_name)
-	local o_file_modtime = path.getmtime(o_file_path)
+	local o_file_mtime = path.getmtime(o_file_path)
 	
-	local modtimes = { path.getmtime(c_file_path) }
+	local mtimes = { path.getmtime(c_file_path) }
 	-- find the modification times of all included files, and add them to the list
+	-- also add the name of all system libs to dlinks
 	
 	-- if the modification time of the C file or one of the files included in it,
 	-- is newer than the object file, recompile it
-	for _, modtime in ipairs(modtimes) do
-		if modtime > o_file_modtime then
+	for _, mtime in ipairs(mtimes) do
+		if mtime > o_file_mtime then
 			os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
 			break
 		end
@@ -157,10 +170,21 @@ dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 end)
 
 -- link object files
--- the created binary will at least need glib2 and flint dynamic libraries on the system
-if is_lib then
+-- the created binary will need glib2 and flint dynamic libraries
+if path.isfile(path.join(src_dir_path, "0.jin")) then
+	local out_file_path = path.join(project_path, ".cache/jina/0")
+	os.execute("gcc -l{" .. dlinks .. "} -o " ..
+		out_file_path .. " " ..
+		o_file_path .. "/*.o"
+	)
+	os.execute(out_file_path)
+else
+	os.execute("gcc -Wl,-soname,lib.so.$ver -o " ..
+		path.join(project_path, ".cache/jina/lib") .. " " ..
+		o_file_path .. "/*.o"
+	)
+	
 	--[[
-	gcc -Wl,-soname,lib.so.$ver_maj -o \"$project_path\"/.cache/jina/lib \"$project_path\"/.cache/jina/*.o
 	cp \"$project_path\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
 	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
 	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
@@ -172,7 +196,4 @@ if is_lib then
 	
 	link object files in test directory, and run the created executable
 	]]
-else
-	os.execute("gcc -o "..path.join(project_path, "/.cache/jina/0 ")..project_path.."/.cache/jina/o/*.o")
-	os.execute(project_path.."/.cache/jina/0")
 end
