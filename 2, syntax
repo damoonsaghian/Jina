@@ -111,8 +111,7 @@ and or:
 which are equivalent to:
 	a .and {b}
 	a .or {b}
-not:
-	-a
+not: -a
 
 matching:
 	a # {
@@ -135,14 +134,17 @@ other definitions are accessable through the module's name: module'name.definiti
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 
-a package is a directory of modules
+a package is a collection of modules that are compiled to a shared object file,
+	which can be dynamically linked to
 to use a package in a project, create a ".p" file
-".p" files contain URL lines (protocol can be gnunet, git or lib):
+".p" files contain:
+, URL lines (protocol can be gnunet, git or lib):
 	protocol://address'of'package'directory
-URL line will be tried in the given order, until one is available
+, comment lines, begining with a semicolon
+URL lines will be tried in the given order, until one is available
 if the protocol is git or gnunet, the following line must contain a public key,
 	will be used to check the given signature
-to use the a module inside a package:
+to use a module inside a package:
 	package'file'name.Module
 definitions in "std" package are directly accessable; there is no need for a ".p" file
 packages that contain a file named "0.jina" (which must contain the init function) are program packages
