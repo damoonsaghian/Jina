@@ -98,6 +98,9 @@ end
 function add_package()
 	-- if a module is imported using gnunet or git, see if gnunet/git is installed
 	-- and if not, ask the user to install them first, then exit with error
+	
+	-- packages are downloaded to ~/.local/share/jina/packages/package-name
+	-- compiled to ~/.cache/jina/lib/package-name.so
 end
 
 if arg[1] == nil then
@@ -135,6 +138,7 @@ dir.getallfiles(src_dir_path, "%.jin$"):foreach(function (jina_file_path)
 	end
 end)
 
+-- the created binary will at leat need glib2 and flint dynamic libraries
 local dlinks = "glib2,flint"
 
 -- compile C files to object files
@@ -170,30 +174,19 @@ dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 end)
 
 -- link object files
--- the created binary will need glib2 and flint dynamic libraries
 if path.isfile(path.join(src_dir_path, "0.jin")) then
 	local out_file_path = path.join(project_path, ".cache/jina/0")
 	os.execute("gcc -l{" .. dlinks .. "} -o " ..
 		out_file_path .. " " ..
 		o_file_path .. "/*.o"
 	)
-	os.execute(out_file_path)
+	os.execute("LD_LIBRARY_PATH=~/.cache/jina/lib "..out_file_path)
 else
-	os.execute("gcc -Wl,-soname,lib.so.$ver -o " ..
-		path.join(project_path, ".cache/jina/lib") .. " " ..
+	os.execute("gcc -Wl,-soname,lib.so.$ver -l{" .. dlinks .. "} -o " ..
+		path.join(project_path, ".cache/jina/so") .. " " ..
 		o_file_path .. "/*.o"
 	)
 	
-	--[[
-	cp \"$project_path\"/.cache/jina/lib /usr/local/lib/lib${lib_name}.so.${ver_maj}.${ver_min}
-	ln -s /usr/local/lib/libjina.so.${ver_maj}.${ver_min} /usr/local/lib/libjina.so.$ver_maj
-	ln -s /usr/local/lib/libjina.so.$ver_maj /usr/local/lib/libjina.so
-	
-	to create dynamic libs:
-		os.execute("gcc -shared -fPIC -o lib.so "..project_path.."/.cache/jina/*.c")
-	to link against a dynamic library called "lib" in the system lib path:
-		gcc -llib -o \"$project_path\"/.cache/jina/bin \"$project_path\"/.cache/jina/*.o
-	
-	link object files in test directory, and run the created executable
-	]]
+	-- link object files in "projict_dir/test" directory, and run the created executable
+	-- LD_LIBRARY_PATH=~/.cache/jina/lib
 end
