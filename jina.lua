@@ -100,7 +100,9 @@ function add_package()
 	-- and if not, ask the user to install them first, then exit with error
 	
 	-- packages are downloaded to ~/.local/share/jina/packages/package-name
-	-- compiled to ~/.cache/jina/lib/package-name.so
+	-- compiled and then:
+	-- ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
+	-- ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
 end
 
 if arg[1] == nil then
@@ -138,7 +140,7 @@ dir.getallfiles(src_dir_path, "%.jin$"):foreach(function (jina_file_path)
 	end
 end)
 
--- the created binary will at leat need glib2 and flint dynamic libraries
+-- the created binary will at least need glib2 and flint dynamic libraries
 local dlinks = "glib2,flint"
 
 -- compile C files to object files
@@ -162,6 +164,7 @@ dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 	local mtimes = { path.getmtime(c_file_path) }
 	-- find the modification times of all included files, and add them to the list
 	-- also add the name of all system libs to dlinks
+	-- create the file "project_dir_path/.cache/jina/deps" that contains the name of all needed shared object files
 	
 	-- if the modification time of the C file or one of the files included in it,
 	-- is newer than the object file, recompile it
@@ -180,7 +183,7 @@ if path.isfile(path.join(src_dir_path, "0.jin")) then
 		out_file_path .. " " ..
 		o_file_path .. "/*.o"
 	)
-	os.execute("LD_LIBRARY_PATH=~/.cache/jina/lib "..out_file_path)
+	os.execute("LD_LIBRARY_PATH=. "..out_file_path)
 else
 	os.execute("gcc -Wl,-soname,lib.so.$ver -l{" .. dlinks .. "} -o " ..
 		path.join(project_path, ".cache/jina/so") .. " " ..
@@ -188,5 +191,5 @@ else
 	)
 	
 	-- link object files in "projict_dir/test" directory, and run the created executable
-	-- LD_LIBRARY_PATH=~/.cache/jina/lib
+	-- LD_LIBRARY_PATH=.
 end
