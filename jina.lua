@@ -164,13 +164,16 @@ dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 	local mtimes = { path.getmtime(c_file_path) }
 	-- find the modification times of all included files, and add them to the list
 	-- also add the name of all system libs to dlinks
-	-- create the file "project_dir_path/.cache/jina/deps" that contains the name of all needed shared object files
 	
 	-- if the modification time of the C file or one of the files included in it,
 	-- is newer than the object file, recompile it
 	for _, mtime in ipairs(mtimes) do
 		if mtime > o_file_mtime then
-			os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
+			if path.isfile(path.join(src_dir_path, "0.jin")) then
+				os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
+			else
+				os.execute("gcc -Wall -Wextra -Wpedantic -fPIC -c "..c_file_path.." -o "..o_file_path)
+			end
 			break
 		end
 	end
@@ -178,16 +181,12 @@ end)
 
 -- link object files
 if path.isfile(path.join(src_dir_path, "0.jin")) then
-	local out_file_path = path.join(project_path, ".cache/jina/0")
-	os.execute("gcc -l{" .. dlinks .. "} -o " ..
-		out_file_path .. " " ..
-		o_file_path .. "/*.o"
-	)
-	os.execute("LD_LIBRARY_PATH=. "..out_file_path)
+	local executable_path = path.join(project_path, ".cache/jina/0")
+	os.execute("gcc "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..executable_path)
+	os.execute("LD_LIBRARY_PATH=. "..executable_path)
 else
-	os.execute("gcc -Wl,-soname,lib.so.$ver -l{" .. dlinks .. "} -o " ..
-		path.join(project_path, ".cache/jina/so") .. " " ..
-		o_file_path .. "/*.o"
+	os.execute("gcc -shared "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..
+		path.join(project_path, ".cache/jina/so")
 	)
 	
 	-- link object files in "projict_dir/test" directory, and run the created executable
