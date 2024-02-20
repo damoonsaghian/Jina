@@ -142,7 +142,6 @@ to use a package in a project, create a ".p" file
 	protocol://address'of'package'directory
 , comment lines, begining with a semicolon
 URL lines will be tried in the given order, until one is available
-version of a package is part of its address
 if the protocol is git or gnunet, the following line must contain a public key,
 	will be used to check the given signature
 to use a module inside a package:
