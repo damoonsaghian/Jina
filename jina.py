@@ -8,6 +8,27 @@ https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://libcello.org/
 
+https://en.cppreference.com/w/c/language/value_category
+https://en.cppreference.com/w/c/language/restrict
+https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
+https://sourceware.org/glibc/manual/html_node/index.html
+https://web.archive.org/web/20051224211528/http://www.network-theory.co.uk/docs/gccintro/
+	https://web.archive.org/web/20051215144235/http://www.network-theory.co.uk/docs/gccintro/gccintro_13.html
+	https://web.archive.org/web/20051215144300/http://www.network-theory.co.uk/docs/gccintro/gccintro_14.html
+	https://web.archive.org/web/20060116041513/http://www.network-theory.co.uk/docs/gccintro/gccintro_16.html
+	https://web.archive.org/web/20051215144452/http://www.network-theory.co.uk/docs/gccintro/gccintro_18.html
+	https://web.archive.org/web/20051215144519/http://www.network-theory.co.uk/docs/gccintro/gccintro_19.html
+https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+	https://gcc.gnu.org/onlinedocs/gcc/Overall-Options.html
+	https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html
+	https://gcc.gnu.org/onlinedocs/gcc/Spec-Files.html
+	https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html
+	https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
+	https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html
+https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Pointers
+https://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
+https://docs.openeuler.org/en/docs/20.09/docs/ApplicationDev/using-gcc-for-compilation.html
+
 only the actor can destroy the heap references it creates
 	other actors just send reference'counting messages
 	so we do not need atomic reference counting
@@ -50,8 +71,8 @@ def generate_c_file(jina_file_path, c_file_path):
 	otherwise use the first word as the function's name
 	if it's a definition, add it to the table of local definition which contains their types
 	
-	https://lunarmodules.github.io/luafilesystem/
-	https://lunarmodules.github.io/luafilesystem/manual.html
+	https://docs.python.org/3/
+	https://docs.python.org/3/library/subprocess.html
 	
 	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
 		https://github.com/edubart/nelua-lang/blob/master/lualib/nelua/ccompiler.lua
@@ -66,8 +87,6 @@ def generate_c_file(jina_file_path, c_file_path):
 	
 	int main(int argc, char* argv[]) {}
 	'''
-	
-	# packages are included as system files (using "<>")
 	
 	'''
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
@@ -93,14 +112,13 @@ def generate_c_file(jina_file_path, c_file_path):
 	https://docs.gtk.org/glib/struct.RWLock.html
 	'''
 
-if arg[1] == nil:
+import sys
+
+if sys.argv[1] == None:
 	printf("interactive Jina is not yet implemented")
-	os.exit()
+	sys.exit()
 
-path = require "pl/path"
-dir = require "pl/dir"
-
-project_dir_path = arg[1]
+project_dir_path = sys.argv[1]
 src_dir_path = path.join(project_dir_path, "src")
 if !path.isdir(src_dir_path):
 	src_dir_path = project_dir_path
