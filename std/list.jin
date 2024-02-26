@@ -1,6 +1,6 @@
 ;{ #include <glib-2.0/glib/garray.h> }
 
-;[
+;(
 the initial value will be kept in an array with the same size
 when we try to mutate it, the size will be checked, and if needed, a dynamic array will be created on the heap
 
@@ -16,7 +16,7 @@ there is a field that contains the address of an array (on the heap),
 	that keeps addresses and indexes of the following segments (also on the heap)
 	index of a segment is the index of its first element in the whole array
 https://github.com/amadvance/tommyds/
-]
+)
 
 List :=
 

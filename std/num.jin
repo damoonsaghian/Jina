@@ -1,11 +1,11 @@
-;[
+;(
 minus operator:
 , unary: "-x" is equivalent to "x.neg()"
 , binary: "x - y" is equivalent to "x.sub(y)"
 
 https://flintlib.org/
 https://flintlib.org/doc/fmpz.html
-]
+)
 
 Numeric := Ord..String'rep..&
 	add: { self :X':Num, other :X' | X' }
@@ -98,7 +98,7 @@ Num1 = &
 	
 	is'equal: {}
 	
-	; bitwise operations
+	;; bitwise operations
 	bit'and: {}
 	bit'or: {}
 	bit'xor: {}
@@ -106,7 +106,7 @@ Num1 = &
 	shift'l: {}
 	shift'r: {}
 	
-	; creates a range iterator
+	;; creates a range iterator
 	to: { self, rhs :Num1 | :Iter(Num1)
 	}
 		

@@ -1,13 +1,13 @@
 ;{ #include <glib-2.0/gio/gio.h> }
-; https://docs.gtk.org/gio/
-; https://docs.gtk.org/gio/class.VolumeMonitor.html
+;; https://docs.gtk.org/gio/
+;; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
 File :=
 
 File = &
 	; open a file or create it, if it doesn't already exist
 	open: { path :String, mode :String = "", cb ::{ f :?File | () } |
-		; create an empty actor that will call "cb" when the file is open
+		;; create an empty actor that will call "cb" when the file is open
 	}
 	
 	append: {}
@@ -21,7 +21,7 @@ File = &
 	copy: { source'path :String, destination'path :String, cb ::{} = {} |
 	}
 	
-	; max_size is in megabytes
+	;; max_size is in megabytes
 	read: { self, max'size :Num8, cb ::{ buf :Array(Num1) } |
 	}
 
@@ -29,5 +29,5 @@ File = &
 	}
 
 	destructor: { self |
-		; close the file descriptor
+		;; close the file descriptor
 	}

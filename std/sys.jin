@@ -11,7 +11,7 @@ Sys = &
 	}
 	
 	read: { cb ::{} | :String
-		; read from stdin (non'blocking io)
+		;; read from stdin (non'blocking io)
 	}
 	
 	exec: { program'name :String, args :String | :(stdin: File, stdout: File)
@@ -24,5 +24,5 @@ Sys = &
 	}
 	
 	get'time: { format :String = "" | :String
-		; sys/time.h
+		;; sys/time.h
 	}

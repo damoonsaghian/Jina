@@ -1,7 +1,7 @@
 String := Array(Num1)
 
 String = &
-	; change array methods to respect UTF8 encoding
+	;; change array methods to respect UTF8 encoding
 	
 	replace: { self, substring :String, replacement :String | :Bool
 	}
@@ -18,13 +18,13 @@ String = &
 	}
 	trim'suffix: { self!, suffix :Self |
 	}
-	; trim ASCII whitespace from the start of the string
+	;; trim ASCII whitespace from the start of the string
 	trim'start: { self! |
 	}
-	; trim ASCII whitespace from the end of the string
+	;; trim ASCII whitespace from the end of the string
 	trim'end: { self! |
 	}
-	; trim ASCII whitespace from the start and end of the string
+	;; trim ASCII whitespace from the start and end of the string
 	trim: { self! |
 	}
 	
