@@ -1,8 +1,8 @@
-apt-get install python3 gcc libglib2.0-dev libflint-dev
+apt-get install lua lua-penlight gcc libglib2.0-dev libflint-dev
 
 project_dir="$(dirname "$0")"
 
-cp "$project_dir/jina.py" /usr/local/bin/jina
+cp "$project_dir/jina.lua" /usr/local/bin/jina
 chmod +x /usr/local/bin/jina
 
 mkdir -p /usr/local/lib/jina/
