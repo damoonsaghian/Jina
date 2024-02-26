@@ -1,12 +1,10 @@
-comment line (";" must be the first non'whitespace charactor on the line):
-	; comment
-comment at the end of a line:
+comment line:
 	;; comment
 comment block:
-	;[
-	braket pairs can be nested: []
-	to write single brakets, put them in double quotes: "]"
-	]
+	;(
+	pairs of parentheses can be nested: ()
+	parentheses inside quotes will be ignored: ")"
+	)
 
 variable definition (unique by default):
 	v :T = ...
