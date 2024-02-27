@@ -6,15 +6,14 @@ comment block:
 	parentheses inside quotes will be ignored: ")"
 	)
 
-variable definition (unique by default):
+variable definition (unique):
 	v :T = ...
 	v = ...
 immutable and mutable referece counted variables:
 	v ::T = ...
 	v !:T = ...
-mutating mutable variables (unique variables are mutable too):
-	v .= ...
-	v.set(...)
+assignment after definition (only possible for mutable and unique variables):
+	v = ...
 
 numbers:
 , floating point with mid-rad interval arithmetics: Num
@@ -72,7 +71,6 @@ records can be matched on smaller records:
 tagged fields can be matched on untaged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 mutating a record:
-	r.a .= 10
 	r.a = 10
 
 record extension:
