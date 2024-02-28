@@ -5,17 +5,16 @@ at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
 memory management is done in a sane way, by distinguishing 2 kinds of variables:
-, immutable/mutable borrow variables: function parameters (by default):
-	v :T
-	v !T
+, immutable/mutable borrow variables
 , immutable/mutable own variables:
-	v ::T
-	v !:T
+note that in Jina, mutability and ownership are properties of variables, not types
 
-note that in Jina, mutability and reference kinds are properties of variables, not types
-
-immutable borrow var can only be assigned to immutable borrow var
-mutable borrow var can only be assigned to immutable/mutable borrow var
+immutable borrow var can only be put into immutable borrow var
+mutable borrow var can only be put into immutable/mutable borrow var
+note that here "put into" means:
+, variable assignment
+, field assignment
+, variable capture in functions
 
 assigning immutable own var to immutable/mutable borrow var is/isn't possible
 assigning immutable own var to immutable own var:
