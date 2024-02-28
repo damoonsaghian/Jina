@@ -4,39 +4,32 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil regime in Iran
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, by distinguishing 5 kinds of variables:
-, unique variables: definitions and function returns (by default):
-	v :T = ...
-	{ :T }
+memory management is done in a sane way, by distinguishing 2 kinds of variables:
 , immutable/mutable borrow variables: function parameters (by default):
-	{ x :T, y !T | ... }
-, immutable/mutable reference counted variables must be indicated explicitly:
+	v :T
+	v !T
+, immutable/mutable own variables:
 	v ::T
 	v !:T
 
 note that in Jina, mutability and reference kinds are properties of variables, not types
 
-assigning unique var to unique var:
-	, stack type: copy
-	, heap type: if not used in the code that follows, move, otherwise copy
-assigning unique var to immutable/mutable borrow var is possible
-assigning unique var to immutable/mutable reference counted var:
-	, stack type: copy to heap
-	, heap type: if not used in the code that follows, move, otherwise copy
-
 immutable borrow var can only be assigned to immutable borrow var
 mutable borrow var can only be assigned to immutable/mutable borrow var
-borrow variable can't exit at the scope of the borrower, so they don't need memory management
 
-assigning immutable ref counted var to unique var: not possible
-assigning immutable ref counted var to immutable/mutable borrow var is/isn't possible
-assigning immutable ref counted var to immutable ref counted var: increase reference count
-assigning immutable ref counted var to mutable ref counted var: not possible
+assigning immutable own var to immutable/mutable borrow var is/isn't possible
+assigning immutable own var to immutable own var:
+, stack part: copy
+, heap part: if ref count is zero and it isn't used in the following code, move,
+	otherwise increase reference count
+assigning immutable own var to mutable own var: not possible
 
-assigning mutable ref counted var to unique var: not possible
-assigning mutable ref counted var to immutable/mutable borrow var: possible
-assigning mutable ref counted var to immutable ref counted var: copy
-assigning mutable ref counted var to mutable ref counted var: increase reference count
+assigning mutable own var to immutable/mutable borrow var is possible
+assigning mutable own var to immutable own var: not possible
+assigning mutable ref counted var to mutable ref counted var:
+, stack part: copy
+, heap part: if ref count is zero and it isn't used in the following code, move,
+	otherwise increase reference count
 
 numbers are stored on the stack (thus don't need memory management)
 lists and dictionaries are stored on the heap
@@ -66,8 +59,8 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 	i think the main reason for its complexities is that even class fields have reference capabilities
 
-in Jina, as shown above, mutable variables will be copied, when captured in immutable functions
-messages are sent to actors via immutable functions
+in Jina, as shown above, mutable variables can't be captured in immutable own functions
+messages are sent to actors via immutable own functions
 so in Jina, all mutations will be synchronous
 
 immutable functions with null return can be called asynchronously, since they can't affect their environment
