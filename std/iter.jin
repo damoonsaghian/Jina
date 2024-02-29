@@ -1,11 +1,12 @@
-Iter' := Actor index: Num4 poll: { index :Num4 | ?X' }
+Iter' := index: Num4 poll: { index :Num4 | ?X' }
 
 Iter = &
-	new: { poll ::{ index :Int | ?X' } | :Iter(X')
-		Actor.new index: 0 poll
+	new: { poll ::{ index :Num4 | ?X' } | :Iter(X')
+		Iter. index: 0 poll
 	}
 	
-	each: { self, do !:{ elem :X' | } |
+	each: { self, do !:{ elem :X' | Y' } |
+		;{}
 		elem = self.poll(self.index + 1)
-		self.repeat do til: (elem == ())
+		;{}
 	}
