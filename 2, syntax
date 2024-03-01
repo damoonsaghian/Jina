@@ -132,7 +132,6 @@ modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
 	and possibly an additional extension (a number or a word starting with an apostrophe)
 	will be exported (ie is accessable outside of the module)
-other definitions are accessable through the module's name: module'name.definition
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 

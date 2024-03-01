@@ -16,19 +16,13 @@ note that here "put into" means:
 , field assignment
 , variable capture in functions
 
-assigning immutable own var to immutable/mutable borrow var is/isn't possible
-assigning immutable own var to immutable own var:
+putting immutable own var into immutable/mutable borrow var is/isn't possible
+putting mutable own var into immutable/mutable borrow var is possible
+putting immutable/mutable own var into immutable/mutable own var:
 , stack part: copy
-, heap part: if ref count is zero and it isn't used in the following code, move,
+, heap part: if reference count is zero and it isn't used in the following code, move,
 	otherwise increase reference count
-assigning immutable own var to mutable own var: not possible
-
-assigning mutable own var to immutable/mutable borrow var is possible
-assigning mutable own var to immutable own var: not possible
-assigning mutable ref counted var to mutable ref counted var:
-, stack part: copy
-, heap part: if ref count is zero and it isn't used in the following code, move,
-	otherwise increase reference count
+putting immutable/mutable own var into mutable/immutable own var is not possible
 
 numbers are stored on the stack (thus don't need memory management)
 lists and dictionaries are stored on the heap

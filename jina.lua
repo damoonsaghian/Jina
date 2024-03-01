@@ -1,4 +1,4 @@
-#!/usr/bin/lua
+#!/usr/bin/env lua
 
 --[[
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
