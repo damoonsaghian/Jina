@@ -40,8 +40,8 @@ indexing:
 negative indices count from the end of the list
 mutating lists:
 	l! = [1, 2, 3]
-	l.put 0 index: 0 ;; [0, 2, 3]
-	l.put 4 index: 3 ;; [0, 2, 3, 4]
+	l..put 0 index: 0 ;; [0, 2, 3]
+	l..put 4 index: 3 ;; [0, 2, 3, 4]
 initial value of lists will be kept on stack
 heap allocation will be used only when the lists needs to grow beyond its initial size
 
@@ -68,7 +68,8 @@ indexing:
 records:
 	r :(a: Int, b: Int, c: Int) = a: 1, b: 2, c: 3
 	r :(Int, Int, c: Int) = 1, 2, c: 3
-alternative syntax: & a: 1 b: 2 c: 3
+alternative syntax:
+	. a: 1 b: 2 c: 3
 to access an element:
 	r.a
 	r.0
@@ -80,11 +81,11 @@ mutating a record:
 	r.a = 10
 
 record extension:
-	(a: 1, b: 2)..(c: 3, d: 4)
+	(a: 1, b: 2) & (c: 3, d: 4)
 the above behaves like:
 	(a: 1, b: 2, c: 3, d: 4)
 masking fields with the same type:
-	(a: 1, b: 2)..(b: 3, c: 4)
+	(a: 1, b: 2) & (b: 3, c: 4)
 which behaves like:
 	(a: 1, b: 3, c: 4)
 
@@ -95,24 +96,30 @@ note that the type of above function is:
 this somehow strange type is to avoid contravarient behaviour of function arguments, when we introduce interfaces
 function call:
 	f x y
-which is equivalent to:
+which is equivalent to these forms:
 	f(x, y)
-and:
 	(x, y) # f
+	f b: y a: x
+
+default values for parameters:
+	f = { a :A = ... , b !B = ... | :C ... }
+	f b: y
+	f x
+	f()
 
 { f x y } can be written as: || f x y
 
 conditional expression:
-	condition.then {...} else: {...}
-	condition.then {...} {...}
-	condition.then {...} || c.then {...} || c.then {...} {...}
+	condition..then {...} else: {...}
+	condition..then {...} {...}
+	condition..then {...} || c.then {...} || c.then {...} {...}
 
 and or:
 	a && b
 	a \\ b
 which are equivalent to:
-	a .and {b}
-	a .or {b}
+	a..and {b}
+	a..or {b}
 not: -a
 
 matching:
@@ -123,10 +130,10 @@ matching:
 
 actor:
 	a = Actor.new B.new(x, y)
-	a.do { b !B | ... }
+	a..do { b !B | ... }
 
 iterators:
-	iter.each { x | ... }
+	iter..each { x | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -134,6 +141,8 @@ any definition whose name is the module's name, with the first letter capitalize
 	will be exported (ie is accessable outside of the module)
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
+to hide a module so it can't be accessed from modules in the parent directory,
+	append an apostrophe at the end of its file name
 
 a package is a collection of modules that are compiled to a shared object file,
 	which can be dynamically linked to
@@ -146,16 +155,16 @@ URL lines will be tried in the given order, until one is available
 if the protocol is git or gnunet, the following line must contain a public key,
 	will be used to check the given signature
 to use a module inside a package:
-	package'file'name.Module
+	package'file'name.Definition
 definitions in "std" package are directly accessable; there is no need for a ".p" file
 packages that contain a file named "0.jina" (which must contain the init function) are program packages
 
 structs:
-	S := &
+	S := .
 		a: A
 		b:: B. 1 ; field with default value
 defining methods:
-	S = &
+	S = .
 		new: { a :A |
 			S. a
 		}
@@ -173,10 +182,9 @@ to create an instance of a struct:
 	s = S. a: x ; fields with default values can be omited
 	s = S.new a: x
 calling a method:
-	s.m x
+	s..m x
 which is equivalent to:
 	S.m s x
-this implies that to call a field that is a function, we have to use parentheses: (r.f)(x)
 
 generics:
 	S := a: X', b: X'
@@ -193,19 +201,19 @@ unions:
 type "?A" is a shortcut for "A\()"
 
 interfaces:
-	I := &
+	I := .
 		m1: { self :A', x :X | Y }
 		m2:: { self !A' |
 			; default implementation
 		}
 interface inheritance:
-	I3 := I1..I2..& ...
+	I3 := I1&I2& . ...
 defining the methods of a struct that implements some interfaces:
-	S = &
+	S = .
 		...
-	.. I1.
+	& I1.
 		...
-	.. I2.
+	& I2.
 		...
 
 to directly enter C code:
