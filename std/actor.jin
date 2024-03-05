@@ -1,8 +1,8 @@
-Actor := &
+Actor := .
 	data': X'
 	messages: Array { :X' | }
 
-Actor = &
+Actor = .
 	new: { data :X' | :Actor(X')
 		;; add a pointer in the global list of actors
 		;{}
@@ -12,9 +12,9 @@ Actor = &
 	do: { self!, message ::{ :X' | } |
 		;; notify that there is a new message
 		;{}
-		self.messages.append message
+		self.messages..append message
 	}
 	
 	repeat: { self!, message ::{ :X' | }, til :Bool |
-		;; repeatedly send message. until "til" becomes true
+		;; repeatedly send message until "til" becomes true
 	}

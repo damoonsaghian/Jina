@@ -1,4 +1,4 @@
-Ord := &
+Ord := .
 	is'equal: { self :X', other :X' | Bool }
 	is'less: { self :X', other :X' | Bool }
 	is'less'or'equal:: { self :X', other :X' | :Bool

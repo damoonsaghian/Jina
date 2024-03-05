@@ -20,7 +20,7 @@ https://github.com/amadvance/tommyds/
 
 List :=
 
-List = &
+List = .
 	new: {}
 	
 	get: { self ::List(X'), index :Num8 | ::X'

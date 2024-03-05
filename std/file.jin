@@ -4,7 +4,7 @@
 
 File :=
 
-File = &
+File = .
 	; open a file or create it, if it doesn't already exist
 	open: { path :String, mode :String = "", cb ::{ f :?File | () } |
 		;; create an empty actor that will call "cb" when the file is open

@@ -1,6 +1,6 @@
 String := Array(Num1)
 
-String = &
+String = .
 	;; change array methods to respect UTF8 encoding
 	
 	replace: { self, substring :String, replacement :String | :Bool
@@ -42,5 +42,5 @@ String = &
 	
 	set: {}
 
-String'rep := &
+String'rep := .
 	to'string: { self :X' | X' }

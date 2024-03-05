@@ -5,7 +5,7 @@ Bool'false = Bool'false. ()
 
 Bool := Bool'true \ Bool'false
 
-Bool = &
+Bool = .
 	and: { self, other :{Bool} | :Bool
 		self # {
 			Bool'false | Bool'false

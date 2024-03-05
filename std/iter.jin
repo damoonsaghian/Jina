@@ -1,12 +1,12 @@
 Iter' := index: Num4 poll: { index :Num4 | ?X' }
 
-Iter = &
+Iter = .
 	new: { poll ::{ index :Num4 | ?X' } | :Iter(X')
 		Iter. index: 0 poll
 	}
 	
 	each: { self, do !:{ elem :X' | Y' } |
 		;{}
-		elem = self.poll(self.index + 1)
+		elem = self..poll(self.index + 1)
 		;{}
 	}
