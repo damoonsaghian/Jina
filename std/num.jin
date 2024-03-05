@@ -1,7 +1,7 @@
 ;(
 minus operator:
-, unary: "-x" is equivalent to "x.neg()"
-, binary: "x - y" is equivalent to "x.sub(y)"
+, unary: "-x" is equivalent to "x..neg()"
+, binary: "x - y" is equivalent to "x..sub(y)"
 
 https://flintlib.org/
 https://flintlib.org/doc/fmpz.html
@@ -98,14 +98,6 @@ Num1 = .
 	
 	is'equal: {}
 	
-	;; bitwise operations
-	bit'and: {}
-	bit'or: {}
-	bit'xor: {}
-	bit'neg: {}
-	shift'l: {}
-	shift'r: {}
-	
 	;; creates a range iterator
 	to: { self, rhs :Num1 | :Iter(Num1)
 	}
@@ -117,7 +109,9 @@ Num1 = .
 & Numeric.
 	add: {}
 	
-	neg:
+	neg: { self | :Num
+		;{ return -self }
+	}
 	
 	abs:
 	

@@ -23,7 +23,9 @@ List :=
 List = .
 	new: {}
 	
-	get: { self ::List(X'), index :Num8 | ::X'
+	get: { self ::List(X'), index :Num8 | :?X'
+		;; checks is index is less than the langth
+		;; negative index counts from the end
 	}
 	
 	append: { self !List(X'), element :X' |
