@@ -7,12 +7,10 @@ https://flintlib.org/
 https://flintlib.org/doc/fmpz.html
 )
 
-Nums := Num \ Num'z \ Num'u \ Num'c
-
 Num = .
-	add: { self, other :Nums | :Num
+	add: { self, other :Num\Num'z\Num'u | :Num
 	}
-	sub: { self, other :Nums | :Num
+	sub: { self, other :Num\Num'z\Num'u | :Num
 	}
 	
 	neg: { self | :Num }
