@@ -1,7 +1,7 @@
-Iter' := index: Num4 poll: { index :Num4 | ?X' }
+Iter' := index: Num'u poll: { index :Num'u | ?X' }
 
 Iter = .
-	new: { poll ::{ index :Num4 | ?X' } | :Iter(X')
+	new: { poll ::{ index :Num'u | ?X' } | :Iter(X')
 		Iter. index: 0 poll
 	}
 	

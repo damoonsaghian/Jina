@@ -7,28 +7,24 @@ https://flintlib.org/
 https://flintlib.org/doc/fmpz.html
 )
 
-Numeric := Ord & String'rep & .
-	add: { self :X':Num, other :X' | X' }
-	sub:: { self :X', other :X' | :X'
-	}
-	
-	neg: { self :X' | X' }
-	abs: { self :X' | X' }
-	
-	mul: { self :X', other :X' | X' }
-	div: { self :X', other :X' | X' }
-	pow:: { self :X', other :X' | :X'
-	}
-	
-	is'less: {}
-	
-	to'string: {}
-	
-	set:: { self !X' |
-		;{ }
-	}
+Nums := Num \ Num'z \ Num'u \ Num'c
 
 Num = .
+	add: { self, other :Nums | :Num
+	}
+	sub: { self, other :Nums | :Num
+	}
+	
+	neg: { self | :Num }
+	abs: { self | :Num }
+	
+	mul: { self, other :Nums | :Num
+	}
+	div: { self, other :Nums | :Num
+	}
+	pow: { self, other :Nums | :Num
+	}
+	
 	next'up: { self | :Num
 	}
 	
@@ -70,63 +66,45 @@ Num = .
 	
 	e: ; base of the natural logarithm
 	pi:
-	
-& Numeric.
-	add: {}
-	
-	neg: { self | :Num
-		;{ return -self }
-	}
-	
-	abs:
-	
-	mul {}
-	
-	div: {}
-	
-	pow: {}
-	
+
+& Ord.
 	is'less: {}
-	
+
+& String'rep.
 	to'string: {}
 
 Num'z =
 
-Num1 = .
+Num'u = .
+	add: { self, other :Num'u | :Num'u
+	}
+	sub: { self, other :Num'u | :Num'u
+	}
+	
+	mul: { self, other :Num'u | :Num'u
+	}
+	div: { self, other :Num'u | :Num'u
+	}
+	pow: { self, other :Num'u | :Num'u
+	}
+	
 	min: ;{}
 	max: ;{}
 	
 	is'equal: {}
 	
 	;; creates a range iterator
-	to: { self, rhs :Num1 | :Iter(Num1)
+	to: { self, rhs :Num'u | :Iter(Num'u)
 	}
 		
 	to'z: { self | :Num'z
 		;{ return (double)self }
 	}
 
-& Numeric.
-	add: {}
-	
-	neg: { self | :Num
-		;{ return -self }
-	}
-	
-	abs:
-	
-	mul: {}
-	
-	div: {}
-	
-	pow: {}
-	
+& Ord.
 	is'less: {}
-	
+
+& String'rep.
 	to'string: {}
 
-Num2 =
-
-Num4 =
-
-Num8 =
+Num'c =

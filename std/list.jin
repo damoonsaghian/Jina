@@ -23,9 +23,8 @@ List :=
 List = .
 	new: {}
 	
-	get: { self ::List(X'), index :Num8 | :?X'
-		;; checks is index is less than the langth
-		;; negative index counts from the end
+	get: { self ::List(X'), index :Num'u | :?X'
+		;; checks if index is less than the length
 	}
 	
 	append: { self !List(X'), element :X' |
@@ -34,19 +33,17 @@ List = .
 	extend: { self !List(X'), extention :List(X') |
 	}
 	
-	put: { self !List(X'), element :X', index :Num8 |
+	put: { self !List(X'), element :X', index :Num'u |
 	}
 	
-	insert: { self !List(X'), element :X', index :Num8 |
+	insert: { self !List(X'), element :X', index :Num'u |
 	}
 	
-	trim: { self!, index :Num8 |
+	trim: { self!, index :Num'u |
 	}
 	
-	remove: { self!, index :Num8 |
+	remove: { self!, index :Num'u |
 	}
 	
 	iter: { self ::List(X') | :Iter(X')
 	}
-	
-	set: {}
