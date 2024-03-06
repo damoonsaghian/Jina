@@ -21,23 +21,21 @@ mutable own variable:
 assignment after definition (only possible for mutable variables):
 	v = ...
 
-numbers:
-, floating point with mid-rad interval arithmetics: Num
-, integer 8 bits (1 byte): Num1
-, integer 16 bits (2 bytes): Num2
-, integer 32 bits (4 bytes): Num4
-, integer 64 bits (8 bytes): Num8
-, multi'precision integer: Num'z
+numeric types:
+, Num: floating point with mid-rad interval arithmetics
+, Num'z: multi'precision integer
+, Num'u: compiled to "unsigned int" type in C
+, Num'c: compiled to "char" type in C
 literal numbers:
-	1.0 ;; Num
-	1.23p4 ;; Num
-	1 ;; could be Num1, Num2, Num4, or Num8
-	1'234'567'890 ;; could be Num4 or Num8
-	0x1234'5678'9abc'def0 ;; Num8
-	123'z ;; Num'z
+	1'234'567'890 ;; Num (by default), can be Num'z, or Num'u too
+	1.23e4 ;; Num
+	123z ;; Num'z
+	0x1234'5678'9abc'def0 ;; Num'u (on 32 bit systems this number is too big, and will produce an error)
+	0'ab ;; Num'c (the character with hexadecimal ASCII code 0xab)
+	0x ;; Num'c (ASCII code for "a" character)
 
 lists:
-	l :List(Int) = [1, 2, 3]
+	l :List(Num) = [1, 2, 3]
 indexing:
 	l_1
 negative indices count from the end of the list
@@ -62,15 +60,15 @@ which is equivalent to:
 	["first line", "\tsecond line"]
 
 dictionaries are indexed using strings (instead of integers as in lists):
-	d :Dict(Int) = ["a": 1, "b": 2, "c": 3]
+	d :Dict(Num) = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
 indexing:
 	d_'a
 
 records:
-	r :(a: Int, b: Int, c: Int) = a: 1, b: 2, c: 3
-	r :(Int, Int, c: Int) = 1, 2, c: 3
+	r :(a: Num, b: Num, c: Num) = a: 1, b: 2, c: 3
+	r :(Num, Num, c: Num) = 1, 2, c: 3
 alternative syntax:
 	. a: 1 b: 2 c: 3
 to access an element:
@@ -113,9 +111,9 @@ default values for parameters:
 { f x y } can be written as: || f x y
 
 conditional expression:
-	condition..then {...} else: {...}
-	condition..then {...} {...}
-	condition..then {...} || c.then {...} || c.then {...} {...}
+	condition..then { } else: { }
+	condition..then { } { }
+	condition..then { } || c.then { } || c.then { } { }
 
 and or:
 	a && b
@@ -140,7 +138,7 @@ iterators:
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
-	and possibly an additional extension (a number or a word starting with an apostrophe)
+	and possibly an additional extension (separated with an apostrophe),
 	will be exported (ie is accessable outside of the module)
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
