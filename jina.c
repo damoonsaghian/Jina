@@ -51,6 +51,8 @@ libmimalloc-dev
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <glib-2.0/glib.h>
 
 void generate_header_file(char* jina_file_path, char* h_file_path) {
@@ -73,7 +75,7 @@ void generate_c_file(char* jina_file_path, char* c_file_path) {
 	FILE* c_file = fopen(c_file_path, "w");
 	
 	char jina_code[10000];
-	while (fget(jina_code, 10000, jina_file)) {
+	while (fgets(jina_code, 10000, jina_file)) {
 		char* c_code = "";
 		/*
 		#include <stdlib.h>
@@ -87,7 +89,7 @@ void generate_c_file(char* jina_file_path, char* c_file_path) {
 		otherwise use the first word as the function's name
 		if it's a definition, add it to the table of local definition which contains their types
 		*/
-		fprintf(c_file, c_code);
+		fputs(c_code, c_file);
 	}
 	
 	fclose(jina_file);
@@ -119,14 +121,19 @@ void generate_c_file(char* jina_file_path, char* c_file_path) {
 }
 
 int main(int argc, char* argv[]) {
-	if (argc == 0) {
+	if (argc == 1) {
 		printf("interactive Jina is not yet implemented");
-		exit();
+		exit(1);
+	}
+	
+	if (arg > 2) {
+		printf("usage: jina project_path");
+		exit(1);
 	}
 	
 	char* project_dir_path = argv[1];
 	
-	char* src_dir_path = path.join(project_dir_path, "src");
+	char* src_dir_path = strcat(project_dir_path, "/src");
 	if (!path.isdir(src_dir_path)) {
 		src_dir_path = project_dir_path;
 	}
