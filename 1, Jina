@@ -36,7 +36,7 @@ sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
 , two or more pointers access the same data at the same time
 , at least one of the pointers is being used to write to the data
-, there’s no mechanism being used to synchronize access to the data
+, there's no mechanism being used to synchronize access to the data
 
 to deal with it, programming languages choose different approaches:
 , abandon concurrency altogether; make single threaded programs

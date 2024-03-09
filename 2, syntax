@@ -26,11 +26,12 @@ numeric types:
 , Num'z: multi'precision integer
 , Num'u: compiled to "unsigned int" type in C
 , Num'c: compiled to "char" type in C
+Num'u follows modular arithmetic (ie it wraps around on overflow)
 literal numbers:
 	1'234'567'890 ;; Num (by default), can be Num'z, or Num'u too
 	1.23e4 ;; Num
 	123z ;; Num'z
-	0x1234'5678'9abc'def0 ;; Num'u (on 32 bit systems this number is too big, and will produce an error)
+	0x1234'5678'9abc'def0 ;; Num'u (on 32 bits systems, this number will be stored as 0x9abc'def0)
 	0'ab ;; Num'c (the character with hexadecimal ASCII code 0xab)
 	0x ;; Num'c (ASCII code for "a" character)
 
