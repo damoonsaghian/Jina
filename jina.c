@@ -1,7 +1,6 @@
 /*
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 https://en.cppreference.com/w/c
-https://en.wikibooks.org/wiki/A_Little_C_Primer/C_Quick_Reference
 https://gist.github.com/eatonphil/21b3d6569f24ad164365
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://libcello.org/
@@ -122,27 +121,48 @@ void generate_c_file(char* jina_file_path, char* c_file_path) {
 
 int main(int argc, char* argv[]) {
 	if (argc == 1) {
-		printf("interactive Jina is not yet implemented");
-		exit(1);
+		printf("interactive Jina is not yet implemented\n");
+		exit(EXIT_FAILURE);
 	}
 	
-	if (arg > 2) {
-		printf("usage: jina project_path");
-		exit(1);
+	if (argc > 2) {
+		printf("usage: jina <project_path>\n");
+		exit(EXIT_FAILURE);
 	}
 	
 	char* project_dir_path = argv[1];
+	if (!g_file_test(project_dir_path, G_FILE_TEST_IS_DIR)) {
+		printf("there is no directory at \"%s\"\n", project_dir_path);
+		exit(EXIT_FAILURE);
+	}
 	
-	char* src_dir_path = strcat(project_dir_path, "/src");
-	if (!path.isdir(src_dir_path)) {
+	char* src_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, "src");
+	if (!g_file_test(src_dir_path, G_FILE_TEST_IS_DIR)) {
 		src_dir_path = project_dir_path;
 	}
-	char* c_dir_path = path.join(project_dir_path, ".cache/jina/c");
-	char* o_dir_path = path.join(project_dir_path, ".cache/jina/o");
-	dir.makepath(c_dir_path);
-	dir.makepath(o_dir_path);
+	
+	char* c_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, ".cache", "jina", "c");
+	if (!g_mkdir_with_parents(c_dir_path, 0700)) {
+		printf("can't create \"%s\" directory\n", c_dir_path);
+		exit(EXIT_FAILURE);
+	}
+	
+	char* o_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, ".cache", "jina", "o");
+	if(!g_mkdir_with_parents(o_dir_path, 0700)) {
+		printf("can't create \"%s\" directory\n", o_dir_path);
+		exit(EXIT_FAILURE);
+	}
 	
 	// generate C files, and add packages
+	
+	GDIR* src_dir = g_dir_open(src_dir_path);
+	if (src_dir == NULL) {
+		printf("can't open \"%\" directory", src_dir_path);
+		exit(EXIT_FAILURE);
+	}
+	char* jina_file_name = g_dir_read_name(src_dir, 0, NULL);
+	g_dir_close()
+	
 	char* jina_files[] = dir.getallfiles(src_dir_path);
 	for (i; ) {}
 	:foreach(function (jina_file_path)
@@ -170,6 +190,11 @@ int main(int argc, char* argv[]) {
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
 		end
 	end)
+	
+	/*
+	TODO: use multiple threads to compile Jina to C
+	number of threads is equal to the number of CPU cores, or the number of Jina files, either one which is smaller
+	*/
 	
 	// the created binary will at least need glib2 and flint dynamic libraries
 	char* dlinks = "glib2,flint";
