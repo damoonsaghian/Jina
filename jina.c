@@ -153,20 +153,34 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
-	// generate C files, and add packages
+	// go through all files in the project directory (or "project_dir/src" if it exists)
+	// compile .jin files to .c and .h files
+	// add packages mensioned in .p files
 	
 	GDIR* src_dir = g_dir_open(src_dir_path);
 	if (src_dir == NULL) {
 		printf("can't open \"%\" directory", src_dir_path);
 		exit(EXIT_FAILURE);
 	}
-	char* jina_file_name = g_dir_read_name(src_dir, 0, NULL);
-	g_dir_close()
-	
-	char* jina_files[] = dir.getallfiles(src_dir_path);
-	for (i; ) {}
-	:foreach(function (jina_file_path)
-		if src_dir_path:find"%.jin$" then
+	GQueue* dirs_under_src = g_queue_new();
+	q_queue_push_tail(dirs_under_src, src_dir);
+	while (1) {
+		GDIR* dir = g_queue_peek_tail(dirs_under_src);
+		char* entry_name = g_dir_read_name(dir, 0, NULL);
+		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, g_dir_get_path(dir), entry_name);
+		
+		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
+			q_queue_push_tail(dirs_under_src, src_dir);
+		}
+		if (entry_name == NULL) {
+			g_dir_close(dir);
+			g_queue_pop_tail(dir_under_src);
+		}
+		if (g_queue_get_length(dirs_under_src) == 0)
+			break;
+		
+		if (strfind(entry_name, "\.jin$")) {
+			char* jina_file_path = g_build_path(G_DIR_SEPARATOR_S, );
 			local relpath_wo_ext, _ = path.splitext(
 				path.relpath(jina_file_path, src_dir_path)
 			)
@@ -180,7 +194,9 @@ int main(int argc, char* argv[]) {
 			if jina_file_mtime > c_file_mtime then
 				compile_jina2c(jina_file_path, c_file_path)
 			end
-		elseif src_dir_path:find"%.p$" then
+		}
+		
+		if (strfind(entry_name, "\.p$")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
 			
@@ -188,8 +204,9 @@ int main(int argc, char* argv[]) {
 			// after compiling the package:
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
-		end
-	end)
+		}
+	}
+	g_queue_free(dirs_under_src);
 	
 	/*
 	TODO: use multiple threads to compile Jina to C
