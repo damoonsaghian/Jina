@@ -51,7 +51,6 @@ libmimalloc-dev
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <glib-2.0/glib.h>
 
 void generate_header_file(char* jina_file_path, char* h_file_path) {
@@ -154,49 +153,50 @@ int main(int argc, char* argv[]) {
 	}
 	
 	// go through all files in the project directory (or "project_dir/src" if it exists)
-	// compile .jin files to .c and .h files
-	// add packages mensioned in .p files
-	
-	GDIR* src_dir = g_dir_open(src_dir_path);
+	// generate header files from .jin files
+	// and add packages mensioned in .p files
+	GDir* src_dir = g_dir_open(src_dir_path, 0, NULL);
 	if (src_dir == NULL) {
 		printf("can't open \"%\" directory", src_dir_path);
 		exit(EXIT_FAILURE);
 	}
 	GQueue* dirs_under_src = g_queue_new();
+	GQueue* dirpaths_under_src = g_queue_new();
 	q_queue_push_tail(dirs_under_src, src_dir);
+	q_queue_push_tail(dirpaths_under_src, src_dir_path);
 	while (1) {
-		GDIR* dir = g_queue_peek_tail(dirs_under_src);
-		char* entry_name = g_dir_read_name(dir, 0, NULL);
-		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, g_dir_get_path(dir), entry_name);
+		GDir* dir = g_queue_peek_tail(dirs_under_src);
+		GDir* dirpath = g_queue_peek_tail(dirpaths_under_src);
+		char* entry_name = g_dir_read_name(dir);
+		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, dirpath, entry_name);
 		
-		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
-			q_queue_push_tail(dirs_under_src, src_dir);
-		}
 		if (entry_name == NULL) {
 			g_dir_close(dir);
-			g_queue_pop_tail(dir_under_src);
+			g_free(dir_path);
+			g_queue_pop_tail(dirs_under_src);
+			g_queue_pop_tail(dirpaths_under_src);
 		}
-		if (g_queue_get_length(dirs_under_src) == 0)
-			break;
+		if (g_queue_get_length(dirs_under_src) == 0) break;
 		
-		if (strfind(entry_name, "\.jin$")) {
-			char* jina_file_path = g_build_path(G_DIR_SEPARATOR_S, );
-			local relpath_wo_ext, _ = path.splitext(
-				path.relpath(jina_file_path, src_dir_path)
-			)
+		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
+			GDir* child_dir = g_dir_open(entry_path, 0, NULL);
+			if (child_dir != NULL) {
+				q_queue_push_tail(dirs_under_src, child_dir);
+				q_queue_push_tail(dirpaths_under_src, entry_path);
+			}
+		} else if (g_str_has_suffix(entry_name, ".jin")) {
+			GString* h_file_path = g_string_new_take(g_build_path(
+				G_DIR_SEPARATOR_S,
+				c_dir_path,
+				entry_path + strlen(src_dir_path)
+			));
+			g_string_replace(h_file_path, ".jin",".h");
 			
-			local h_file_path = path.join(c_dir_path, relpath_wo_ext..".h")
-			generate_header_file(jina_file_path, h_file_path)
+			generate_header_file(entry_path, h_file_path);
 			
-			local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
-			local jina_file_mtime = path.getmtime(jina_file_path)
-			local c_file_mtime = path.getmtime(c_file_path)
-			if jina_file_mtime > c_file_mtime then
-				compile_jina2c(jina_file_path, c_file_path)
-			end
-		}
-		
-		if (strfind(entry_name, "\.p$")) {
+			g_free(h_file_path);
+			g_free(entry_path);
+		} else if (g_str_has_suffix(entry_name, ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
 			
@@ -204,13 +204,62 @@ int main(int argc, char* argv[]) {
 			// after compiling the package:
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
+			
+			g_free(entry_path);
 		}
 	}
+	
+	// again go through all files, and compile .jin files to .c files
+	q_queue_push_tail(dirs_under_src, src_dir);
+	q_queue_push_tail(dirpaths_under_src, src_dir_path);
+	while (1) {
+		GDir* dir = g_queue_peek_tail(dirs_under_src);
+		GDir* dirpath = g_queue_peek_tail(dirpaths_under_src);
+		char* entry_name = g_dir_read_name(dir);
+		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, dirpath, entry_name);
+		
+		if (entry_name == NULL) {
+			g_dir_close(dir);
+			g_free(dir_path);
+			g_queue_pop_tail(dirs_under_src);
+			g_queue_pop_tail(dirpaths_under_src);
+		}
+		if (g_queue_get_length(dirs_under_src) == 0) break;
+		
+		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
+			GDir* child_dir = g_dir_open(entry_path, 0, NULL);
+			if (child_dir != NULL) {
+				q_queue_push_tail(dirs_under_src, child_dir);
+				q_queue_push_tail(dirpaths_under_src, entry_path);
+			}
+		} else if (g_str_has_suffix(entry_name, ".jin")) {
+			GString* c_file_path = g_string_new_take(g_build_path(
+				G_DIR_SEPARATOR_S,
+				c_dir_path,
+				entry_path + strlen(src_dir_path)
+			));
+			g_string_replace(h_file_path, ".jin",".c");
+			
+			generate_header_file(entry_path, h_file_path);
+			
+			int jina_file_mtime = path.getmtime(entry_path);
+			int c_file_mtime = path.getmtime(c_file_path);
+			if (jina_file_mtime > c_file_mtime) {
+				generate_c_file(entry_path, c_file_path);
+			}
+			
+			g_free(c_file_path);
+			g_free(entry_path);
+		}
+	}
+	
 	g_queue_free(dirs_under_src);
+	g_queue_free(dirpaths_under_src);
 	
 	/*
-	TODO: use multiple threads to compile Jina to C
-	number of threads is equal to the number of CPU cores, or the number of Jina files, either one which is smaller
+	TODO: use multiple threads to generate headers and to compile Jina to C
+	number of spawn threads will be equal to the number of CPU cores,
+		or the number of Jina files, either one which is smaller
 	*/
 	
 	// the created binary will at least need glib2 and flint dynamic libraries
@@ -266,3 +315,7 @@ int main(int argc, char* argv[]) {
 		// LD_LIBRARY_PATH=.
 	}
 }
+
+g_free(src_dir_path);
+g_free(c_dir_path);
+g_free(o_dir_path);
