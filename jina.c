@@ -129,61 +129,62 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
-	char* project_dir_path = argv[1];
-	if (!g_file_test(project_dir_path, G_FILE_TEST_IS_DIR)) {
-		printf("there is no directory at \"%s\"\n", project_dir_path);
+	GFile* project_dir = g_file_new_for_path(argv[1]);
+	if (g_file_query_file_type(project_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
+		printf("there is no directory at \"%s\"\n", g_file_peek_path(project_dir));
 		exit(EXIT_FAILURE);
 	}
 	
-	char* src_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, "src");
-	if (!g_file_test(src_dir_path, G_FILE_TEST_IS_DIR)) {
-		src_dir_path = project_dir_path;
+	GFile* src_dir = g_file_get_child(project_dir, "src");
+	if (g_file_query_file_type(src_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
+		g_clear_object(src_dir);
+		src_dir = project_dir;
 	}
 	
-	char* c_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, ".cache", "jina", "c");
-	if (!g_mkdir_with_parents(c_dir_path, 0700)) {
-		printf("can't create \"%s\" directory\n", c_dir_path);
+	GFile* c_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "c");
+	if (
+		!g_file_make_directory_with_parents(c_dir) &&
+		g_file_query_file_type(c_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(c_dir));
 		exit(EXIT_FAILURE);
 	}
 	
-	char* o_dir_path = g_build_path(G_DIR_SEPARATOR_S, project_dir_path, ".cache", "jina", "o");
-	if(!g_mkdir_with_parents(o_dir_path, 0700)) {
-		printf("can't create \"%s\" directory\n", o_dir_path);
+	GFile* o_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "o");
+	if(
+		!g_file_make_directory_with_parents(o_dir) &&
+		!g_file_query_file_type(o_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(o_dir));
 		exit(EXIT_FAILURE);
 	}
 	
 	// go through all files in the project directory (or "project_dir/src" if it exists)
 	// generate header files from .jin files
 	// and add packages mensioned in .p files
-	GDir* src_dir = g_dir_open(src_dir_path, 0, NULL);
-	if (src_dir == NULL) {
-		printf("can't open \"%\" directory", src_dir_path);
-		exit(EXIT_FAILURE);
-	}
-	GQueue* dirs_under_src = g_queue_new();
-	GQueue* dirpaths_under_src = g_queue_new();
-	q_queue_push_tail(dirs_under_src, src_dir);
-	q_queue_push_tail(dirpaths_under_src, src_dir_path);
+	GQueue* dir_enums_under_src = g_queue_new();
+	q_queue_push_tail(
+		dir_enums_under_src,
+		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+	);
 	while (1) {
-		GDir* dir = g_queue_peek_tail(dirs_under_src);
-		GDir* dirpath = g_queue_peek_tail(dirpaths_under_src);
-		char* entry_name = g_dir_read_name(dir);
-		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, dirpath, entry_name);
-		
-		if (entry_name == NULL) {
-			g_dir_close(dir);
-			g_free(dir_path);
-			g_queue_pop_tail(dirs_under_src);
-			g_queue_pop_tail(dirpaths_under_src);
+		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
+		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
+		if (entry_info == NULL) {
+			g_queue_pop_tail(dir_enums_under_src);
+			g_clear_object(dir_enum);
+			g_clear_object(entry_info);
+			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
 		}
-		if (g_queue_get_length(dirs_under_src) == 0) break;
 		
-		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
-			GDir* child_dir = g_dir_open(entry_path, 0, NULL);
-			if (child_dir != NULL) {
-				q_queue_push_tail(dirs_under_src, child_dir);
-				q_queue_push_tail(dirpaths_under_src, entry_path);
-			}
+		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
+		g_clear_object(entry_info);
+		
+		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
+			q_queue_push_tail(
+				dir_enums_under_src,
+				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+			);
 		} else if (g_str_has_suffix(entry_name, ".jin")) {
 			GString* h_file_path = g_string_new_take(g_build_path(
 				G_DIR_SEPARATOR_S,
@@ -205,7 +206,7 @@ int main(int argc, char* argv[]) {
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
 			
-			g_free(entry_path);
+			g_clear_object(file);
 		}
 	}
 	
@@ -314,8 +315,9 @@ int main(int argc, char* argv[]) {
 		// link object files in "projict_dir/test" directory, and run the created executable
 		// LD_LIBRARY_PATH=.
 	}
+	
+	g_clear_object(project_dir);
+	g_clear_object(src_dir);
+	g_clear_object(c_dir);
+	g_clear_object(o_dir);
 }
-
-g_free(src_dir_path);
-g_free(c_dir_path);
-g_free(o_dir_path);
