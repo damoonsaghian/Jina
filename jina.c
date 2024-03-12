@@ -53,7 +53,7 @@ libmimalloc-dev
 #include <stdlib.h>
 #include <glib-2.0/glib.h>
 
-void generate_header_file(char* jina_file_path, char* h_file_path) {
+void generate_header_file(GFile* jina_file, GFile* h_file) {
 	// generate header and store it in a String var
 	// generate its hash
 	// if there is an old header file (remained from the last compilation),
@@ -63,35 +63,27 @@ void generate_header_file(char* jina_file_path, char* h_file_path) {
 	// also a .t file is generated which contains the type signature of all exported definitions
 }
 
-void generate_c_file(char* jina_file_path, char* c_file_path) {
+void generate_c_file(GFile* jina_file, GFile* c_file) {
 	// fill the table of module identifiers and their types
 	// https://docs.gtk.org/glib/struct.HashTable.html
 	// check for type consistency in the module, and with .t files
 	// compile to c
 	
-	FILE* jina_file = fopen(jina_file_path, "r");
-	FILE* c_file = fopen(c_file_path, "w");
+	GOutputStream* jina_file_stream = ;
+	GInputStream* c_file_stream = ;
 	
-	char jina_code[10000];
-	while (fgets(jina_code, 10000, jina_file)) {
-		char* c_code = "";
-		/*
-		#include <stdlib.h>
-		#include <glib-2.0/glib.h>
-		; https://packages.debian.org/bookworm/amd64/libglib2.0-dev/filelist
-		
-		int main(int argc, char* argv[]) {}
-		
-		words: alpha'numerics plus apostrophe, dot or colon at the start or end
-		if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
-		otherwise use the first word as the function's name
-		if it's a definition, add it to the table of local definition which contains their types
-		*/
-		fputs(c_code, c_file);
-	}
+	/*
+	#include <stdlib.h>
+	#include <glib-2.0/glib.h>
+	; https://packages.debian.org/bookworm/amd64/libglib2.0-dev/filelist
 	
-	fclose(jina_file);
-	fclose(c_file);
+	int main(int argc, char* argv[]) {}
+	
+	words: alpha'numerics plus apostrophe, dot or colon at the start or end
+	if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
+	otherwise use the first word as the function's name
+	if it's a definition, add it to the table of local definition which contains their types
+	*/
 		
 	/*
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
@@ -171,9 +163,9 @@ int main(int argc, char* argv[]) {
 		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
 		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
-			g_queue_pop_tail(dir_enums_under_src);
-			g_clear_object(dir_enum);
 			g_clear_object(entry_info);
+			g_clear_object(dir_enum);
+			g_queue_pop_tail(dir_enums_under_src);
 			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
 		}
 		
@@ -193,10 +185,10 @@ int main(int argc, char* argv[]) {
 			));
 			g_string_replace(h_file_path, ".jin",".h");
 			
-			generate_header_file(entry_path, h_file_path);
+			generate_header_file(entry, h_file);
 			
-			g_free(h_file_path);
-			g_free(entry_path);
+			g_clear_object(h_file);
+			g_clear_object(entry);
 		} else if (g_str_has_suffix(entry_name, ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
