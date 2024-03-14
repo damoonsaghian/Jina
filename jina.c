@@ -50,32 +50,38 @@ libmimalloc-dev
 */
 
 #include <stdlib.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <glib-2.0/glib.h>
 #include <glib-2.0/glib-object.h>
 #include <glib-2.0/gio/gio.h>
 
-void generate_header_file(GFile* jina_file, GFile* h_file) {
-	// generate header and store it in a String var
-	// generate its hash
-	// if there is an old header file (remained from the last compilation),
-	// and it's not equal to the new one (compare their hashes), overwrite the old one
-	// otherwise just keep the old one
+char generate_header_file(GFile* jina_file, GFile* h_file) {
+	/*
+	generate header and store it in a String var
+	generate its hash
+	if there is an old header file (remained from the last compilation),
+	and it's not equal to the new one (compare their hashes), overwrite the old one
+	otherwise just keep the old one, and return(0)
 	
-	// also a .t file is generated which contains the type signature of all exported definitions
+	also a .t file is generated which contains the type signature of all exported definitions
+	*/
 	
 	GFileOutputStream* jina_file_stream = g_file_read(jina_file, NULL, NULL);
 	GFileInputStream* h_file_stream = g_file_create(h_file, 0, NULL, NULL);
 	
 	g_object_unref(jina_file_stream);
 	g_object_unref(h_file_stream);
+	
+	return(1);
 }
 
-void generate_c_file(GFile* jina_file, GFile* c_file) {
+char* generate_c_file(GFile* jina_file, GFile* c_file) {
+	// a comma separatedlist of paths of imported modules
+	char* imported_modules_paths;
+	
 	// fill the table of module identifiers and their types
 	// https://docs.gtk.org/glib/struct.HashTable.html
-	// check for type consistency in the module, and with .t files
+	// check for type consistency in the module, and with (cached) .t files
 	// compile to c
 	
 	/*
@@ -120,6 +126,8 @@ void generate_c_file(GFile* jina_file, GFile* c_file) {
 	
 	g_object_unref(jina_file_stream);
 	g_object_unref(c_file_stream);
+	
+	return(imported_modules_paths);
 }
 
 int main(int argc, char* argv[]) {
@@ -127,7 +135,6 @@ int main(int argc, char* argv[]) {
 		printf("interactive Jina is not yet implemented\n");
 		exit(EXIT_FAILURE);
 	}
-	
 	if (argc > 2) {
 		printf("usage: jina <project_path>\n");
 		exit(EXIT_FAILURE);
@@ -138,13 +145,10 @@ int main(int argc, char* argv[]) {
 		printf("there is no directory at \"%s\"\n", g_file_peek_path(project_dir));
 		exit(EXIT_FAILURE);
 	}
-	
 	GFile* src_dir = g_file_get_child(project_dir, "src");
 	if (g_file_query_file_type(src_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
-		g_object_unref(src_dir);
 		src_dir = g_file_new_for_path(argv[1]);
 	}
-	
 	GFile* c_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "c");
 	if (
 		!g_file_make_directory_with_parents(c_dir) &&
@@ -153,7 +157,6 @@ int main(int argc, char* argv[]) {
 		printf("can't create \"%s\" directory\n", g_file_peek_path(c_dir));
 		exit(EXIT_FAILURE);
 	}
-	
 	GFile* o_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "o");
 	if(
 		!g_file_make_directory_with_parents(o_dir) &&
@@ -163,29 +166,31 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
+	GPtrArray* modules_with_changed_exports = g_ptr_array_new();
+	
 	// go through all files in the project directory (or "project_dir/src" if it exists)
 	// generate header files from .jin files
 	// and add packages mensioned in .p files
-	GQueue* dir_enums_under_src = g_queue_new();
-	q_queue_push_tail(
-		dir_enums_under_src,
+	GQueue* dir_enums_queue = g_queue_new();
+	g_queue_push_tail(
+		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
-		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
+		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_queue);
 		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
 			g_object_unref(entry_info);
 			g_object_unref(dir_enum);
-			g_queue_pop_tail(dir_enums_under_src);
-			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
+			g_queue_pop_tail(dir_enums_queue);
+			if (g_queue_get_length(dir_enums_queue) == 0) { break; } else { continue; }
 		}
 		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
 		g_object_unref(entry_info);
 		
 		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
 			q_queue_push_tail(
-				dir_enums_under_src,
+				dir_enums_queue,
 				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
@@ -196,7 +201,8 @@ int main(int argc, char* argv[]) {
 			g_string_append(relative_path, ".h");
 			GFile* h_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
-			generate_header_file(entry, h_file);
+			if (generate_header_file(entry, h_file) == 1)
+				g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
 			
 			g_object_unref(relative_path);
 			g_object_unref(h_file);
@@ -214,26 +220,28 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
-	// again go through all files, and compile .jin files to .c files
-	q_queue_push_tail(
-		dir_enums_under_src,
+	GPtrArray* modules_with_changed_imports = g_ptr_array_new();
+	
+	// again go through all files, and compile (newly changed) .jin files to .c files
+	g_queue_push_tail(
+		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
-		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
+		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_queue);
 		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
 			g_object_unref(entry_info);
 			g_object_unref(dir_enum);
-			g_queue_pop_tail(dir_enums_under_src);
-			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
+			g_queue_pop_tail(dir_enums_queue);
+			if (g_queue_get_length(dir_enums_queue) == 0) { break; } else { continue; }
 		}
 		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
 		g_object_unref(entry_info);
 		
 		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
 			q_queue_push_tail(
-				dir_enums_under_src,
+				dir_enums_queue,
 				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
@@ -244,7 +252,12 @@ int main(int argc, char* argv[]) {
 			g_string_append(relative_path, ".c");
 			GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
-			generate_c_file(entry, c_file);
+			char* imported_modules = generate_c_file(entry, c_file);
+			/*
+			split imported_modules
+			if an imported module is in modules_with_changed_exports,
+				add g_file_peek_path(entry) to modules_with_changed_imports
+			*/
 			
 			GFileInfo* jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
 			GDateTime* jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
@@ -270,8 +283,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
-	g_queue_free(dir_enums_under_src);
-	
 	/*
 	TODO: use multiple threads to generate headers and to compile Jina to C
 	number of spawn threads will be equal to the number of CPU cores,
@@ -281,13 +292,19 @@ int main(int argc, char* argv[]) {
 	// the created binary will at least need glib2 and flint dynamic libraries
 	char* dlinks = "glib2,flint";
 	
-	// compile C files to object files
+	// go through all files in the directory containing the generated C files
+	g_queue_push_tail(
+		dir_enums_queue,
+		g_file_enumerate_children(c_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+	);
+	while (1) {
+	}
 	dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 		local relpath_wo_ext, _ = path.splitext(
 			path.relpath(c_file_path, c_dir_path)
 		)
 		
-		// if for the C file, there is no corresponding jina file, delete it and its header file, then return
+		// if for the C file, there is no corresponding jina file, delete it and its header file
 		local jina_file_path = path.join(src_dir_path, relpath_wo_ext..".jin")
 		if not path.isfile(jina_file_path) then
 			os.remove(c_file_path)
@@ -303,8 +320,9 @@ int main(int argc, char* argv[]) {
 		// find the modification times of all included files, and add them to the list
 		// also add the name of all system libs to dlinks
 		
-		// if the modification time of the C file or one of the files included in it,
-		// is newer than the object file, recompile it
+		// recompile if:
+		// , the corresponding jina file is in modules_with_changed_imports
+		// , or the modification time of the C file is newer than the object file
 		for _, mtime in ipairs(mtimes) do
 			if mtime > o_file_mtime then
 				if path.isfile(path.join(src_dir_path, "0.jin")) then
@@ -331,6 +349,7 @@ int main(int argc, char* argv[]) {
 		// LD_LIBRARY_PATH=.
 	}
 	
+	g_queue_free(dir_enums_queue);
 	g_object_unref(project_dir);
 	g_object_unref(src_dir);
 	g_object_unref(c_dir);
