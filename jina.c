@@ -49,9 +49,12 @@ https://github.com/Microsoft/mimalloc
 libmimalloc-dev
 */
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <glib-2.0/glib.h>
+#include <glib-2.0/glib-object.h>
+#include <glib-2.0/gio/gio.h>
 
 void generate_header_file(GFile* jina_file, GFile* h_file) {
 	// generate header and store it in a String var
@@ -61,6 +64,12 @@ void generate_header_file(GFile* jina_file, GFile* h_file) {
 	// otherwise just keep the old one
 	
 	// also a .t file is generated which contains the type signature of all exported definitions
+	
+	GFileOutputStream* jina_file_stream = g_file_read(jina_file, NULL, NULL);
+	GFileInputStream* h_file_stream = g_file_create(h_file, 0, NULL, NULL);
+	
+	g_object_unref(jina_file_stream);
+	g_object_unref(h_file_stream);
 }
 
 void generate_c_file(GFile* jina_file, GFile* c_file) {
@@ -68,9 +77,6 @@ void generate_c_file(GFile* jina_file, GFile* c_file) {
 	// https://docs.gtk.org/glib/struct.HashTable.html
 	// check for type consistency in the module, and with .t files
 	// compile to c
-	
-	GOutputStream* jina_file_stream = ;
-	GInputStream* c_file_stream = ;
 	
 	/*
 	#include <stdlib.h>
@@ -108,6 +114,12 @@ void generate_c_file(GFile* jina_file, GFile* c_file) {
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	https://docs.gtk.org/glib/struct.RWLock.html
 	*/
+	
+	GFileOutputStream* jina_file_stream = g_file_read(jina_file, NULL, NULL);
+	GFileInputStream* c_file_stream = g_file_create(c_file, 0, NULL, NULL);
+	
+	g_object_unref(jina_file_stream);
+	g_object_unref(c_file_stream);
 }
 
 int main(int argc, char* argv[]) {
@@ -129,8 +141,8 @@ int main(int argc, char* argv[]) {
 	
 	GFile* src_dir = g_file_get_child(project_dir, "src");
 	if (g_file_query_file_type(src_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
-		g_clear_object(src_dir);
-		src_dir = project_dir;
+		g_object_unref(src_dir);
+		src_dir = g_file_new_for_path(argv[1]);
 	}
 	
 	GFile* c_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "c");
@@ -163,33 +175,33 @@ int main(int argc, char* argv[]) {
 		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
 		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
-			g_clear_object(entry_info);
-			g_clear_object(dir_enum);
+			g_object_unref(entry_info);
+			g_object_unref(dir_enum);
 			g_queue_pop_tail(dir_enums_under_src);
 			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
 		}
-		
 		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
-		g_clear_object(entry_info);
+		g_object_unref(entry_info);
 		
 		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
 			q_queue_push_tail(
 				dir_enums_under_src,
 				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
-		} else if (g_str_has_suffix(entry_name, ".jin")) {
-			GString* h_file_path = g_string_new_take(g_build_path(
-				G_DIR_SEPARATOR_S,
-				c_dir_path,
-				entry_path + strlen(src_dir_path)
-			));
-			g_string_replace(h_file_path, ".jin",".h");
+		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
+			GString* relative_path = g_string_new_take(
+				g_file_get_relative_path(src_dir, g_file_peek_path(entry))
+			);
+			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
+			g_string_append(relative_path, ".h");
+			GFile* h_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
 			generate_header_file(entry, h_file);
 			
-			g_clear_object(h_file);
-			g_clear_object(entry);
-		} else if (g_str_has_suffix(entry_name, ".p")) {
+			g_object_unref(relative_path);
+			g_object_unref(h_file);
+			g_object_unref(entry);
+		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
 			
@@ -198,56 +210,67 @@ int main(int argc, char* argv[]) {
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
 			
-			g_clear_object(file);
+			g_object_unref(entry);
 		}
 	}
 	
 	// again go through all files, and compile .jin files to .c files
-	q_queue_push_tail(dirs_under_src, src_dir);
-	q_queue_push_tail(dirpaths_under_src, src_dir_path);
+	q_queue_push_tail(
+		dir_enums_under_src,
+		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+	);
 	while (1) {
-		GDir* dir = g_queue_peek_tail(dirs_under_src);
-		GDir* dirpath = g_queue_peek_tail(dirpaths_under_src);
-		char* entry_name = g_dir_read_name(dir);
-		char* entry_path = g_build_path(G_DIR_SEPARATOR_S, dirpath, entry_name);
-		
-		if (entry_name == NULL) {
-			g_dir_close(dir);
-			g_free(dir_path);
-			g_queue_pop_tail(dirs_under_src);
-			g_queue_pop_tail(dirpaths_under_src);
+		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_under_src);
+		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
+		if (entry_info == NULL) {
+			g_object_unref(entry_info);
+			g_object_unref(dir_enum);
+			g_queue_pop_tail(dir_enums_under_src);
+			if (g_queue_get_length(dir_enums_under_src) == 0) { break; } else { continue; }
 		}
-		if (g_queue_get_length(dirs_under_src) == 0) break;
+		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
+		g_object_unref(entry_info);
 		
-		if (g_file_test(entry_path, G_FILE_TEST_IS_DIR)) {
-			GDir* child_dir = g_dir_open(entry_path, 0, NULL);
-			if (child_dir != NULL) {
-				q_queue_push_tail(dirs_under_src, child_dir);
-				q_queue_push_tail(dirpaths_under_src, entry_path);
+		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
+			q_queue_push_tail(
+				dir_enums_under_src,
+				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+			);
+		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
+			GString* relative_path = g_string_new_take(
+				g_file_get_relative_path(src_dir, g_file_peek_path(entry))
+			);
+			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
+			g_string_append(relative_path, ".c");
+			GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
+			
+			generate_c_file(entry, c_file);
+			
+			GFileInfo* jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			GDateTime* jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
+			g_object_unref(jina_file_info);
+			
+			GFileInfo* c_file_info = g_file_query_info(c_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			GDateTime* c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
+			g_object_unref(c_file_info);
+			
+			if (
+				jina_file_mtime == NULL ||
+				c_file_mtime == NULL ||
+				g_date_time_compare(jina_file_mtime, c_file_mtime) > 0
+			) {
+				generate_c_file(entry, c_file);
 			}
-		} else if (g_str_has_suffix(entry_name, ".jin")) {
-			GString* c_file_path = g_string_new_take(g_build_path(
-				G_DIR_SEPARATOR_S,
-				c_dir_path,
-				entry_path + strlen(src_dir_path)
-			));
-			g_string_replace(h_file_path, ".jin",".c");
 			
-			generate_header_file(entry_path, h_file_path);
-			
-			int jina_file_mtime = path.getmtime(entry_path);
-			int c_file_mtime = path.getmtime(c_file_path);
-			if (jina_file_mtime > c_file_mtime) {
-				generate_c_file(entry_path, c_file_path);
-			}
-			
-			g_free(c_file_path);
-			g_free(entry_path);
+			g_object_unref(jina_file_mtime);
+			g_object_unref(c_file_mtime);
+			g_object_unref(relative_path);
+			g_object_unref(c_file);
+			g_object_unref(entry);
 		}
 	}
 	
-	g_queue_free(dirs_under_src);
-	g_queue_free(dirpaths_under_src);
+	g_queue_free(dir_enums_under_src);
 	
 	/*
 	TODO: use multiple threads to generate headers and to compile Jina to C
@@ -308,8 +331,8 @@ int main(int argc, char* argv[]) {
 		// LD_LIBRARY_PATH=.
 	}
 	
-	g_clear_object(project_dir);
-	g_clear_object(src_dir);
-	g_clear_object(c_dir);
-	g_clear_object(o_dir);
+	g_object_unref(project_dir);
+	g_object_unref(src_dir);
+	g_object_unref(c_dir);
+	g_object_unref(o_dir);
 }
