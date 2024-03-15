@@ -55,80 +55,8 @@ libmimalloc-dev
 #include <glib-2.0/glib-object.h>
 #include <glib-2.0/gio/gio.h>
 
-char generate_header_file(GFile* jina_file, GFile* h_file) {
-	/*
-	generate header and store it in a String var
-	generate its hash
-	if there is an old header file (remained from the last compilation),
-	and it's not equal to the new one (compare their hashes), overwrite the old one
-	otherwise just keep the old one, and return(0)
-	
-	also a .t file is generated which contains the type signature of all exported definitions
-	*/
-	
-	GFileOutputStream* jina_file_stream = g_file_read(jina_file, NULL, NULL);
-	GFileInputStream* h_file_stream = g_file_create(h_file, 0, NULL, NULL);
-	
-	g_object_unref(jina_file_stream);
-	g_object_unref(h_file_stream);
-	
-	return(1);
-}
-
-char* generate_c_file(GFile* jina_file, GFile* c_file) {
-	// a comma separatedlist of paths of imported modules
-	char* imported_modules_paths;
-	
-	// fill the table of module identifiers and their types
-	// https://docs.gtk.org/glib/struct.HashTable.html
-	// check for type consistency in the module, and with (cached) .t files
-	// compile to c
-	
-	/*
-	#include <stdlib.h>
-	#include <glib-2.0/glib.h>
-	; https://packages.debian.org/bookworm/amd64/libglib2.0-dev/filelist
-	
-	int main(int argc, char* argv[]) {}
-	
-	words: alpha'numerics plus apostrophe, dot or colon at the start or end
-	if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
-	otherwise use the first word as the function's name
-	if it's a definition, add it to the table of local definition which contains their types
-	*/
-		
-	/*
-	after calling the init function, create a fixed number of threads (as many as CPU cores),
-		and then run the main loop
-	each thread runs a loop that processes the messages
-	after each loop, if there are no messages left, it goes to sleep (sigwait)
-	when a message is registered, a signal will be sent to all threads to wake up the slept ones
-	https://docs.gtk.org/glib/main-loop.html
-	https://docs.gtk.org/glib/struct.MainLoop.html
-	https://docs.gtk.org/glib/threads.html
-	https://docs.gtk.org/glib/struct.Thread.html
-	https://docs.gtk.org/glib/struct.ThreadPool.html
-	https://docs.gtk.org/glib/struct.MainContext.html
-	
-	the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
-	, a heavy computation that blocks its thread, can't make the UI lag
-	, the UI remains resposive, even when the number of non'UI actors is extremely large
-	the main loop runs messages of UI actors, and then polls (non'waiting) more events (glib2)
-		if there is no more messages for UI actors, wait for events
-	
-	use mutexes to hold the list of actors and their message queues
-	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
-	https://docs.gtk.org/glib/struct.RWLock.html
-	*/
-	
-	GFileOutputStream* jina_file_stream = g_file_read(jina_file, NULL, NULL);
-	GFileInputStream* c_file_stream = g_file_create(c_file, 0, NULL, NULL);
-	
-	g_object_unref(jina_file_stream);
-	g_object_unref(c_file_stream);
-	
-	return(imported_modules_paths);
-}
+#include "gen_header.c"
+#include "gen_c.c"
 
 int main(int argc, char* argv[]) {
 	if (argc == 1) {
@@ -157,6 +85,14 @@ int main(int argc, char* argv[]) {
 		printf("can't create \"%s\" directory\n", g_file_peek_path(c_dir));
 		exit(EXIT_FAILURE);
 	}
+	GFile* h_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "h");
+	if (
+		!g_file_make_directory_with_parents(h_dir) &&
+		g_file_query_file_type(h_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(h_dir));
+		exit(EXIT_FAILURE);
+	}
 	GFile* o_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "o");
 	if(
 		!g_file_make_directory_with_parents(o_dir) &&
@@ -172,21 +108,21 @@ int main(int argc, char* argv[]) {
 	// generate header files from .jin files
 	// and add packages mensioned in .p files
 	GQueue* dir_enums_queue = g_queue_new();
+	GFileEnumerator* dir_enum;
+	GFileInfo* entry_info;
+	GFile* entry;
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
-		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_queue);
-		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
+		dir_enum = g_queue_peek_tail(dir_enums_queue);
+		entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
-			g_object_unref(entry_info);
-			g_object_unref(dir_enum);
 			g_queue_pop_tail(dir_enums_queue);
 			if (g_queue_get_length(dir_enums_queue) == 0) { break; } else { continue; }
 		}
-		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
-		g_object_unref(entry_info);
+		entry = g_file_enumerator_get_child(dir_enum, entry_info);
 		
 		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
 			q_queue_push_tail(
@@ -199,7 +135,7 @@ int main(int argc, char* argv[]) {
 			);
 			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
 			g_string_append(relative_path, ".h");
-			GFile* h_file = g_file_resolve_relative_path(c_dir, relative_path);
+			GFile* h_file = g_file_resolve_relative_path(h_dir, relative_path);
 			
 			if (generate_header_file(entry, h_file) == 1)
 				g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
@@ -216,7 +152,7 @@ int main(int argc, char* argv[]) {
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
 			
-			g_object_unref(entry);
+			
 		}
 	}
 	
@@ -228,16 +164,13 @@ int main(int argc, char* argv[]) {
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
-		GFileEnumerator* dir_enum = g_queue_peek_tail(dir_enums_queue);
-		GFileInfo* entry_info = g_file_enumerator_next_file(dir_enum);
+		dir_enum = g_queue_peek_tail(dir_enums_queue);
+		entry_info = g_file_enumerator_next_file(dir_enum);
 		if (entry_info == NULL) {
-			g_object_unref(entry_info);
-			g_object_unref(dir_enum);
 			g_queue_pop_tail(dir_enums_queue);
 			if (g_queue_get_length(dir_enums_queue) == 0) { break; } else { continue; }
 		}
-		GFile* entry = g_file_enumerator_get_child(dir_enum, entry_info);
-		g_object_unref(entry_info);
+		entry = g_file_enumerator_get_child(dir_enum, entry_info);
 		
 		if (g_file_query_file_type(entry, 0, NULL) == G_FILE_TYPE_DIRECTORY) {
 			q_queue_push_tail(
@@ -250,6 +183,7 @@ int main(int argc, char* argv[]) {
 			);
 			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
 			g_string_append(relative_path, ".c");
+			g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
 			GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
 			char* imported_modules = generate_c_file(entry, c_file);
@@ -283,6 +217,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	
+	g_queue_free(dir_enums_queue);
+	
 	/*
 	TODO: use multiple threads to generate headers and to compile Jina to C
 	number of spawn threads will be equal to the number of CPU cores,
@@ -293,12 +229,43 @@ int main(int argc, char* argv[]) {
 	char* dlinks = "glib2,flint";
 	
 	// go through all files in the directory containing the generated C files
-	g_queue_push_tail(
-		dir_enums_queue,
-		g_file_enumerate_children(c_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
-	);
+	dir_enum = g_file_enumerate_children(c_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	while (1) {
+		entry_info = g_file_enumerator_next_file(dir_enum, NULL, NULL);
+		if (entry_info == NULL) break;
+		entry = g_file_enumerator_get_child(c_dir_enum, entry_info);
+		
+		GString* relative_path = g_string_new_take(
+			g_file_get_relative_path(src_dir, g_file_peek_path(entry))
+		);
+		g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
+		g_string_append(relative_path, ".c");
+		g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
+		GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
+		
+		GFileInfo* jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+		GDateTime* jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
+		g_object_unref(jina_file_info);
+		
+		GFileInfo* c_file_info = g_file_query_info(c_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+		GDateTime* c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
+		g_object_unref(c_file_info);
+		
+		if (
+			jina_file_mtime == NULL ||
+			c_file_mtime == NULL ||
+			g_date_time_compare(jina_file_mtime, c_file_mtime) > 0
+		) {
+			generate_c_file(entry, c_file);
+		}
+		
+		g_object_unref(jina_file_mtime);
+		g_object_unref(c_file_mtime);
+		g_object_unref(relative_path);
+		g_object_unref(c_file);
+		g_object_unref(entry);
 	}
+	/*
 	dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
 		local relpath_wo_ext, _ = path.splitext(
 			path.relpath(c_file_path, c_dir_path)
@@ -334,6 +301,7 @@ int main(int argc, char* argv[]) {
 			end
 		end
 	end)
+	*/
 	
 	// link object files
 	if (path.isfile(path.join(src_dir_path, "0.jin"))) {
@@ -349,7 +317,10 @@ int main(int argc, char* argv[]) {
 		// LD_LIBRARY_PATH=.
 	}
 	
-	g_queue_free(dir_enums_queue);
+	g_object_unref(entry_info);
+	g_object_unref(dir_enum);
+	g_object_unref(entry);
+	
 	g_object_unref(project_dir);
 	g_object_unref(src_dir);
 	g_object_unref(c_dir);
