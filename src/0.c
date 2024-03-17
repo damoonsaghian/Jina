@@ -102,15 +102,16 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
-	GPtrArray* modules_with_changed_exports = g_ptr_array_new();
-	
 	// go through all files in the project directory (or "project_dir/src" if it exists)
 	// generate header files from .jin files
 	// and add packages mensioned in .p files
+	GPtrArray* modules_with_changed_exports = g_ptr_array_new();
 	GQueue* dir_enums_queue = g_queue_new();
 	GFileEnumerator* dir_enum;
 	GFileInfo* entry_info;
 	GFile* entry;
+	GString* relative_path;
+	GFile* h_file;
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
@@ -130,19 +131,15 @@ int main(int argc, char* argv[]) {
 				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
-			GString* relative_path = g_string_new_take(
+			relative_path = g_string_new_take(
 				g_file_get_relative_path(src_dir, g_file_peek_path(entry))
 			);
 			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
 			g_string_append(relative_path, ".h");
-			GFile* h_file = g_file_resolve_relative_path(h_dir, relative_path);
+			h_file = g_file_resolve_relative_path(h_dir, relative_path);
 			
 			if (generate_header_file(entry, h_file) == 1)
 				g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
-			
-			g_object_unref(relative_path);
-			g_object_unref(h_file);
-			g_object_unref(entry);
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
@@ -151,14 +148,20 @@ int main(int argc, char* argv[]) {
 			// after compiling the package:
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
 			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
-			
-			
 		}
 	}
 	
-	GPtrArray* modules_with_changed_imports = g_ptr_array_new();
+	g_object_unref(h_file);
 	
 	// again go through all files, and compile (newly changed) .jin files to .c files
+	GPtrArray* modules_with_changed_imports = g_ptr_array_new();
+	GString* dlinks = g_string_new("glib2,flint");
+	GString* imported_modules;
+	GFile* c_file;
+	GFileInfo* jina_file_info;
+	GDateTime* jina_file_mtime;
+	GFileInfo* c_file_info;
+	GDateTime* c_file_mtime;
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
@@ -178,28 +181,26 @@ int main(int argc, char* argv[]) {
 				g_file_enumerate_children(entry, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".jin")) {
-			GString* relative_path = g_string_new_take(
+			relative_path = g_string_new_take(
 				g_file_get_relative_path(src_dir, g_file_peek_path(entry))
 			);
 			g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
 			g_string_append(relative_path, ".c");
 			g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
-			GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
+			c_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
-			char* imported_modules = generate_c_file(entry, c_file);
+			generate_c_file(entry, c_file, imported_modules, dlink);
 			/*
 			split imported_modules
 			if an imported module is in modules_with_changed_exports,
 				add g_file_peek_path(entry) to modules_with_changed_imports
 			*/
 			
-			GFileInfo* jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
-			GDateTime* jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
-			g_object_unref(jina_file_info);
+			jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
 			
-			GFileInfo* c_file_info = g_file_query_info(c_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
-			GDateTime* c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
-			g_object_unref(c_file_info);
+			c_file_info = g_file_query_info(c_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
 			
 			if (
 				jina_file_mtime == NULL ||
@@ -208,15 +209,13 @@ int main(int argc, char* argv[]) {
 			) {
 				generate_c_file(entry, c_file);
 			}
-			
-			g_object_unref(jina_file_mtime);
-			g_object_unref(c_file_mtime);
-			g_object_unref(relative_path);
-			g_object_unref(c_file);
-			g_object_unref(entry);
 		}
 	}
 	
+	g_object_unref(entry);
+	g_object_unref(entry_info);
+	g_object_unref(jina_file_info);
+	g_object_unref(jina_file_mtime);
 	g_queue_free(dir_enums_queue);
 	
 	/*
@@ -225,101 +224,72 @@ int main(int argc, char* argv[]) {
 		or the number of Jina files, either one which is smaller
 	*/
 	
-	// the created binary will at least need glib2 and flint dynamic libraries
-	char* dlinks = "glib2,flint";
-	
 	// go through all files in the directory containing the generated C files
+	GFileInfo* o_file_info;
+	GDateTime* o_file_mtime;
 	dir_enum = g_file_enumerate_children(c_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	while (1) {
-		entry_info = g_file_enumerator_next_file(dir_enum, NULL, NULL);
+		c_file_info = g_file_enumerator_next_file(dir_enum, NULL, NULL);
 		if (entry_info == NULL) break;
-		entry = g_file_enumerator_get_child(c_dir_enum, entry_info);
+		c_file = g_file_enumerator_get_child(dir_enum, c_file_info);
+		c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
 		
-		GString* relative_path = g_string_new_take(
-			g_file_get_relative_path(src_dir, g_file_peek_path(entry))
-		);
-		g_string_truncate(relative_path, relative_path->len - 4); // remove .jin extension
-		g_string_append(relative_path, ".c");
-		g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
-		GFile* c_file = g_file_resolve_relative_path(c_dir, relative_path);
-		
-		GFileInfo* jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
-		GDateTime* jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
-		g_object_unref(jina_file_info);
-		
-		GFileInfo* c_file_info = g_file_query_info(c_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
-		GDateTime* c_file_mtime = g_file_info_get_modification_date_time(c_file_info);
-		g_object_unref(c_file_info);
-		
-		if (
-			jina_file_mtime == NULL ||
-			c_file_mtime == NULL ||
-			g_date_time_compare(jina_file_mtime, c_file_mtime) > 0
-		) {
-			generate_c_file(entry, c_file);
-		}
-		
-		g_object_unref(jina_file_mtime);
-		g_object_unref(c_file_mtime);
-		g_object_unref(relative_path);
-		g_object_unref(c_file);
-		g_object_unref(entry);
-	}
-	/*
-	dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
-		local relpath_wo_ext, _ = path.splitext(
-			path.relpath(c_file_path, c_dir_path)
-		)
+		relative_path = g_string_new_take(g_file_basename(entry_info));
+		g_string_truncate(relative_path, relative_path->len - 2); // remove .c extension
+		g_string_append(entry_name, ".o");
 		
 		// if for the C file, there is no corresponding jina file, delete it and its header file
-		local jina_file_path = path.join(src_dir_path, relpath_wo_ext..".jin")
-		if not path.isfile(jina_file_path) then
-			os.remove(c_file_path)
-			os.remove(path.join(c_dir_path, relpath_wo_ext)..".h")
-			return
-		end
+		jina_file_path = path.join(src_dir_path, relpath_wo_ext..".jin")
+		if (!path.isfile(jina_file_path)) {
+			g_file_remove(c_file_path);
+			g_file_remove(path.join(c_dir_path, relpath_wo_ext)..".h");
+			continue;
+		}
 		
-		local o_file_name = relpath_wo_ext:gsub(path.sep, "__") .. ".o"
-		local o_file_path = path.join(o_dir_path, o_file_name)
-		local o_file_mtime = path.getmtime(o_file_path)
+		o_file = g_file_resolve_relative_path(o_dir, relative_path);
+		GFileInfo* o_file_info = g_file_query_info(o_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+		GDateTime* o_file_mtime = g_file_info_get_modification_date_time(o_file_info);
 		
-		local mtimes = { path.getmtime(c_file_path) }
-		// find the modification times of all included files, and add them to the list
-		// also add the name of all system libs to dlinks
-		
-		// recompile if:
-		// , the corresponding jina file is in modules_with_changed_imports
-		// , or the modification time of the C file is newer than the object file
-		for _, mtime in ipairs(mtimes) do
-			if mtime > o_file_mtime then
-				if path.isfile(path.join(src_dir_path, "0.jin")) then
-					os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
-				else
-					os.execute("gcc -Wall -Wextra -Wpedantic -fPIC -c "..c_file_path.." -o "..o_file_path)
-				end
-				break
-			end
-		end
-	end)
-	*/
+		if (
+			// the corresponding jina file is in modules_with_changed_imports ||
+			c_file_mtime == NULL ||
+			o_file_mtime == NULL ||
+			g_date_time_compare(c_file_mtime, o_file_mtime) > 0
+		) {
+			// argv[2] can contain gcc options
+			
+			if (path.isfile(path.join(src_dir_path, "0.jin"))) {
+				os.execute("gcc -Wall -Wextra -Wpedantic -c %s -o %s", c_file_path, o_file_path);
+			} else {
+				os.execute("gcc -Wall -Wextra -Wpedantic -fPIC -c %s -o %s", c_file_path, o_file_path);
+			}
+		}
+	}
 	
 	// link object files
 	if (path.isfile(path.join(src_dir_path, "0.jin"))) {
-		local executable_path = path.join(project_path, ".cache/jina/0")
-		os.execute("gcc "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..executable_path)
-		os.execute("LD_LIBRARY_PATH=. "..executable_path)
+		executable_path = path.join(project_path, ".cache/jina/0");
+		os.execute("gcc %s/*.o -l{%s} -o %s", o_dir_path, dlinks, executable_path);
+		os.execute("LD_LIBRARY_PATH=. %s", executable_path);
 	} else {
-		os.execute("gcc -shared "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..
+		os.execute("gcc -shared %s/*.o -l{%s} -o %s",
+			o_dir_path,
+			dlinks,
 			path.join(project_path, ".cache/jina/so")
-		)
-		
-		// link object files in "projict_dir/test" directory, and run the created executable
-		// LD_LIBRARY_PATH=.
+		);
 	}
-	
-	g_object_unref(entry_info);
+		
+	g_object_unref(modules_with_changed_exports);
+	g_object_unref(modules_with_changed_imports);
+	g_object_unref(dlinks);
+	g_object_unref(imported_modules);
+	g_object_unref(c_file);
+	g_object_unref(c_file_info);
+	g_object_unref(c_file_mtime);
+	g_object_unref(o_file_info);
+	g_object_unref(o_file_mtime);
 	g_object_unref(dir_enum);
-	g_object_unref(entry);
+	g_object_unref(relative_path);
 	
 	g_object_unref(project_dir);
 	g_object_unref(src_dir);
