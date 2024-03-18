@@ -153,7 +153,8 @@ to use a package in a project, create a ".p" file with this format:
 , entries are separated with empty new line
 , each entry contains a URL of the form (protocol can be gnunet, git, project or lib):
 	protocol://address'of'package'directory
-, after the URL, there can be line with a public key,
+	when using the "lib" protocol, the indicated version is the minimum required one
+, the next line of the entry can contain a public key,
 	which will be used to check the signature provided by the package
 entries will be tried in the given order, until one is available
 
