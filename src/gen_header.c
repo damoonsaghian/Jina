@@ -7,6 +7,7 @@ char generate_header_file(GFile* jina_file, GFile* h_file, GString* dlinks) {
 	otherwise just keep the old one, and return(0)
 	
 	// add the path of libs compiled from packages to dlinks
+	// and create a link in project_dir/.cache/jina/lib (except for packages added with "lib" protocol)
 	
 	also a .t file is generated which contains the type signature of all exported definitions
 	*/

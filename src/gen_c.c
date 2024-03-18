@@ -1,6 +1,4 @@
 void generate_c_file(GFile* jina_file, GFile* c_file, GString* imported_modules_paths, GString* dlinks) {
-	
-	
 	// fill the table of module identifiers and their types
 	// https://docs.gtk.org/glib/struct.HashTable.html
 	// check for type consistency in the module, and with (cached) .t files

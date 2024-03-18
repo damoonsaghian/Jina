@@ -229,7 +229,10 @@ void compile_c(char* dir_path) {
 	if (path.isfile(path.join(src_dir_path, "0.jin"))) {
 		executable_path = path.join(project_path, ".cache/jina/0");
 		os.execute("gcc %s/*.o -l{%s} -o %s", o_dir_path, dlinks, executable_path);
-		os.execute("%s", executable_path);
+		os.execute("LD_LIBRARY_PATH='%s/.cache/jina/lib' '%s'",
+			g_file_peek_path(project_dir),
+			executable_path
+		);
 	} else {
 		os.execute("gcc -shared %s/*.o -l{%s} -o %s",
 			o_dir_path,
@@ -305,8 +308,6 @@ int main(int argc, char* argv[]) {
 		compile_c(test_c_dir);
 		// run test program
 	}
-	
-	// run the executable (if there is one)
 	
 	g_object_unref(project_dir);
 	g_object_unref(src_dir);
