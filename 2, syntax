@@ -140,7 +140,7 @@ iterators:
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
 	and possibly an additional extension (separated with an apostrophe),
-	will be exported (ie is accessable outside of the module)
+	will be exported (ie is accessible outside of the module)
 to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 to hide a module so it can't be accessed from modules in the parent directory,
@@ -148,17 +148,18 @@ to hide a module so it can't be accessed from modules in the parent directory,
 
 a package is a collection of modules that are compiled to a shared object file,
 	which can be dynamically linked to
-to use a package in a project, create a ".p" file
-".p" files contain:
-, URL lines (protocol can be gnunet, git or lib):
+to use a package in a project, create a ".p" file with this format:
+, double semicolons start a comment line
+, entries are separated with empty new line
+, each entry contains a URL of the form (protocol can be gnunet, git, project or lib):
 	protocol://address'of'package'directory
-, comment lines, begining with a semicolon
-URL lines will be tried in the given order, until one is available
-if the protocol is git or gnunet, the following line must contain a public key,
-	will be used to check the given signature
+, after the URL, there can be line with a public key,
+	which will be used to check the signature provided by the package
+entries will be tried in the given order, until one is available
+
 to use a module inside a package:
 	package'file'name.Definition
-definitions in "std" package are directly accessable; there is no need for a ".p" file
+definitions in "std" package are directly accessible; there is no need for a ".p" file
 packages that contain a file named "0.jina" (which must contain the init function) are program packages
 
 structs:
