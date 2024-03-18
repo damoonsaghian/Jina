@@ -1,4 +1,4 @@
-char* generate_c_file(GFile* jina_file, GFile* c_file, GString* imported_modules_paths, GString* dlinks) {
+void generate_c_file(GFile* jina_file, GFile* c_file, GString* imported_modules_paths, GString* dlinks) {
 	
 	
 	// fill the table of module identifiers and their types
