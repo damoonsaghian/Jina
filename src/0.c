@@ -59,9 +59,8 @@ libmimalloc-dev
 #include "gen_c.c"
 
 void compile_jina(char* dir_path) {
-	// go through all files in the project directory (or "project_dir/src" if it exists)
+	// go through all files in the dir_path, recursively, including packages mensioned in .p files
 	// generate header files from .jin files
-	// and add packages mensioned in .p files
 	GString* dlinks = g_string_new("glib2,flint");
 	GPtrArray* modules_with_changed_exports = g_ptr_array_new();
 	GQueue* dir_enums_queue = g_queue_new();
@@ -70,6 +69,7 @@ void compile_jina(char* dir_path) {
 	GFile* entry;
 	GString* relative_path;
 	GFile* h_file;
+	GFile* package_dir;
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
@@ -96,16 +96,26 @@ void compile_jina(char* dir_path) {
 			g_string_append(relative_path, ".h");
 			h_file = g_file_resolve_relative_path(h_dir, relative_path);
 			
-			if (generate_header_file(entry, h_file, dlinks) == 1)
+			if (generate_header_file(entry, h_file) == 1)
 				g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
 			
-			// packages will be downloaded to ~/.local/share/jina/packages/package-name
-			// after compiling the package:
-			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
-			// ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
+			// download the package to ~/.local/share/jina/packages/package-name
+			package_dir = ;
+			
+			q_queue_push_tail(
+				dir_enums_queue,
+				g_file_enumerate_children(package_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+			);
+			
+			/*
+			add the path of the lib compiled from the package to dlinks,
+				except for packages added with "lib" protocol
+			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
+				$project_dir/.cahce/jina/lib/package-name.so
+			*/
 		}
 	}
 	
@@ -166,6 +176,7 @@ void compile_jina(char* dir_path) {
 			) {
 				generate_c_file(entry, c_file);
 			}
+		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 		}
 	}
 	
@@ -302,10 +313,12 @@ int main(int argc, char* argv[]) {
 	
 	compile_jina(src_dir);
 	compile_c(c_dir);
+	// compile_c(package_dir) for all packages, recursively
 	
 	if () {
 		compile_jina(test_dir);
 		compile_c(test_c_dir);
+		// compile_c(package_dir) for all packages, recursively
 		// run test program
 	}
 	
