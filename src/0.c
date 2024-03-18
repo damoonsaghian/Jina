@@ -311,15 +311,15 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
-	compile_jina(src_dir);
-	compile_c(c_dir);
-	// compile_c(package_dir) for all packages, recursively
-	
 	if () {
 		compile_jina(test_dir);
 		compile_c(test_c_dir);
 		// compile_c(package_dir) for all packages, recursively
 		// run test program
+	} else {
+		compile_jina(src_dir);
+		compile_c(c_dir);
+		// compile_c(package_dir) for all packages, recursively
 	}
 	
 	g_object_unref(project_dir);
