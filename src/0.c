@@ -59,10 +59,9 @@ libmimalloc-dev
 #include "gen_c.c"
 
 void compile_jina(char* dir_path) {
-	// go through all files in the dir_path, recursively, including packages mensioned in .p files
+	// go through all files in the dir_path, recursively, including packages included using .p files
 	// generate header files from .jin files
 	GString* dlinks = g_string_new("glib2,flint");
-	GPtrArray* modules_with_changed_exports = g_ptr_array_new();
 	GQueue* dir_enums_queue = g_queue_new();
 	GFileEnumerator* dir_enum;
 	GFileInfo* entry_info;
@@ -107,8 +106,7 @@ void compile_jina(char* dir_path) {
 				h_file_mtime == NULL ||
 				g_date_time_compare(jina_file_mtime, h_file_mtime) > 0
 			) {
-				if (generate_header_file(entry, h_file) == 1)
-					g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
+				generate_header_file(entry, h_file);
 			}
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
@@ -119,7 +117,7 @@ void compile_jina(char* dir_path) {
 			
 			/*
 			if the package protocol is "gnunet" or "git", and it needs download/update,
-				or the compiled lib does not exists
+				or the compiled lib does not exist
 			*/
 			if () q_queue_push_tail(
 				dir_enums_queue,
@@ -138,8 +136,6 @@ void compile_jina(char* dir_path) {
 	g_object_unref(h_file);
 	
 	// again go through all files, and compile (newly changed) .jin files to .c files
-	GPtrArray* modules_with_changed_imports = g_ptr_array_new();
-	GString* imported_modules;
 	GFile* c_file;
 	GFileInfo* jina_file_info;
 	GDateTime* jina_file_mtime;
@@ -171,13 +167,6 @@ void compile_jina(char* dir_path) {
 			g_string_append(relative_path, ".c");
 			g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
 			c_file = g_file_resolve_relative_path(c_dir, relative_path);
-			
-			imported_modules = generate_c_file(entry, c_file);
-			/*
-			split imported_modules
-			if an imported module is in modules_with_changed_exports,
-				add g_file_peek_path(entry) to modules_with_changed_imports
-			*/
 			
 			jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
 			jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
@@ -237,7 +226,6 @@ void compile_c(char* dir_path) {
 		GDateTime* o_file_mtime = g_file_info_get_modification_date_time(o_file_info);
 		
 		if (
-			// the corresponding jina file is in modules_with_changed_imports ||
 			c_file_mtime == NULL ||
 			o_file_mtime == NULL ||
 			g_date_time_compare(c_file_mtime, o_file_mtime) > 0
@@ -268,10 +256,7 @@ void compile_c(char* dir_path) {
 		);
 	}
 	
-	g_object_unref(modules_with_changed_exports);
-	g_object_unref(modules_with_changed_imports);
 	g_object_unref(dlinks);
-	g_object_unref(imported_modules);
 	g_object_unref(c_file);
 	g_object_unref(c_file_info);
 	g_object_unref(c_file_mtime);

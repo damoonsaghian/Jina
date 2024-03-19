@@ -1,13 +1,8 @@
-GString* generate_c_file(GFile* jina_file, GFile* c_file) {
-	GString* imported_modules_paths;
-	
+void generate_c_file(GFile* jina_file, GFile* c_file) {
 	// fill the table of module identifiers and their types
 	// https://docs.gtk.org/glib/struct.HashTable.html
 	// check for type consistency in the module, and with (cached) .t files
 	// compile to c
-	
-	// add the paths of imported modules (local and from packages) to imported_modules_paths
-	// separated with comma
 	
 	/*
 	#include <stdlib.h>
@@ -51,6 +46,4 @@ GString* generate_c_file(GFile* jina_file, GFile* c_file) {
 	
 	g_object_unref(jina_file_stream);
 	g_object_unref(c_file_stream);
-	
-	return imported_modules_paths;
 }
