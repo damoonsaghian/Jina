@@ -15,5 +15,5 @@ char generate_header_file(GFile* jina_file, GFile* h_file) {
 	g_object_unref(jina_file_stream);
 	g_object_unref(h_file_stream);
 	
-	return(1);
+	return 1;
 }

@@ -105,7 +105,11 @@ void compile_jina(char* dir_path) {
 			// download the package to ~/.local/share/jina/packages/package-name
 			package_dir = ;
 			
-			q_queue_push_tail(
+			/*
+			if the package protocol is "gnunet" or "git", and it needs download/update,
+				or the compiled lib does not exists
+			*/
+			if () q_queue_push_tail(
 				dir_enums_queue,
 				g_file_enumerate_children(package_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 			);
@@ -311,15 +315,15 @@ int main(int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 	
+	compile_jina(src_dir);
+	compile_c(c_dir);
+	// compile_c(package_dir) for all packages, recursively
+	
 	if () {
 		compile_jina(test_dir);
 		compile_c(test_c_dir);
 		// compile_c(package_dir) for all packages, recursively
 		// run test program
-	} else {
-		compile_jina(src_dir);
-		compile_c(c_dir);
-		// compile_c(package_dir) for all packages, recursively
 	}
 	
 	g_object_unref(project_dir);

@@ -52,5 +52,5 @@ GString* generate_c_file(GFile* jina_file, GFile* c_file) {
 	g_object_unref(jina_file_stream);
 	g_object_unref(c_file_stream);
 	
-	return(imported_modules_paths);
+	return imported_modules_paths;
 }
