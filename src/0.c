@@ -96,8 +96,20 @@ void compile_jina(char* dir_path) {
 			g_string_append(relative_path, ".h");
 			h_file = g_file_resolve_relative_path(h_dir, relative_path);
 			
-			if (generate_header_file(entry, h_file) == 1)
-				g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
+			jina_file_info = g_file_query_info(entry, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			jina_file_mtime = g_file_info_get_modification_date_time(jina_file_info);
+			
+			h_file_info = g_file_query_info(h_file, FILE_ATTRIBUTE_TIME_MODIFIED, 0, NULL, NULL);
+			h_file_mtime = g_file_info_get_modification_date_time(h_file_info);
+			
+			if (
+				jina_file_mtime == NULL ||
+				h_file_mtime == NULL ||
+				g_date_time_compare(jina_file_mtime, h_file_mtime) > 0
+			) {
+				if (generate_header_file(entry, h_file) == 1)
+					g_ptr_array_append(modules_with_changed_exports, g_file_peek_path(entry));
+			}
 		} else if (g_str_has_suffix(g_file_peek_path(entry), ".p")) {
 			// if gnunet or git is needed to add a package, and they are not installed on the system,
 			// ask the user to install them first, then exit with error
@@ -160,7 +172,7 @@ void compile_jina(char* dir_path) {
 			g_string_replace(relative_path, G_DIR_SEPARATOR_S, "__");
 			c_file = g_file_resolve_relative_path(c_dir, relative_path);
 			
-			generate_c_file(entry, c_file, imported_modules, dlink);
+			imported_modules = generate_c_file(entry, c_file);
 			/*
 			split imported_modules
 			if an imported module is in modules_with_changed_exports,

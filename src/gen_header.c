@@ -4,7 +4,7 @@ char generate_header_file(GFile* jina_file, GFile* h_file) {
 	generate its hash
 	if there is an old header file (remained from the last compilation),
 	and it's not equal to the new one (compare their hashes), overwrite the old one
-	otherwise just keep the old one, and return(0)
+	otherwise just keep the old one, and return 0
 	
 	also a .t file is generated which contains the type signature of all exported definitions
 	*/
