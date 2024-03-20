@@ -53,6 +53,8 @@ adding members to the end of structs do not change ABI
 
 there is a one to one relation between API and ABI
 API change means ABI change; API invarience means ABI invarience
+so for recompiling an object file, we just need to track the corresponding .c file,
+	and not all the included .h files
 
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
