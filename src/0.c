@@ -51,8 +51,8 @@ records are implemented as multiple variables
 functions are compiled to c functions with only one arg, which is a struct
 adding members to the end of structs do not change ABI
 
-there is a one to one relation between API and ABI
-API change means ABI change; API invarience means ABI invarience
+all these means that there is a one to one relation between API and ABI
+API change imply ABI change; API invarience imply ABI invarience
 so for recompiling an object file, we just need to track the corresponding .c file,
 	and not all the included .h files
 
@@ -69,20 +69,70 @@ libmimalloc-dev
 #include "gen_header.c"
 #include "gen_c.c"
 
-void compile_jina(char* dir_path) {
-	// go through all files in the dir_path, recursively, including packages included using .p files
+int main(int argc, char* argv[]) {
+	if (argc == 1) {
+		printf("interactive Jina is not yet implemented\n");
+		printf("to compile a project: jina <project_dir_path> [gcc_options]\n");
+		exit(EXIT_FAILURE);
+	}
+	if (argv[1][0] == '-') {
+		printf("usage: jina <project_dir_path> [gcc_options]\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	GFile* project_dir = g_file_new_for_path(argv[1]);
+	if (g_file_query_file_type(project_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
+		printf("there is no directory at \"%s\"\n", g_file_peek_path(project_dir));
+		exit(EXIT_FAILURE);
+	}
+	GFile* src_dir = g_file_get_child(project_dir, "src");
+	if (g_file_query_file_type(src_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
+		printf("there is no \"src\" directory in \"%s\"\n", g_file_peek_path(project_dir));
+		exit(EXIT_FAILURE);
+	}
+	GFile* test_dir = g_file_get_child(project_dir, "test");
+	GFile* c_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "c");
+	if (
+		!g_file_make_directory_with_parents(c_dir) &&
+		g_file_query_file_type(c_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(c_dir));
+		exit(EXIT_FAILURE);
+	}
+	GFile* h_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "h");
+	if (
+		!g_file_make_directory_with_parents(h_dir) &&
+		g_file_query_file_type(h_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(h_dir));
+		exit(EXIT_FAILURE);
+	}
+	GFile* o_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "o");
+	if(
+		!g_file_make_directory_with_parents(o_dir) &&
+		g_file_query_file_type(o_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
+	) {
+		printf("can't create \"%s\" directory\n", g_file_peek_path(o_dir));
+		exit(EXIT_FAILURE);
+	}
+	
+	// go through all files in src and test, recursively, including packages imported by .p files
 	// generate header files from .jin files
-	GString* dlinks = g_string_new("glib2,flint");
-	GQueue* dir_enums_queue = g_queue_new();
+	GString* dlibs = g_string_new("glib2,flint");
 	GFileEnumerator* dir_enum;
 	GFileInfo* entry_info;
 	GFile* entry;
 	GString* relative_path;
 	GFile* h_file;
 	GFile* package_dir;
+	GQueue* dir_enums_queue = g_queue_new();
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+	);
+	g_queue_push_tail(
+		dir_enums_queue,
+		g_file_enumerate_children(test_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
 		dir_enum = g_queue_peek_tail(dir_enums_queue);
@@ -136,17 +186,20 @@ void compile_jina(char* dir_path) {
 			);
 			
 			/*
-			add the path of the lib compiled from the package to dlinks,
+			add the path of the lib compiled from the package to dlibs,
 				except for packages added with "lib" protocol
 			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
 				$project_dir/.cahce/jina/lib/package-name.so
+			
+			for packages imported using "lib" protocol, add the output of following command to dlibs:
+			pkgconf --libs libname
 			*/
 		}
 	}
 	
 	g_object_unref(h_file);
 	
-	// again go through all files, and compile (newly changed) .jin files to .c files
+	// again go through all files, and compile (newly changed) .jin files into .c files
 	GFile* c_file;
 	GFileInfo* jina_file_info;
 	GDateTime* jina_file_mtime;
@@ -155,6 +208,10 @@ void compile_jina(char* dir_path) {
 	g_queue_push_tail(
 		dir_enums_queue,
 		g_file_enumerate_children(src_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
+	);
+	g_queue_push_tail(
+		dir_enums_queue,
+		g_file_enumerate_children(test_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
 	);
 	while (1) {
 		dir_enum = g_queue_peek_tail(dir_enums_queue);
@@ -207,10 +264,8 @@ void compile_jina(char* dir_path) {
 	g_object_unref(jina_file_info);
 	g_object_unref(jina_file_mtime);
 	g_queue_free(dir_enums_queue);
-}
-
-void compile_c(char* dir_path) {
-	// go through all files in the directory containing the generated C files
+	
+	// go through all c files
 	GFileInfo* o_file_info;
 	GDateTime* o_file_mtime;
 	dir_enum = g_file_enumerate_children(c_dir, G_FILE_ATTRIBUTE_STANDARD_NAME, 0, NULL, NULL)
@@ -254,7 +309,7 @@ void compile_c(char* dir_path) {
 	// link object files
 	if (path.isfile(path.join(src_dir_path, "0.jin"))) {
 		executable_path = path.join(project_path, ".cache/jina/0");
-		os.execute("gcc %s/*.o -l{%s} -o %s", o_dir_path, dlinks, executable_path);
+		os.execute("gcc %s/*.o -l{%s} -o %s", o_dir_path, dlibs, executable_path);
 		os.execute("LD_LIBRARY_PATH='%s/.cache/jina/lib' '%s'",
 			g_file_peek_path(project_dir),
 			executable_path
@@ -262,12 +317,13 @@ void compile_c(char* dir_path) {
 	} else {
 		os.execute("gcc -shared %s/*.o -l{%s} -o %s",
 			o_dir_path,
-			dlinks,
+			dlibs,
 			path.join(project_path, ".cache/jina/so")
 		);
 	}
 	
-	g_object_unref(dlinks);
+	// link and run test program
+	
 	g_object_unref(c_file);
 	g_object_unref(c_file_info);
 	g_object_unref(c_file_mtime);
@@ -275,67 +331,10 @@ void compile_c(char* dir_path) {
 	g_object_unref(o_file_mtime);
 	g_object_unref(dir_enum);
 	g_object_unref(relative_path);
-}
-
-int main(int argc, char* argv[]) {
-	if (argc == 1) {
-		printf("interactive Jina is not yet implemented\n");
-		exit(EXIT_FAILURE);
-	}
-	if (argc > 2) {
-		printf("usage: jina <project_path>\n");
-		exit(EXIT_FAILURE);
-	}
-	
-	GFile* project_dir = g_file_new_for_path(argv[1]);
-	if (g_file_query_file_type(project_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
-		printf("there is no directory at \"%s\"\n", g_file_peek_path(project_dir));
-		exit(EXIT_FAILURE);
-	}
-	GFile* src_dir = g_file_get_child(project_dir, "src");
-	if (g_file_query_file_type(src_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY) {
-		printf("there is no \"src\" directory in \"%s\"\n", g_file_peek_path(project_dir));
-		exit(EXIT_FAILURE);
-	}
-	GFile* test_dir = g_file_get_child(project_dir, "test");
-	GFile* c_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "c");
-	if (
-		!g_file_make_directory_with_parents(c_dir) &&
-		g_file_query_file_type(c_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
-	) {
-		printf("can't create \"%s\" directory\n", g_file_peek_path(c_dir));
-		exit(EXIT_FAILURE);
-	}
-	GFile* h_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "h");
-	if (
-		!g_file_make_directory_with_parents(h_dir) &&
-		g_file_query_file_type(h_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
-	) {
-		printf("can't create \"%s\" directory\n", g_file_peek_path(h_dir));
-		exit(EXIT_FAILURE);
-	}
-	GFile* o_dir = g_file_new_build_filename(g_file_peek_path(project_dir), ".cache", "jina", "o");
-	if(
-		!g_file_make_directory_with_parents(o_dir) &&
-		!g_file_query_file_type(o_dir, 0, NULL) != G_FILE_TYPE_DIRECTORY
-	) {
-		printf("can't create \"%s\" directory\n", g_file_peek_path(o_dir));
-		exit(EXIT_FAILURE);
-	}
-	
-	compile_jina(src_dir);
-	compile_c(c_dir);
-	// compile_c(package_dir) for all packages, recursively
-	
-	if () {
-		compile_jina(test_dir);
-		compile_c(test_c_dir);
-		// compile_c(package_dir) for all packages, recursively
-		// run test program
-	}
 	
 	g_object_unref(project_dir);
 	g_object_unref(src_dir);
 	g_object_unref(c_dir);
 	g_object_unref(o_dir);
+	g_object_unref(dlibs);
 }
