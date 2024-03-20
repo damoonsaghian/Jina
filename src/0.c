@@ -45,6 +45,15 @@ records and modules are implemented similarly:
 record_name__field_name
 module_name__var_name
 
+note that record types are not compiled to c structs
+records are implemented as multiple variables
+
+functions are compiled to c functions with only one arg, which is a struct
+adding members to the end of structs do not change ABI
+
+there is a one to one relation between API and ABI
+API change means ABI change; API invarience means ABI invarience
+
 https://github.com/Microsoft/mimalloc
 libmimalloc-dev
 */
