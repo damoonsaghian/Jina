@@ -1,10 +1,9 @@
 ;{ #include <glib-2.0/glib/garray.h> }
 
 ;(
-the initial value will be kept in an array with the same size
-when we try to mutate it, the size will be checked, and if needed, a dynamic array will be created on the heap
+the initial Array will be on stack, if it's small
+when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
 
-for now just use glib2 array
 https://docs.gtk.org/glib/struct.Array.html
 https://docs.gtk.org/glib/struct.ByteArray.html
 https://docs.gtk.org/glib/struct.PtrArray.html
