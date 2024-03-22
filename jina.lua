@@ -62,6 +62,8 @@ https://github.com/Microsoft/mimalloc
 libmimalloc-dev
 ]]
 
+require("pl/stringx").import()
+
 function generate_t_file(jin_file_path, t_file_path)
 	--[[
 	generate a string containing the exported definitions and their types
@@ -71,7 +73,7 @@ function generate_t_file(jin_file_path, t_file_path)
 	]]
 end
 
-function generate_c_file(jin_file_path, c_file_path)
+function generate_c_file(jin_file_path, c_file_path, h_file_path)
 	-- fill the table of definitions and their types
 	-- check for type consistency in the module, and with (cached) .t files
 	-- compile to c
@@ -156,47 +158,70 @@ if not path.isdir(src_dir_path) then
 end
 
 local test_dir_path = path.join(project_dir_path, "test")
+if not path.isdir(src_dir_path) then
+	test_dir_path = nil
+end
 
-local c_dir_path = path.join(project_dir_path, ".cache/jina/c")
-dir.makepath(c_dir_path)
-
-local h_dir_path = path.join(project_dir_path, ".cache/jina/h")
-dir.makepath(h_dir_path)
-
-local o_dir_path = path.join(project_dir_path, ".cache/jina/o")
-dir.makepath(o_dir_path)
-
--- go through all files in all directories in root_paths (recursively)
--- for each .p file, download the package (if necessary), and add its "src" directory to root_paths
--- generate .t files from .jin files
+--[[
+go through all files in all directories in root_paths (recursively)
+for each .p file, download the package (if needed),
+	and if it needs to be compiled, add its "src" directory to root_paths
+generate .t files from .jin files
+]]
 local dlibs = "glib2,flint"
 local root_paths = {src_dir_path, test_dir_path}
 local i = 1
 while root_paths[i] do
+	local package_path = path.dirname(root_paths[i])
+	local c_dir_path = path.join(package_path, ".cache/jina/c")
+	dir.makepath(c_dir_path)
+	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	dir.makepath(h_dir_path)
+	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
-			local relpath_wo_ext, _ = path.splitext(
-				path.relpath(jin_file_path, src_dir_path)
+			local relpath_wo_ext = path.splitext(
+				path.relpath(file_path, root_paths[i])
 			)
 			
-			local t_file_path = path.join(c_dir_path, relpath_wo_ext..".t")
-			generate_t_file(jin_file_path, t_file_path)
+			local t_file_path = path.join(h_dir_path, relpath_wo_ext..".t")
 			
 			local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
-			local jin_file_mtime = path.getmtime(jin_file_path)
+			local jin_file_mtime = path.getmtime(file_path)
 			local c_file_mtime = path.getmtime(c_file_path)
-			if jin_file_mtime > c_file_mtime then
-				compile_jina2c(jin_file_path, c_file_path)
+			
+			if
+				not jin_file_mtime or not c_file_mtime or
+				jin_file_mtime > c_file_mtime or
+				c_file_mtime > os.time() -- make sure that c file is not from future!
+			then
+				generate_t_file(file_path, t_file_path)
 			end
 		elseif file_path:find"%.p$" then
-			table.insert(package_paths, file_path)
+			-- ~/.local/share/jina/packages/hash-of-package-url
+			local package_name =path.basename()
+			local package_src_path = path.join("~/.local/share/jina/packages", package_name, "src")
+			table.insert(root_paths, package_src_path)
+			
 			-- if gnunet or git is needed to add a package, and they are not installed on the system,
 			-- ask the user to install them first, then exit with error
 			
-			-- packages will be downloaded to ~/.local/share/jina/packages/package-name
-			-- after compiling the package:
-			-- ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so $project_dir/.cahce/jina/package-name.so
-			-- ln -s ~/.local/share/jina/packages/package-name/.cache/jina/c $project_dir/.cahce/jina/c/package-name
+			--[[
+			if the package protocol is "gnunet" or "git", and it needs download/update,
+				or the compiled lib does not exist:
+			table.insert(root_dirs, ""~/.local/share/jina/packages/$package-name/src")
+			
+			packages will be downloaded to ~/.local/share/jina/packages/hash-of-package-url
+			]]
+			
+			-- hard link ".git" dir to "~/.local/share/git/hash_of_url"
+			
+			--[[
+			add the path of the lib compiled from the package to dlibs
+			except for packages added with "lib" protocol:
+			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
+				$project_dir/.cahce/jina/lib/package-name.so
+			]]
 		end
 	end)
 	i = i + 1
@@ -205,58 +230,114 @@ end
 -- go through all files in all directories in root_paths (recursively)
 -- generate .c and .h files from .jin and .t files
 for _, root_path in ipairs(root_paths) do
+	local package_path = path.dirname(root_path)
+	local c_dir_path = path.join(package_path, ".cache/jina/c")
+	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	
 	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
+			local relpath_wo_ext = path.splitext(
+				path.relpath(file_path, root_path)
+			)
+			relpath_wo_ext:replace(path.sep, "__")
+			
+			
+			
+			local h_file_path = path.join(h_dir_path, relpath_wo_ext..".h")
+			
+			local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
+			local jin_file_mtime = path.getmtime(file_path)
+			local c_file_mtime = path.getmtime(c_file_path)
+			
+			if
+				not jin_file_mtime or not c_file_mtime or
+				jin_file_mtime > c_file_mtime or
+				c_file_mtime > os.time() -- make sure that c file is not from future!
+			then
+				generate_c_file(file_path, c_file_path, h_file_path)
+			end
 		end
 	end)
 end
 
+--[[
+TODO: use multiple threads to generate .t and c files
+number of spawn threads will be equal to the number of CPU cores,
+	or the number of Jina files, either one which is smaller
+https://lualanes.github.io/lanes/
+]]
+
+local gcc_options = arg[2]
+
+-- go through all ".cache/jina/c" subdirectories of all directories in root_paths
 -- compile C files to object files
-dir.getallfiles(c_dir_path, "%.c$"):foreach(function (c_file_path)
-	local relpath_wo_ext, _ = path.splitext(
-		path.relpath(c_file_path, c_dir_path)
-	)
+for _, root_path in ipairs(root_paths) do
+	local package_path = path.dirname(root_path)
+	local c_dir_path = path.join(package_path, ".cache/jina/c")
+	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	local o_dir_path = path.join(package_path, ".cache/jina/o")
+	dir.makepath(o_dir_path)
 	
-	-- if for the C file, there is no corresponding jina file, delete it and its header file, then return
-	local jin_file_path = path.join(src_dir_path, relpath_wo_ext..".jin")
-	if not path.isfile(jin_file_path) then
-		os.remove(c_file_path)
-		os.remove(path.join(c_dir_path, relpath_wo_ext)..".h")
-		return
-	end
-	
-	local o_file_name = relpath_wo_ext:gsub(path.sep, "__") .. ".o"
-	local o_file_path = path.join(o_dir_path, o_file_name)
-	local o_file_mtime = path.getmtime(o_file_path)
-	
-	local mtimes = { path.getmtime(c_file_path) }
-	-- find the modification times of all included files, and add them to the list
-	-- also add the name of all system libs to dlinks
-	
-	-- if the modification time of the C file or one of the files included in it,
-	-- is newer than the object file, recompile it
-	for _, mtime in ipairs(mtimes) do
-		if mtime > o_file_mtime then
-			if path.isfile(path.join(src_dir_path, "0.jin")) then
-				os.execute("gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path)
+	for c_file_path in dir.getfiles(c_dir_path) do
+		local relpath_wo_ext, _ = path.splitext(
+			path.relpath(c_file_path, c_dir_path)
+		)
+		
+		-- if for the C file, there is no corresponding jina file, delete it and its .h and .o file
+		local jin_file_path = path.join(root_path, relpath_wo_ext..".jin")
+		if not path.isfile(jin_file_path) then
+			os.remove(c_file_path)
+			os.remove(path.join(h_dir_path, relpath_wo_ext..".h"))
+			os.remove(path.join(o_dir_path, relpath_wo_ext..".o"))
+			goto skip
+		end
+		
+		local o_file_path = path.join(o_dir_path, relpath_wo_ext..".o")
+		local o_file_mtime = path.getmtime(o_file_path)
+		
+		local c_file_mtime = path.getmtime(c_file_path)
+		
+		if
+			not c_file_mtime or not o_file_mtim or
+			c_file_mtime > o_file_mtime or
+			o_file_mtime > os.time() -- make sure that o file is not from future!
+		then
+			if
+				root_path == project_dir_path and
+				path.isfile(path.join(root_path, "0.jin"))
+			then
+				os.execute("gcc -Wall -Wextra -Wpedantic "..gcc_options..
+					" -c "..c_file_path.." -o "..o_file_path
+				)
 			else
-				os.execute("gcc -Wall -Wextra -Wpedantic -fPIC -c "..c_file_path.." -o "..o_file_path)
+				os.execute("gcc -Wall -Wextra -Wpedantic -fPIC "..gcc_options..
+					" -c "..c_file_path.." -o "..o_file_path
+				)
 			end
 			break
 		end
+		::skip::
 	end
-end)
+end
 
 -- link object files
-if path.isfile(path.join(src_dir_path, "0.jin")) then
-	local executable_path = path.join(project_path, ".cache/jina/0")
-	os.execute("gcc "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..executable_path)
-	os.execute("LD_LIBRARY_PATH=. "..executable_path)
-else
-	os.execute("gcc -shared "..o_dir_path.."/*.o -l{"..dlinks.."} -o "..
-		path.join(project_path, ".cache/jina/so")
-	)
-	
-	-- link object files in "projict_dir/test" directory, and run the created executable
-	-- LD_LIBRARY_PATH=.
+-- the order of linking packages -> dependency tree
+for _, root_path in ipairs(root_paths) do
+	local package_path = path.dirname(root_path)
+	local o_dir_path = path.join(package_path, ".cache/jina/o")
+
+	if
+		root_path == project_dir_path and
+		path.isfile(path.join(root_path, "0.jin"))
+	then
+		local executable_path = path.join(project_dir_path, ".cache/jina/0")
+		os.execute("gcc "..o_dir_path.."/*.o -l{"..dlibs.."} -o "..executable_path)
+		os.execute("LD_LIBRARY_PATH='"..project_dir_path.."/.cache/jina/lib' "..executable_path)
+	else
+		os.execute("gcc -shared "..o_dir_path.."/*.o -l{"..dlibs.."} -o "..
+			path.join(package_path, ".cache/jina/so")
+		)
+	end
 end
+
+-- popen -> concurrent processes
