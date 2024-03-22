@@ -95,7 +95,7 @@ function:
 	f = { a :A , b !B | :C ... }
 note that the type of above function is:
 	f :{ a :A , b !B | C }
-this somehow strange type is to avoid contravarient behaviour of function arguments, when we introduce interfaces
+this somehow strange type is to avoid contravarient behavior of function arguments, when we introduce interfaces
 function call:
 	f x y
 which is equivalent to these forms:
@@ -151,9 +151,11 @@ a package is a collection of modules that are compiled to a shared object file,
 to use a package in a project, create a ".p" file with this format:
 , double semicolons start a comment line
 , entries are separated with empty new line
-, each entry contains a URL of the form (protocol can be gnunet, git, project or lib):
+, each entry contains a URL of the form (where protocol can be gnunet, git, project):
 	protocol://address'of'package'directory
-	when using the "lib" protocol, the indicated version is the minimum required one
+	or:
+	lib://libname.major'ver'num.minor'ver'num
+	the library installed on the system must have the same major version, and the same or bigger minor version
 , the next line of the entry can contain a public key,
 	which will be used to check the signature provided by the package
 entries will be tried in the given order, until one is available

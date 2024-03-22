@@ -69,3 +69,4 @@ to avoid this problem, some languages (eg Rust) have two kinds of types:
 Jina does the same, without actually spliting types into two kinds
 
 Jina compiles to C, and can easily use existing C libraries
+the compiled binary will at least need "glib2" and "flint" dynamic libraries to be installed on the system

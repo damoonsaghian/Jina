@@ -1,9 +1,9 @@
-apt-get install gcc libglib2.0-dev libflint-dev
+apt-get install lua5.4 lua-penlight gcc libglib2.0-dev libflint-dev
 
 project_dir="$(dirname "$0")"
 
-gcc -Wall -Wextra -Wpedantic -lglib-2.0 "$project_dir/src/0.c" -o "$project_dir/.cache/gcc/jina"
-cp "$project_dir/.cache/gcc/jina" /usr/local/bin/jina
+cp "$project_dir/jina.lua" /usr/local/bin/jina
+chmod +x /usr/local/bin/jina
 
 mkdir -p /usr/local/lib/jina/
 cp -r "$project_dir"/std/* /usr/local/lib/jina/
