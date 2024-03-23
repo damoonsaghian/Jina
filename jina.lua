@@ -213,8 +213,9 @@ while root_paths[i] do
 			
 			--[[
 			if the package protocol is "gnunet" or "git", and it needs download/update,
-				or the compiled lib does not exist:
+				or if the compiled lib does not exist:
 			table.insert(root_dirs, ""~/.local/share/jina/packages/$package-name/src")
+			if the it's not already in root_dirs
 			
 			packages will be downloaded to ~/.local/share/jina/packages/hash-of-package-url
 			before starting to update, first remove the compiled lib (.so file)
@@ -224,7 +225,7 @@ while root_paths[i] do
 			
 			--[[
 			add the path of the libs compiled from the package to dlibs[]
-			
+			when there is a dependency cycle don't add it to dlibs
 			
 			except for packages added with "lib" protocol:
 			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
@@ -333,12 +334,6 @@ end
 
 -- wait for all process to complete
 for _, handle in ipairs(process_handles) do handle:read() end
-
--- go through all ".cache/jina/o" subdirectories of all directories in root_paths
--- create 0.a files, and link them into package_path/.cache/jina/lib/
--- this is to work arount dependecy cycles when creating shared objects
-for _, root_path in ipairs(root_paths) do
-end
 
 -- go through all ".cache/jina/o" subdirectories of all directories in root_paths
 -- link object files
