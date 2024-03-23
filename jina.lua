@@ -328,6 +328,15 @@ for _, root_path in ipairs(root_paths) do
 	end
 end
 
+-- wait for all process to complete
+for _, handle in ipairs(process_handles) do handle:read() end
+
+-- go through all ".cache/jina/o" subdirectories of all directories in root_paths
+-- create 0.a files
+-- this is to work arount dependecy cycles when creating shared objects
+for _, root_path in ipairs(root_paths) do
+end
+
 -- go through all ".cache/jina/o" subdirectories of all directories in root_paths
 -- link object files
 -- iterate backwards from the end, to link dependecies before dependants
