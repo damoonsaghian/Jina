@@ -168,7 +168,7 @@ for each .p file, download the package (if needed),
 	and if it needs to be compiled, add its "src" directory to root_paths
 generate .t files from .jin files
 ]]
-local dlibs = "glib2,flint"
+local dlibs = {}
 local root_paths = {src_dir_path, test_dir_path}
 local i = 1
 while root_paths[i] do
@@ -177,6 +177,8 @@ while root_paths[i] do
 	dir.makepath(c_dir_path)
 	local h_dir_path = path.join(package_path, ".cache/jina/h")
 	dir.makepath(h_dir_path)
+	
+	dir.rmtree(project_path.."/.cahce/jina/lib")
 	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -212,12 +214,15 @@ while root_paths[i] do
 			table.insert(root_dirs, ""~/.local/share/jina/packages/$package-name/src")
 			
 			packages will be downloaded to ~/.local/share/jina/packages/hash-of-package-url
+			before starting to update, first remove the compiled lib (.so file)
 			]]
 			
 			-- hard link ".git" dir to "~/.local/share/git/hash_of_url"
 			
 			--[[
-			add the path of the lib compiled from the package to dlibs
+			add the path of the libs compiled from the package to dlibs[]
+			
+			
 			except for packages added with "lib" protocol:
 			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
 				$project_dir/.cahce/jina/lib/package-name.so
@@ -268,6 +273,7 @@ https://lualanes.github.io/lanes/
 ]]
 
 local gcc_options = arg[2]
+local process_handles = {}
 
 -- go through all ".cache/jina/c" subdirectories of all directories in root_paths
 -- compile C files to object files
@@ -306,13 +312,15 @@ for _, root_path in ipairs(root_paths) do
 				root_path == project_dir_path and
 				path.isfile(path.join(root_path, "0.jin"))
 			then
-				os.execute("gcc -Wall -Wextra -Wpedantic "..gcc_options..
+				local handle = io.open("gcc -Wall -Wextra -Wpedantic "..gcc_options..
 					" -c "..c_file_path.." -o "..o_file_path
 				)
+				table.insert(process_handles, handle)
 			else
-				os.execute("gcc -Wall -Wextra -Wpedantic -fPIC "..gcc_options..
+				local handle = io.open("gcc -Wall -Wextra -Wpedantic -fPIC "..gcc_options..
 					" -c "..c_file_path.." -o "..o_file_path
 				)
+				table.insert(process_handles, handle)
 			end
 			break
 		end
@@ -320,24 +328,28 @@ for _, root_path in ipairs(root_paths) do
 	end
 end
 
+-- go through all ".cache/jina/o" subdirectories of all directories in root_paths
 -- link object files
--- the order of linking packages -> dependency tree
-for _, root_path in ipairs(root_paths) do
-	local package_path = path.dirname(root_path)
+-- iterate backwards from the end, to link dependecies before dependants
+for i = #root_paths, 1, -1 do
+	local package_path = path.dirname(root_paths[i])
 	local o_dir_path = path.join(package_path, ".cache/jina/o")
-
+	
+	-- if .so file exists, goto skip
+	
 	if
-		root_path == project_dir_path and
-		path.isfile(path.join(root_path, "0.jin"))
+		root_paths[i] == project_dir_path and
+		path.isfile(path.join(project_dir_path, "0.jin"))
 	then
 		local executable_path = path.join(project_dir_path, ".cache/jina/0")
-		os.execute("gcc "..o_dir_path.."/*.o -l{"..dlibs.."} -o "..executable_path)
+		os.execute("gcc "..o_dir_path.."/*.o -lglib2 -lflint "..dlibs[package_name].." -o "..executable_path) or
+			os.exit(false)
 		os.execute("LD_LIBRARY_PATH='"..project_dir_path.."/.cache/jina/lib' "..executable_path)
 	else
-		os.execute("gcc -shared "..o_dir_path.."/*.o -l{"..dlibs.."} -o "..
+		os.execute("gcc -shared "..o_dir_path.."/*.o -lglib2 -lflint "..dlibs[package_name].." -o "..
 			path.join(package_path, ".cache/jina/so")
-		)
+		) or os.exit(false)
 	end
+	
+	::skip::
 end
-
--- popen -> concurrent processes
