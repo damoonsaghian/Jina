@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-require("pl/stringx").import()
+require "pl.stringx" .import()
 
 function generate_t_file(jin_file_path, t_file_path)
 	--[[
@@ -212,17 +212,16 @@ while root_paths[i] do
 				generate_t_file(file_path, t_file_path)
 			end
 		elseif file_path:find"%.p$" then
-			-- ~/.local/share/jina/packages/hash-of-package-url
-			local package_name =path.basename()
+			local package_name = path.basename()
 			local package_src_path = path.join("~/.local/share/jina/packages", package_name, "src")
 			
 			--[[
 			if gnunet or git is needed to add a package, and they are not installed on the system,
 			ask the user to install them first, then exit with error
-			packages will be downloaded to ~/.local/share/jina/packages/hash-of-package-url
+			packages will be downloaded to ~/.local/share/jina/packages/url_hash/package_name
 			before starting to update, first remove the compiled lib (.so file)
 			
-			hard link ".git" dir to "~/.local/share/git/hash_of_url"
+			https://sourceware.org/glibc/wiki/LinkerNamespaces
 			
 			root_paths:set(package_name, package_src_path)
 			
