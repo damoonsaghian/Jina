@@ -149,6 +149,7 @@ end
 
 local path = require "pl/path"
 local dir = require "pl/dir"
+local omap = require "pl/OrderedMap"
 
 local project_dir_path = arg[1]
 if not path.isdir(project_dir_path) then
@@ -172,7 +173,7 @@ for each .p file, download the package (if needed),
 generate .t files from .jin files
 ]]
 local dlibs = {}
-local root_paths = {src_dir_path, test_dir_path}
+local root_paths = omap{ _src = src_dir_path, _test = test_dir_path}
 local i = 1
 while root_paths[i] do
 	local package_path = path.dirname(root_paths[i])
@@ -206,24 +207,24 @@ while root_paths[i] do
 			-- ~/.local/share/jina/packages/hash-of-package-url
 			local package_name =path.basename()
 			local package_src_path = path.join("~/.local/share/jina/packages", package_name, "src")
-			table.insert(root_paths, package_src_path)
-			
-			-- if gnunet or git is needed to add a package, and they are not installed on the system,
-			-- ask the user to install them first, then exit with error
 			
 			--[[
-			if the package protocol is "gnunet" or "git", and it needs download/update,
-				or if the compiled lib does not exist:
-			table.insert(root_dirs, ""~/.local/share/jina/packages/$package-name/src")
-			if the it's not already in root_dirs
-			
+			if gnunet or git is needed to add a package, and they are not installed on the system,
+			ask the user to install them first, then exit with error
 			packages will be downloaded to ~/.local/share/jina/packages/hash-of-package-url
 			before starting to update, first remove the compiled lib (.so file)
-			]]
 			
-			-- hard link ".git" dir to "~/.local/share/git/hash_of_url"
+			hard link ".git" dir to "~/.local/share/git/hash_of_url"
 			
-			--[[
+			root_paths:set(package_name, package_src_path)
+			
+			if there is a key named "package_name" in root_dirs:
+			, if its index is greater than "i", do nothing
+			, else, sort elements between them, according to their dependecies
+			{package_name = "~/.local/share/jina/packages/$package-name/src"}
+			
+			do not allow cyclic dependencies
+			
 			add the path of the libs compiled from the package to dlibs[]
 			when there is a dependency cycle don't add it to dlibs
 			
