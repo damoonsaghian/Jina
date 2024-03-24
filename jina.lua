@@ -157,14 +157,17 @@ if not path.isdir(project_dir_path) then
 end
 
 local src_dir_path = path.join(project_dir_path, "src")
-if not path.isdir(src_dir_path) then
-	error("there is no \"src\" directory in \""..project_dir_path.."\"\n")
-end
-
 local test_dir_path = path.join(project_dir_path, "test")
+if not path.isdir(src_dir_path) then
+	src_dir_path = project_dir_path
+	test_dir_path = nil
+end
 if not path.isdir(src_dir_path) then
 	test_dir_path = nil
 end
+
+local std_path = "/usr/local/lib/jina/"
+if not path.isdir(std_path) then  std_path = "/usr/lib/jina/" end
 
 --[[
 go through all files in all directories in root_paths (recursively)
@@ -183,6 +186,11 @@ while root_paths[i] do
 	dir.makepath(h_dir_path)
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
+	
+	dir.getfiles(std_path):foreach(function (file_path)
+		local t_file_path = path.join(h_dir_path, path.splitext(path.basename(file_path))..".t")
+		generate_t_file(file_path, t_file_path)
+	end)
 	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -243,6 +251,12 @@ for _, root_path in ipairs(root_paths) do
 	local package_path = path.dirname(root_path)
 	local c_dir_path = path.join(package_path, ".cache/jina/c")
 	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	
+	dir.getfiles(std_path):foreach(function (file_path)
+		local c_file_path = path.join(c_dir_path, path.splitext(path.basename(file_path))..".c")
+		local h_file_path = path.join(h_dir_path, path.splitext(path.basename(file_path))..".h")
+		generate_c_file(file_path, c_file_path, h_file_path)
+	end)
 	
 	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
