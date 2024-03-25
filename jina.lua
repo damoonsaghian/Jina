@@ -156,33 +156,30 @@ if not path.isdir(project_dir_path) then
 	error("there is no directory at \""..project_dir_path.."\"\n")
 end
 
-local src_dir_path = path.join(project_dir_path, "src")
-local test_dir_path = path.join(project_dir_path, "test")
-if not path.isdir(src_dir_path) then
-	src_dir_path = project_dir_path
-	test_dir_path = nil
-end
-if not path.isdir(src_dir_path) then
-	test_dir_path = nil
-end
+local root_paths = omap{}
+
+-- find all directories inside project_dir that contains at least one .jin file; add them to root_paths
+root_path:set()
+path.join(project_dir_path, "src")
 
 local std_path = "/usr/local/lib/jina/"
-if not path.isdir(std_path) then  std_path = "/usr/lib/jina/" end
+if not path.isdir(std_path) then std_path = "/usr/lib/jina/" end
+
+local dlibs = {}
 
 --[[
 go through all files in all directories in root_paths (recursively)
-for each .p file, download the package (if needed),
-	and if it needs to be compiled, add its "src" directory to root_paths
-generate .t files from .jin files
+, for each "package_name.p" file, download the package (if needed)
+	inside the download, the directory with the name "package_name" contains the source of the package
+	if it needs compilation, it will be added to root_paths
+, from .jin files generate .t files
 ]]
-local dlibs = {}
-local root_paths = omap{ _src = src_dir_path, _test = test_dir_path}
 local i = 1
 while root_paths[i] do
-	local package_path = path.dirname(root_paths[i])
-	local c_dir_path = path.join(package_path, ".cache/jina/c")
+	local project_path = path.dirname(root_paths[i])
+	local c_dir_path = path.join(project_path, ".cache/jina/c")
 	dir.makepath(c_dir_path)
-	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	local h_dir_path = path.join(project_path, ".cache/jina/h")
 	dir.makepath(h_dir_path)
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
@@ -213,17 +210,15 @@ while root_paths[i] do
 			end
 		elseif file_path:find"%.p$" then
 			local package_name = path.basename()
-			local package_src_path = path.join("~/.local/share/jina/packages", package_name, "src")
+			local package_path = path.join("~/.local/share/jina/packages", url_hash, package_name)
 			
 			--[[
 			if gnunet or git is needed to add a package, and they are not installed on the system,
 			ask the user to install them first, then exit with error
-			packages will be downloaded to ~/.local/share/jina/packages/url_hash/package_name
+			packages will be downloaded to ~/.local/share/jina/packages/url_hash/
 			before starting to update, first remove the compiled lib (.so file)
 			
-			https://sourceware.org/glibc/wiki/LinkerNamespaces
-			
-			root_paths:set(package_name, package_src_path)
+			root_paths:set(package_name, package_path)
 			
 			if there is a key named "package_name" in root_dirs:
 			, if its index is greater than "i", do nothing
@@ -233,7 +228,6 @@ while root_paths[i] do
 			do not allow cyclic dependencies
 			
 			add the path of the libs compiled from the package to dlibs[]
-			when there is a dependency cycle don't add it to dlibs
 			
 			except for packages added with "lib" protocol:
 			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
@@ -247,9 +241,9 @@ end
 -- go through all files in all directories in root_paths (recursively)
 -- generate .c and .h files from .jin and .t files
 for _, root_path in ipairs(root_paths) do
-	local package_path = path.dirname(root_path)
-	local c_dir_path = path.join(package_path, ".cache/jina/c")
-	local h_dir_path = path.join(package_path, ".cache/jina/h")
+	local project_path = path.dirname(root_path)
+	local c_dir_path = path.join(project_path, ".cache/jina/c")
+	local h_dir_path = path.join(project_path, ".cache/jina/h")
 	
 	dir.getfiles(std_path):foreach(function (file_path)
 		local c_file_path = path.join(c_dir_path, path.splitext(path.basename(file_path))..".c")
@@ -296,10 +290,10 @@ local process_handles = {}
 -- go through all ".cache/jina/c" subdirectories of all directories in root_paths
 -- compile C files to object files
 for _, root_path in ipairs(root_paths) do
-	local package_path = path.dirname(root_path)
-	local c_dir_path = path.join(package_path, ".cache/jina/c")
-	local h_dir_path = path.join(package_path, ".cache/jina/h")
-	local o_dir_path = path.join(package_path, ".cache/jina/o")
+	local project_path = path.dirname(root_path)
+	local c_dir_path = path.join(project_path, ".cache/jina/c")
+	local h_dir_path = path.join(project_path, ".cache/jina/h")
+	local o_dir_path = path.join(project_path, ".cache/jina/o")
 	dir.makepath(o_dir_path)
 	
 	for c_file_path in dir.getfiles(c_dir_path) do
@@ -353,8 +347,8 @@ for _, handle in ipairs(process_handles) do handle:read() end
 -- link object files
 -- iterate backwards from the end, to link dependecies before dependants
 for i = #root_paths, 1, -1 do
-	local package_path = path.dirname(root_paths[i])
-	local o_dir_path = path.join(package_path, ".cache/jina/o")
+	local project_path = path.dirname(root_paths[i])
+	local o_dir_path = path.join(project_path, ".cache/jina/o")
 	
 	-- if .so file exists, goto skip
 	
@@ -368,7 +362,7 @@ for i = #root_paths, 1, -1 do
 		os.execute("LD_LIBRARY_PATH='"..project_dir_path.."/.cache/jina/lib' "..executable_path)
 	else
 		os.execute("gcc -shared "..o_dir_path.."/*.o -lglib2 -lflint "..dlibs[package_name].." -o "..
-			path.join(package_path, ".cache/jina/so")
+			path.join(project_path, ".cache/jina/so")
 		) or os.exit(false)
 	end
 	
