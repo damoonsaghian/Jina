@@ -148,6 +148,8 @@ to hide a module so it can't be accessed from modules in the parent directory,
 
 a package is a collection of modules that are compiled to a shared object file,
 	which can be dynamically linked to
+in the project directory, we can have multiple package directories
+	the name of the directory is the package name
 to use a package in a project, create a ".p" file with this format:
 , double semicolons start a comment line
 , entries are separated with empty new line
