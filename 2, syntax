@@ -141,26 +141,27 @@ modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
 	and possibly an additional extension (separated with an apostrophe),
 	will be exported (ie is accessible outside of the module)
-to hide the internals of a definition, append an apostrophe at the end of its name: a' = ...
+to hide a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 to hide a module so it can't be accessed from modules in the parent directory,
 	append an apostrophe at the end of its file name
 
-a package is a collection of modules that are compiled to a shared object file,
-	which can be dynamically linked to
-in the project directory, we can have multiple package directories
-	the name of the directory is the package name
-to use a package in a project, create a ".p" file with this format:
+a package is a collection of modules
+in a project directory, we can have multiple package directories
+	the name of the package directory is the package name, plus a ".jin" extension
+to use a package in a project, create a file named "package_name.p" with this format:
 , double semicolons start a comment line
 , entries are separated with empty new line
-, each entry contains a URL of the form (where protocol can be gnunet, git, project):
-	protocol://address'of'package'directory
+, each entry contains a URL of the form (where protocol can be gnunet, git):
+	protocol://address'of'package'project
 	or:
 	lib://libname.major'ver'num.minor'ver'num
 	the library installed on the system must have the same major version, and the same or bigger minor version
 , the next line of the entry can contain a public key,
 	which will be used to check the signature provided by the package
 entries will be tried in the given order, until one is available
+if there is no entry in the .p file, it refers to a directory with the same name as the .p file,
+	in the current project
 
 to use a module inside a package:
 	package'file'name.Definition

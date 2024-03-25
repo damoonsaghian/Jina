@@ -1,8 +1,12 @@
 #!/usr/bin/env lua
 
+local path = require "pl/path"
+local dir = require "pl/dir"
+local omap = require "pl/OrderedMap"
 require "pl.stringx" .import()
 
-function generate_t_file(jin_file_path, t_file_path)
+function generate_t_file(jin_file_path)
+	local t_file_path =
 	--[[
 	generate a string containing the exported definitions and their types
 	then write the string into the .t file, if:
@@ -31,6 +35,9 @@ function generate_c_file(jin_file_path, c_file_path, h_file_path)
 	end
 	
 	-- if correspoding .t file is newer than corresponding .h file, regenerate the .h file
+	
+	-- prefeix all exportedidentifiers with "package_name__"
+	-- except when package name is "std"
 	
 	--[[
 	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
@@ -139,33 +146,29 @@ end
 
 if arg[1] == nil then
 	print("interactive Jina is not yet implemented")
-	print("to compile a project: jina <project_dir_path> [gcc_options]")
+	print("to compile a project: jina <project_path> [gcc_options]")
 	os.exit()
 end
 if arg[1]:char(1) == "-" then
-	print("usage: jina <project_dir_path> [gcc_options]")
+	print("usage: jina <project_path> [gcc_options]")
 	os.exit()
 end
 
-local path = require "pl/path"
-local dir = require "pl/dir"
-local omap = require "pl/OrderedMap"
-
-local project_dir_path = arg[1]
-if not path.isdir(project_dir_path) then
-	error("there is no directory at \""..project_dir_path.."\"\n")
+if not path.isdir(arg[1]) then
+	error("there is no directory at \""..arg[1].."\"\n")
 end
 
 local root_paths = omap{}
 
--- find all directories inside project_dir that contains at least one .jin file; add them to root_paths
+-- find all directories named "*.jin" inside the project directory, and add them to root_paths
 root_path:set()
-path.join(project_dir_path, "src")
 
 local std_path = "/usr/local/lib/jina/"
 if not path.isdir(std_path) then std_path = "/usr/lib/jina/" end
 
 local dlibs = {}
+-- if package_name is not "std":
+-- dlib[package_name] = "-lstd.jin"
 
 --[[
 go through all files in all directories in root_paths (recursively)
@@ -183,11 +186,6 @@ while root_paths[i] do
 	dir.makepath(h_dir_path)
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
-	
-	dir.getfiles(std_path):foreach(function (file_path)
-		local t_file_path = path.join(h_dir_path, path.splitext(path.basename(file_path))..".t")
-		generate_t_file(file_path, t_file_path)
-	end)
 	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -244,12 +242,6 @@ for _, root_path in ipairs(root_paths) do
 	local project_path = path.dirname(root_path)
 	local c_dir_path = path.join(project_path, ".cache/jina/c")
 	local h_dir_path = path.join(project_path, ".cache/jina/h")
-	
-	dir.getfiles(std_path):foreach(function (file_path)
-		local c_file_path = path.join(c_dir_path, path.splitext(path.basename(file_path))..".c")
-		local h_file_path = path.join(h_dir_path, path.splitext(path.basename(file_path))..".h")
-		generate_c_file(file_path, c_file_path, h_file_path)
-	end)
 	
 	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -320,10 +312,7 @@ for _, root_path in ipairs(root_paths) do
 			c_file_mtime > o_file_mtime or
 			o_file_mtime > os.time() -- make sure that o file is not from future!
 		then
-			if
-				root_path == project_dir_path and
-				path.isfile(path.join(root_path, "0.jin"))
-			then
+			if path.isfile(path.join(root_path, "0.jin")) then
 				local handle = io.open("gcc -Wall -Wextra -Wpedantic "..gcc_options..
 					" -c "..c_file_path.." -o "..o_file_path
 				)
@@ -352,16 +341,14 @@ for i = #root_paths, 1, -1 do
 	
 	-- if .so file exists, goto skip
 	
-	if
-		root_paths[i] == project_dir_path and
-		path.isfile(path.join(project_dir_path, "0.jin"))
-	then
-		local executable_path = path.join(project_dir_path, ".cache/jina/0")
-		os.execute("gcc "..o_dir_path.."/*.o -lglib2 -lflint "..dlibs[package_name].." -o "..executable_path) or
-			os.exit(false)
-		os.execute("LD_LIBRARY_PATH='"..project_dir_path.."/.cache/jina/lib' "..executable_path)
+	if path.isfile(path.join(project_path, "0.jin")) then
+		local executable_path = path.join(project_path, ".cache/jina/0")
+		local compile_command = "gcc "..o_dir_path.."/*.o "..
+			dlibs[package_name].." -o "..executable_path
+		os.execute(compile_command) or os.exit(false)
+		os.execute("LD_LIBRARY_PATH='"..project_path.."/.cache/jina/lib' "..executable_path)
 	else
-		os.execute("gcc -shared "..o_dir_path.."/*.o -lglib2 -lflint "..dlibs[package_name].." -o "..
+		os.execute("gcc -shared "..o_dir_path.."/*.o "..dlibs[package_name].." -o "..
 			path.join(project_path, ".cache/jina/so")
 		) or os.exit(false)
 	end
