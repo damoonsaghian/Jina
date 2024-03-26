@@ -342,14 +342,14 @@ for i = #root_paths, 1, -1 do
 	-- if .so file exists, goto skip
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
-		local executable_path = path.join(project_path, ".cache/jina/0")
-		local compile_command = "gcc "..o_dir_path.."/*.o "..
+		local executable_path = path.join(project_path, ".cache/jina/out", package_name)
+		local compile_command = "gcc -Wl,-rpath,../lib "..o_dir_path.."/*.o "..
 			dlibs[package_name].." -o "..executable_path
 		os.execute(compile_command) or os.exit(false)
-		os.execute("LD_LIBRARY_PATH='"..project_path.."/.cache/jina/lib' "..executable_path)
+		os.execute(executable_path)
 	else
-		os.execute("gcc -shared "..o_dir_path.."/*.o "..dlibs[package_name].." -o "..
-			path.join(project_path, ".cache/jina/so")
+		os.execute("gcc -shared -Wl,-rpath,../lib "..o_dir_path.."/*.o "..dlibs[package_name].." -o "..
+			path.join(project_path, ".cache/jina/out", package_name)
 		) or os.exit(false)
 	end
 	
