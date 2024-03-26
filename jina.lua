@@ -282,34 +282,32 @@ number of spawn threads will be equal to the number of CPU cores,
 https://lualanes.github.io/lanes/
 ]]
 
-local gcc_options = ""
-for i = 2, i <= #arg, 1 do gcc_options = gcc_options..arg[i] end
 local process_handles = {}
 
 -- go through all ".cache/jina/c" subdirectories of all directories in root_paths
 -- compile C files to object files
 for _, root_path in ipairs(root_paths) do
 	local project_path = path.dirname(root_path)
-	local c_dir_path = path.join(project_path, ".cache/jina/c")
-	local h_dir_path = path.join(project_path, ".cache/jina/h")
-	local o_dir_path = path.join(project_path, ".cache/jina/o")
-	dir.makepath(o_dir_path)
+	local package_name = path.basename(root_path)
+	local c_dir_path = path.join(project_path, ".cache/jina/c", package_name)
 	
-	for c_file_path in dir.getfiles(c_dir_path) do
-		local relpath_wo_ext, _ = path.splitext(
-			path.relpath(c_file_path, c_dir_path)
+	for _, c_file_path in ipairs(dir.getfiles(c_dir_path)) do
+		local file_name = path.splitext(
+			path.basename(c_file_path)
 		)
 		
 		-- if for the C file, there is no corresponding jina file, delete it and its .h and .o file
-		local jin_file_path = path.join(root_path, relpath_wo_ext..".jin")
+		local jin_file_path = path.join(root_path, file_name:replace("__", path.sep) .. ".jin")
 		if not path.isfile(jin_file_path) then
 			os.remove(c_file_path)
-			os.remove(path.join(h_dir_path, relpath_wo_ext..".h"))
-			os.remove(path.join(o_dir_path, relpath_wo_ext..".o"))
+			os.remove(path.join(project_path, ".cache/jina/h", package_name, file_name..".h"))
+			os.remove(path.join(project_path, ".cache/jina/o", package_name, file_name..".o"))
 			goto skip
 		end
 		
-		local o_file_path = path.join(o_dir_path, relpath_wo_ext..".o")
+		dir.makepath()
+		
+		local o_file_path = path.join(project_path, ".cache/jina/o", package_name, file_name..".o")
 		local o_file_mtime = path.getmtime(o_file_path)
 		
 		local c_file_mtime = path.getmtime(c_file_path)
@@ -317,16 +315,18 @@ for _, root_path in ipairs(root_paths) do
 		if
 			not c_file_mtime or not o_file_mtim or
 			c_file_mtime > o_file_mtime or
-			o_file_mtime > os.time() -- make sure that o file is not from future!
+			o_file_mtime > os.time() -- o_file is from future!
 		then
 			if path.isfile(path.join(root_path, "0.jin")) then
-				local handle = io.open("gcc -Wall -Wextra -Wpedantic "..gcc_options..
-					" -c "..c_file_path.." -o "..o_file_path
+				local handle = io.popen(
+					"gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path,
+					"r"
 				)
 				table.insert(process_handles, handle)
 			else
-				local handle = io.open("gcc -Wall -Wextra -Wpedantic -fPIC "..gcc_options..
-					" -c "..c_file_path.." -o "..o_file_path
+				local handle = io.popen(
+					"gcc -Wall -Wextra -Wpedantic -fPIC -c "..c_file_path.." -o "..o_file_path,
+					"r"
 				)
 				table.insert(process_handles, handle)
 			end
@@ -337,7 +337,13 @@ for _, root_path in ipairs(root_paths) do
 end
 
 -- wait for all process to complete
-for _, handle in ipairs(process_handles) do handle:read() end
+for _, handle in ipairs(process_handles) do
+	handle:read"a"
+	handle:close()
+end
+
+local gcc_options = ""
+for i = 2, i <= #arg, 1 do gcc_options = gcc_options..arg[i] end
 
 -- go through all ".cache/jina/o" subdirectories of all directories in root_paths
 -- link object files
@@ -350,12 +356,12 @@ for i = #root_paths, 1, -1 do
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local executable_path = path.join(project_path, ".cache/jina/out", package_name)
-		local compile_command = "gcc -Wl,-rpath-link=../lib,-rpath=../lib "..o_dir_path.."/*.o "..
+		local compile_command = "gcc -Wl,-rpath-link=../lib,-rpath=../lib "..gcc_options.." "..o_dir_path.."/*.o "..
 			dlibs[package_name].." -o "..executable_path
 		os.execute(compile_command) or os.exit(false)
 		os.execute(executable_path)
 	else
-		os.execute("gcc -shared -Wl,-rpath-link=../lib,-rpath=../lib "..o_dir_path.."/*.o "..
+		os.execute("gcc -shared -Wl,-rpath-link=../lib,-rpath=../lib "..gcc_options.." "..o_dir_path.."/*.o "..
 			" -o "..path.join(project_path, ".cache/jina/out", package_name)
 		) or os.exit(false)
 	end
