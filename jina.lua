@@ -203,7 +203,7 @@ root_paths:set()
 
 local dlibs = {}
 -- if package_name is not "std":
--- dlib[package_name] = "-lstd.jin"
+-- dlib[package_name] = "-lstd.jin "
 
 --[[
 go through all files in all directories in root_paths (recursively)
@@ -252,7 +252,7 @@ while root_paths[i] do
 			
 			do not allow cyclic dependencies
 			
-			add the path of the libs compiled from the package to dlibs[]
+			add the the libs compiled from the package "-lpackage_name.jin " to dlibs[]
 			
 			except for packages added with "lib" protocol:
 			os.execute("ln -s ~/.local/share/jina/packages/url-hash/.cache/jina/out/libpackage_name.jin.so "..
@@ -342,7 +342,7 @@ for _, handle in ipairs(process_handles) do
 end
 
 local gcc_options = ""
-for i = 2, #arg, 1 do gcc_options = gcc_options..arg[i] end
+for i = 2, #arg, 1 do gcc_options = gcc_options..arg[i].." " end
 
 -- go through all ".cache/jina/o/package_name" subdirectories of all directories in "root_paths/.."
 -- link object files
@@ -355,15 +355,16 @@ for i = #root_paths, 1, -1 do
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local out_executable_path = path.join(project_path, ".cache/jina/out/lib"..package_name..".jin.so")
+		local libs_path = path.join(arg[1], "/.cahce/jina/lib").." "
 		os.execute(
-			"gcc -Wl,-rpath=../lib "..dlibs[package_name].. " "..gcc_options.." "..
+			"gcc -Wl,-rpath-link=.,-rpath=../lib -L "..libs_path..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_executable_path
 		) or os.exit(false)
 		os.execute(executable_path)
 	else
 		local out_lib_path = path.join(project_path, ".cache/jina/out", package_name)
 		os.execute(
-			"gcc -shared -Wl,-rpath=. "..dlibs[package_name].." "..gcc_options.." "..
+			"gcc -shared -Wl,-rpath-link=.,-rpath=. -L "..libs_path..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
 	end
