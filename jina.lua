@@ -1,21 +1,59 @@
 #!/usr/bin/env lua
 
-local path = require "pl/path"
-local dir = require "pl/dir"
-local omap = require "pl/OrderedMap"
-require "pl.stringx" .import()
+local path = require"pl/path"
+local dir = require"pl/dir"
+local omap = require"pl/OrderedMap"
+require"pl.stringx".import()
 
-function generate_t_file(jin_file_path)
-	local t_file_path =
+function generate_t_file(project_path, jin_file_path)
+	local relative_extensionless_path = path.splitext(
+		path.relpath(jin_file_path, project_path)
+	)
+	
+	local c_file_path = path.join(project_path, ".cache/jina/c", relative_extensionless_path..".c")
+	local c_file_mtime = path.getmtime(c_file_path)
+	
+	local jin_file_mtime = path.getmtime(jin_file_path)
+	
+	if
+		jin_file_mtime and c_file_mtime and	c_file_mtime >= jin_file_mtime and
+		os.time() >= c_file_mtime -- make sure that c file is not from future!
+	then
+		return
+	end
+	
+	local t_file_path = path.join(project_path, ".cache/jina/h", relative_extensionless_path..".t")
+	
 	--[[
 	generate a string containing the exported definitions and their types
 	then write the string into the .t file, if:
 	, there is no old .t file remained from the last compilation
 	, or there is an old .t file, but it's not equal to the generated string (compare their hashes)
 	]]
+	
+	dir.makepath(path.dirname(t_file_path))
+	local t_file_handle = io.open(t_file_path)
 end
 
-function generate_c_file(jin_file_path, c_file_path, h_file_path)
+function generate_c_file(project_path, jin_file_path)
+	local extensionless_file_name = path.splitext(
+		path.relpath(jin_file_path, project_path)
+	):replace(path.sep, "__")
+	
+	local h_file_path = path.join(project_path, ".cache/jina/c", extensionless_file_name..".h")
+	
+	local c_file_path = path.join(project_path, ".cache/jina/c", extensionless_file_name..".c")
+	local c_file_mtime = path.getmtime(c_file_path)
+	
+	local jin_file_mtime = path.getmtime(jin_file_path)
+	
+	if
+		jin_file_mtime and c_file_mtime and	c_file_mtime >= jin_file_mtime and
+		os.time() >= c_file_mtime -- make sure that c file is not from future!
+	then
+		return
+	end
+	
 	-- fill the table of definitions and their types
 	-- check for type consistency in the module, and with (cached) .t files
 	-- compile to c
@@ -145,12 +183,12 @@ function generate_c_file(jin_file_path, c_file_path, h_file_path)
 end
 
 if arg[1] == nil then
-	print("interactive Jina is not yet implemented")
-	print("to compile a project: jina <project_path> [gcc_options]")
+	print"interactive Jina is not yet implemented"
+	print"to compile a project: jina <project_path> [gcc_options]"
 	os.exit()
 end
 if arg[1]:char(1) == "-" then
-	print("usage: jina <project_path> [gcc_options]")
+	print"usage: jina <project_path> [gcc_options]"
 	os.exit()
 end
 
@@ -163,52 +201,41 @@ local root_paths = omap{}
 -- find all directories named "*.jin" inside the project directory, and add them to root_paths
 root_path:set()
 
-local std_path = "/usr/local/lib/jina/"
-if not path.isdir(std_path) then std_path = "/usr/lib/jina/" end
-
 local dlibs = {}
 -- if package_name is not "std":
 -- dlib[package_name] = "-lstd.jin"
 
 --[[
 go through all files in all directories in root_paths (recursively)
+, from .jin files generate .t files
 , for each "package_name.p" file, download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
 	if it needs compilation, it will be added to root_paths
-, from .jin files generate .t files
 ]]
 local i = 1
 while root_paths[i] do
 	local project_path = path.dirname(root_paths[i])
-	local c_dir_path = path.join(project_path, ".cache/jina/c")
-	dir.makepath(c_dir_path)
-	local h_dir_path = path.join(project_path, ".cache/jina/h")
-	dir.makepath(h_dir_path)
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
 	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
-			local relpath_wo_ext = path.splitext(
-				path.relpath(file_path, root_paths[i])
-			)
-			
-			local t_file_path = path.join(h_dir_path, relpath_wo_ext..".t")
-			
-			local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
-			local jin_file_mtime = path.getmtime(file_path)
-			local c_file_mtime = path.getmtime(c_file_path)
-			
-			if
-				not jin_file_mtime or not c_file_mtime or
-				jin_file_mtime > c_file_mtime or
-				c_file_mtime > os.time() -- make sure that c file is not from future!
-			then
-				generate_t_file(file_path, t_file_path)
-			end
+			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
-			local package_name = path.basename()
-			local package_path = path.join("~/.local/share/jina/packages", url_hash, package_name)
+			local url
+			for line in io.lines(file_path) do
+				url =
+				-- if protocol is lib:// and the lib exists on the system
+			end
+			
+			local url_hash
+			local package_name = path.basename(file_path)
+			local package_path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, package_name)
+			
+			-- if there is no entry in the .p file
+			if not url then
+				package_path = path.join(project_path, package_name)
+			end
 			
 			--[[
 			if gnunet or git is needed to add a package, and they are not installed on the system,
@@ -240,31 +267,10 @@ end
 -- generate .c and .h files from .jin and .t files
 for _, root_path in ipairs(root_paths) do
 	local project_path = path.dirname(root_path)
-	local c_dir_path = path.join(project_path, ".cache/jina/c")
-	local h_dir_path = path.join(project_path, ".cache/jina/h")
 	
 	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
-			local relpath_wo_ext = path.splitext(
-				path.relpath(file_path, root_path)
-			)
-			relpath_wo_ext:replace(path.sep, "__")
-			
-			
-			
-			local h_file_path = path.join(h_dir_path, relpath_wo_ext..".h")
-			
-			local c_file_path = path.join(c_dir_path, relpath_wo_ext..".c")
-			local jin_file_mtime = path.getmtime(file_path)
-			local c_file_mtime = path.getmtime(c_file_path)
-			
-			if
-				not jin_file_mtime or not c_file_mtime or
-				jin_file_mtime > c_file_mtime or
-				c_file_mtime > os.time() -- make sure that c file is not from future!
-			then
-				generate_c_file(file_path, c_file_path, h_file_path)
-			end
+			generate_c_file(project_path, file_path)
 		end
 	end)
 end
@@ -276,7 +282,8 @@ number of spawn threads will be equal to the number of CPU cores,
 https://lualanes.github.io/lanes/
 ]]
 
-local gcc_options = arg[2]
+local gcc_options = ""
+for i = 2, i <= #arg, 1 do gcc_options = gcc_options..arg[i] end
 local process_handles = {}
 
 -- go through all ".cache/jina/c" subdirectories of all directories in root_paths
@@ -343,13 +350,13 @@ for i = #root_paths, 1, -1 do
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local executable_path = path.join(project_path, ".cache/jina/out", package_name)
-		local compile_command = "gcc -Wl,-rpath,../lib "..o_dir_path.."/*.o "..
+		local compile_command = "gcc -Wl,-rpath-link=../lib,-rpath=../lib "..o_dir_path.."/*.o "..
 			dlibs[package_name].." -o "..executable_path
 		os.execute(compile_command) or os.exit(false)
 		os.execute(executable_path)
 	else
-		os.execute("gcc -shared -Wl,-rpath,../lib "..o_dir_path.."/*.o "..dlibs[package_name].." -o "..
-			path.join(project_path, ".cache/jina/out", package_name)
+		os.execute("gcc -shared -Wl,-rpath-link=../lib,-rpath=../lib "..o_dir_path.."/*.o "..
+			" -o "..path.join(project_path, ".cache/jina/out", package_name)
 		) or os.exit(false)
 	end
 	
