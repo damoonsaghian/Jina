@@ -199,7 +199,7 @@ end
 local root_paths = omap{}
 
 -- find all directories named "*.jin" inside the project directory, and add them to root_paths
-root_path:set()
+root_paths:set()
 
 local dlibs = {}
 -- if package_name is not "std":
@@ -255,8 +255,8 @@ while root_paths[i] do
 			add the path of the libs compiled from the package to dlibs[]
 			
 			except for packages added with "lib" protocol:
-			ln -s ~/.local/share/jina/packages/package-name/.cache/jina/so \
-				$project_dir/.cahce/jina/lib/package-name.so
+			os.execute("ln -s ~/.local/share/jina/packages/url-hash/.cache/jina/out/libpackage_name.jin.so "..
+				arg[1].."/.cahce/jina/lib/")
 			]]
 		end
 	end)
@@ -284,11 +284,10 @@ https://lualanes.github.io/lanes/
 
 local process_handles = {}
 
--- go through all ".cache/jina/c" subdirectories of all directories in root_paths
+-- go through all ".cache/jina/c/package_name" subdirectories of all directories in "root_paths/.."
 -- compile C files to object files
 for _, root_path in ipairs(root_paths) do
-	local project_path = path.dirname(root_path)
-	local package_name = path.basename(root_path)
+	local project_path, package_name = path.splitpath(root_path)
 	local c_dir_path = path.join(project_path, ".cache/jina/c", package_name)
 	
 	for _, c_file_path in ipairs(dir.getfiles(c_dir_path)) do
@@ -343,26 +342,29 @@ for _, handle in ipairs(process_handles) do
 end
 
 local gcc_options = ""
-for i = 2, i <= #arg, 1 do gcc_options = gcc_options..arg[i] end
+for i = 2, #arg, 1 do gcc_options = gcc_options..arg[i] end
 
--- go through all ".cache/jina/o" subdirectories of all directories in root_paths
+-- go through all ".cache/jina/o/package_name" subdirectories of all directories in "root_paths/.."
 -- link object files
 -- iterate backwards from the end, to link dependecies before dependants
 for i = #root_paths, 1, -1 do
-	local project_path = path.dirname(root_paths[i])
-	local o_dir_path = path.join(project_path, ".cache/jina/o")
+	local project_path, package_name = path.splitpath(root_paths[i])
+	local o_dir_path = path.join(project_path, ".cache/jina/o", package_name)
 	
 	-- if .so file exists, goto skip
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
-		local executable_path = path.join(project_path, ".cache/jina/out", package_name)
-		local compile_command = "gcc -Wl,-rpath-link=../lib,-rpath=../lib "..gcc_options.." "..o_dir_path.."/*.o "..
-			dlibs[package_name].." -o "..executable_path
-		os.execute(compile_command) or os.exit(false)
+		local out_executable_path = path.join(project_path, ".cache/jina/out/lib"..package_name..".jin.so")
+		os.execute(
+			"gcc -Wl,-rpath=../lib "..dlibs[package_name].. " "..gcc_options.." "..
+			o_dir_path.."/*.o -o "..out_executable_path
+		) or os.exit(false)
 		os.execute(executable_path)
 	else
-		os.execute("gcc -shared -Wl,-rpath-link=../lib,-rpath=../lib "..gcc_options.." "..o_dir_path.."/*.o "..
-			" -o "..path.join(project_path, ".cache/jina/out", package_name)
+		local out_lib_path = path.join(project_path, ".cache/jina/out", package_name)
+		os.execute(
+			"gcc -shared -Wl,-rpath=. "..dlibs[package_name].." "..gcc_options.." "..
+			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
 	end
 	
