@@ -357,14 +357,16 @@ for i = #root_paths, 1, -1 do
 		local out_executable_path = path.join(project_path, ".cache/jina/out/lib"..package_name..".jin.so")
 		local libs_path = path.join(arg[1], "/.cahce/jina/lib").." "
 		os.execute(
-			"gcc -Wl,-rpath-link=.,-rpath=../lib -L "..libs_path..dlibs[package_name]..gcc_options..
+			"gcc -Wl,-rpath-link=. -L "..libs_path..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_executable_path
 		) or os.exit(false)
-		os.execute(executable_path)
+		if package_name == "test" then
+			os.execute("LD_LIBRARY_PATH=../lib"..executable_path)
+		end
 	else
 		local out_lib_path = path.join(project_path, ".cache/jina/out", package_name)
 		os.execute(
-			"gcc -shared -Wl,-rpath-link=.,-rpath=. -L "..libs_path..dlibs[package_name]..gcc_options..
+			"gcc -shared -Wl,-rpath-link=. -L "..libs_path..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
 	end
