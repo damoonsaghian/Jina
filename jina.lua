@@ -344,6 +344,18 @@ end
 local gcc_options = ""
 for i = 2, #arg, 1 do gcc_options = gcc_options..arg[i].." " end
 
+--[[
+C libs:
+find the from the embedded C code; add them to dlibs
+if a lib is installed on the system, make a hardlink in "arg[1]/.cache/lib/",
+	otherwise download and extract the correspoding deb package, then make the hardlink
+find the dependencies in the shared object and repeat the above
+
+std: ../share/jina/std/
+-lglib2 -lflint
+libglib2.0-dev libflint-dev
+]]
+
 -- go through all ".cache/jina/o/package_name" subdirectories of all directories in "root_paths/.."
 -- link object files
 -- iterate backwards from the end, to link dependecies before dependants
@@ -355,18 +367,17 @@ for i = #root_paths, 1, -1 do
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local out_executable_path = path.join(project_path, ".cache/jina/out/lib"..package_name..".jin.so")
-		local libs_path = path.join(arg[1], "/.cahce/jina/lib").." "
 		os.execute(
-			"gcc -Wl,-rpath-link=. -L "..libs_path..dlibs[package_name]..gcc_options..
+			"gcc -Wl,-rpath-link=. -L. "..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_executable_path
 		) or os.exit(false)
 		if package_name == "test" then
-			os.execute("LD_LIBRARY_PATH=../lib"..executable_path)
+			os.execute("LD_LIBRARY_PATH=."..executable_path)
 		end
 	else
 		local out_lib_path = path.join(project_path, ".cache/jina/out", package_name)
 		os.execute(
-			"gcc -shared -Wl,-rpath-link=. -L "..libs_path..dlibs[package_name]..gcc_options..
+			"gcc -shared -Wl,-rpath-link=. -L. "..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
 	end
