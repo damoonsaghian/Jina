@@ -204,11 +204,11 @@ root_paths:set()
 local dlibs = {}
 
 --[[
-go through all files in all directories in root_paths (recursively)
+for each directory in root_paths, go through all its files (recursively) and:
 , from .jin files generate .t files
 , for each "package_name.p" file, download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
-	if it needs compilation, it will be added to root_paths
+	add it to root_paths (if it's not a "lib://" protocol package)
 ]]
 local i = 1
 while root_paths[i] do
@@ -254,9 +254,8 @@ while root_paths[i] do
 			
 			add the the libs compiled from the package "-lpackage_name.jin " to dlibs[]
 			
-			except for packages added with "lib" protocol:
-			os.execute("ln -s ~/.local/share/jina/packages/url-hash/.cache/jina/out/libpackage_name.jin.so "..
-				arg[1].."/.cahce/jina/lib/")
+			if this is a "lib://" protocol package:
+			os.execute("ln /usr/lib/*/libpackage_name.jin.so "..arg[1].."/.cahce/jina/out/")
 			]]
 		end
 	end)
@@ -380,6 +379,7 @@ for i = #root_paths, 1, -1 do
 			"gcc -shared -Wl,-rpath-link=. -L. "..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
+		-- "ln ~/.local/share/jina/packages/url-hash/.cache/jina/out/libpackage_name.jin.so "..arg[1].."/.cahce/jina/out/")
 	end
 	
 	::skip::
