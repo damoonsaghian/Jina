@@ -4,8 +4,14 @@ if [ $1 = remove ]; then
 	exit
 fi
 
-# lua5.4 lua-penlight gcc
-# if these are not installed on system, download and install them
+echo 'Jina needs "lua lua-penlight gcc" packages'
+printf "are these installed on system? (Y/n) "
+read -r ans
+if [ "$ans" = "n" ] || [ "$ans" = "no" ]; then
+	echo "so go install them first"
+	echo "to install them on Debian based systems:"
+	printf "\tsudo apt install lua5.4 lua-penlight gcc\n"
+fi
 
 project_dir="$(dirname "$0")"
 
