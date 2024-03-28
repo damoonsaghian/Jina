@@ -74,7 +74,7 @@ function generate_c_file(project_path, jin_file_path)
 	
 	-- if correspoding .t file is newer than corresponding .h file, regenerate the .h file
 	
-	-- prefeix all exportedidentifiers with "package_name__"
+	-- prefeix all exported identifiers with "package_name__"
 	-- except when package name is "std"
 	
 	--[[
@@ -202,8 +202,6 @@ local root_paths = omap{}
 root_paths:set()
 
 local dlibs = {}
--- if package_name is not "std":
--- dlib[package_name] = "-lstd.jin "
 
 --[[
 go through all files in all directories in root_paths (recursively)
@@ -217,6 +215,8 @@ while root_paths[i] do
 	local project_path = path.dirname(root_paths[i])
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
+	
+	-- if package_name is not "std": dlib[package_name] = "-lstd.jin,"
 	
 	dir.getallfiles(root_paths[i]):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -351,7 +351,7 @@ if a lib is installed on the system, make a hardlink in "arg[1]/.cache/lib/",
 	otherwise download and extract the correspoding deb package, then make the hardlink
 find the dependencies in the shared object and repeat the above
 
-std: ../share/jina/std/
+if std is not installed on the system, hard link it from ../packages/jina/libstd.jin.so
 -lglib2 -lflint
 libglib2.0-dev libflint-dev
 ]]
