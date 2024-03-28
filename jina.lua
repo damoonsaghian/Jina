@@ -212,13 +212,17 @@ for each directory in root_paths, go through all its files (recursively) and:
 ]]
 local i = 1
 while root_paths[i] do
-	local project_path = path.dirname(root_paths[i])
+	local root_path = root_path[i]
+	local project_path = path.dirname(root_path)
 	
 	dir.rmtree(project_path.."/.cahce/jina/lib")
 	
-	-- if package_name is not "std": dlib[package_name] = "-lstd.jin,"
+	local root_name = path.basename(root_path)
+	if root_name ~= "std.jin" then
+		dlib[root_name] = "-lstd.jin "
+	end
 	
-	dir.getallfiles(root_paths[i]):foreach(function (file_path)
+	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
@@ -341,7 +345,9 @@ for _, handle in ipairs(process_handles) do
 end
 
 local gcc_options = ""
-for i = 2, #arg, 1 do gcc_options = gcc_options..arg[i].." " end
+for i = 2, #arg, 1 do
+	gcc_options = gcc_options..arg[i].." "
+end
 
 --[[
 C libs:

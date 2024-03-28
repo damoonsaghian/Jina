@@ -1,9 +1,3 @@
-if [ $1 = remove ]; then
-	rm "$HOME/.local/bin/jina"
-	rm -r "$HOME/.local/packages/jina"
-	exit
-fi
-
 echo 'Jina needs "lua lua-penlight gcc" packages'
 printf "are these installed on system? (Y/n) "
 read -r ans
@@ -21,3 +15,9 @@ chmod +x "$HOME/.local/bin/jina"
 jina "$project_dir"
 mkdir -p "$HOME/.local/packages/jina"
 cp "$project_dir/.cache/jina/out/*" "$HOME/.local/packages/jina/"
+
+cat <<-'__EOF__' > "$HOME/.local/packages/jina/uninstall.sh"
+rm "$HOME/.local/bin/jina"
+rm -r "$HOME/.local/packages/jina"
+exit
+__EOF__
