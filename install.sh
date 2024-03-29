@@ -1,16 +1,9 @@
-echo 'Jina needs "lua lua-penlight gcc" packages'
-printf "are these installed on system? (Y/n) "
-read -r ans
-if [ "$ans" = "n" ] || [ "$ans" = "no" ]; then
-	echo "so go install them first"
-	echo "to install them on Debian based systems:"
-	printf "\tsudo apt install lua5.4 lua-penlight gcc\n"
-fi
-
 project_dir="$(dirname "$0")"
 
 cp "$project_dir/jina.lua" "$HOME/.local/bin/jina"
 chmod +x "$HOME/.local/bin/jina"
+
+sh "$project_dir/std.sh" &> /dev/null
 
 jina "$project_dir"
 mkdir -p "$HOME/.local/packages/jina"

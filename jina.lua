@@ -220,7 +220,13 @@ while root_paths[i] do
 	local root_name = path.basename(root_path)
 	if root_name ~= "std.jin" then
 		dlib[root_name] = "-lstd.jin "
+		-- ln "$HOME/.local/packages/jina/libstd.jin.so" "project_path/.cache/jina/out/package_name"
 	end
+	
+	--[[
+	if there is a file named "package_name.sh" in the project_path, run it,
+		and add the returned string to dlibs[package_name]
+	]]
 	
 	dir.getallfiles(root_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
@@ -348,18 +354,6 @@ local gcc_options = ""
 for i = 2, #arg, 1 do
 	gcc_options = gcc_options..arg[i].." "
 end
-
---[[
-C libs:
-find the from the embedded C code; add them to dlibs
-if a lib is installed on the system, make a hardlink in "arg[1]/.cache/lib/",
-	otherwise download and extract the correspoding deb package, then make the hardlink
-find the dependencies in the shared object and repeat the above
-
-if std is not installed on the system, hard link it from ../packages/jina/libstd.jin.so
--lglib2 -lflint
-libglib2.0-dev libflint-dev
-]]
 
 -- go through all ".cache/jina/o/package_name" subdirectories of all directories in "root_paths/.."
 -- link object files
