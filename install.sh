@@ -1,11 +1,9 @@
-osp-deb install jina,lua5.4,lua-penlight,gcc
+osp-deb add jina-std lua5.4 lua-penlight gcc
 
 project_dir="$(dirname "$0")"
 
 cp "$project_dir/jina.lua" "$HOME/.local/bin/jina"
 chmod +x "$HOME/.local/bin/jina"
-
-sh "$project_dir/std.sh" &> /dev/null
 
 jina "$project_dir"
 mkdir -p "$HOME/.local/packages/jina"

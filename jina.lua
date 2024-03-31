@@ -224,8 +224,7 @@ while root_paths[i] do
 	end
 	
 	--[[
-	if there is a file named "package_name.sh" in the project_path, run it,
-		and add the returned string to dlibs[package_name]
+	find ";[ osp-deb: , dlibs: ]" blocks install the os packages and add dlibs
 	]]
 	
 	dir.getallfiles(root_path):foreach(function (file_path)
