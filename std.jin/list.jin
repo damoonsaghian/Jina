@@ -1,0 +1,37 @@
+;{ #include <glib-2.0/glib/garray.h> }
+
+;(
+https://docs.gtk.org/glib/struct.PtrArray.html
+the initial PtrArray will be on stack, if it's small
+when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
+)
+
+List :=
+
+List = .
+	new: {}
+	
+	get: { self ::List(X'), index :Num'u | :?X'
+		;; checks if index is less than the length
+	}
+	
+	append: { self !List(X'), element :X' |
+	}
+	
+	extend: { self !List(X'), extention :List(X') |
+	}
+	
+	put: { self !List(X'), element :X', index :Num'u |
+	}
+	
+	insert: { self !List(X'), element :X', index :Num'u |
+	}
+	
+	trim: { self!, index :Num'u |
+	}
+	
+	remove: { self!, index :Num'u |
+	}
+	
+	iter: { self ::List(X') | :Iter(X')
+	}

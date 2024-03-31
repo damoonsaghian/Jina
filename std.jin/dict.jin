@@ -1,0 +1,22 @@
+;{ #include <glib-2.0/glib/ghash.h> }
+
+;(
+for now just use glib2 hashtables
+https://docs.gtk.org/glib/struct.HashTable.html
+https://docs.gtk.org/glib/struct.HashTableIter.html
+
+maybe in the future we can implement dicts using adaptive radix tree
+https://en.wikipedia.org/wiki/Radix_tree
+https://github.com/armon/libart
+https://www.the-paper-trail.org/post/art-paper-notes/
+https://github.com/fragglet/c-algorithms/blob/master/src/trie.c
+https://aly.arriqaaq.com/art-building-a-prefix-search-trie-in-go/
+https://github.com/arriqaaq/art
+https://github.com/plar/go-adaptive-radix-tree
+
+another option was linear hashing
+https://en.wikipedia.org/wiki/Linear_hashing
+http://www.cs.emory.edu/~cheung/Courses/554/Syllabus/3-index/linear-hashing-new1.html
+https://github.com/amadvance/tommyds/blob/master/tommyds/tommyhashlin.h
+but iteration over hash tables, which may be needed in some situations, is not efficient
+)
