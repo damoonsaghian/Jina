@@ -1,4 +1,0 @@
-;[
-osp-deb: "libglib2.0-dev libflint-dev",
-dlibs: "-lglib2 -lflint"
-]
