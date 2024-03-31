@@ -224,7 +224,8 @@ while root_paths[i] do
 	end
 	
 	--[[
-	find ";[ osp-deb: , dlibs: ]" blocks install the os packages and add dlibs
+	find ";ospkg-*:" and ";dlibs:" lines/blocks
+	install the os packages, and add dlibs
 	]]
 	
 	dir.getallfiles(root_path):foreach(function (file_path)

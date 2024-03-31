@@ -1,10 +1,10 @@
-comment line:
+comments:
+	;; comment line
 	;; comment
-comment block:
-	;(
-	pairs of parentheses can be nested: ()
-	parentheses inside quotes will be ignored: ")"
-	)
+		block
+	;;; comment
+	block
+	;
 
 immutable borrow variable definition:
 	v :T = ...
@@ -139,7 +139,7 @@ iterators:
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
-	and possibly an additional extension (separated with an apostrophe),
+	and possibly an additional number or extension (separated with an apostrophe),
 	will be exported (ie is accessible outside of the module)
 to hide a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
@@ -201,12 +201,12 @@ bounded generics:
 	S := a: X':I, b: X'
 
 singletons:
-	Bool'true' := ()
-	Bool'true = Bool'true. ()
-	Bool'false' := ()
-	Bool'false = Bool'false. ()
+	B0 := () ;; false
+	B0 = B0. ()
+	B1 := () ;; true
+	B1 = B1. ()
 unions:
-	Bool := Bool'true \ Bool'false
+	B := B0 \ B1
 type "?A" is a shortcut for "A\()"
 
 interfaces:

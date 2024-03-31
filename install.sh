@@ -12,7 +12,6 @@ cp "$project_dir/.cache/jina/out/*" "$HOME/.local/packages/jina/"
 cat <<-'__EOF__' > "$HOME/.local/packages/jina/uninstall.sh"
 rm "$HOME/.local/bin/jina"
 rm -r "$HOME/.local/packages/jina"
-osp-deb remove jina
 osp-deb remove jina-std
 exit
 __EOF__
