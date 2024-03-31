@@ -1,10 +1,10 @@
 ;{ #include <glib-2.0/glib/garray.h> }
+;ospkg-deb: libglib2.0-dev
+;dlibs: -lglib2
 
-;(
-https://docs.gtk.org/glib/struct.PtrArray.html
-the initial PtrArray will be on stack, if it's small
-when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
-)
+;; https://docs.gtk.org/glib/struct.PtrArray.html
+	the initial PtrArray will be on stack, if it's small
+	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
 
 List :=
 

@@ -1,3 +1,7 @@
+;{ #include <glib-2.0/glib.h> }
+;ospkg-deb: libglib2.0-dev
+;dlibs: -lglib2
+
 Actor := .
 	data': X'
 	messages: Array { :X' | }
@@ -15,6 +19,6 @@ Actor = .
 		self.messages..append message
 	}
 	
-	repeat: { self!, message ::{ :X' | }, til :Bool |
+	repeat: { self!, message ::{ :X' | }, til :B |
 		;; repeatedly send message until "til" becomes true
 	}

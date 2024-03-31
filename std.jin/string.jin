@@ -3,7 +3,7 @@ String := Array(Num'c)
 String = .
 	;; change array methods to respect UTF8 encoding
 	
-	replace: { self, substring :String, replacement :String | :Bool
+	replace: { self, substring :String, replacement :String | :B
 	}
 	
 	split:
@@ -11,7 +11,7 @@ String = .
 	
 	find: { self, substring :String | :?Num'u
 	}
-	contains: { self, substring :Self | :Bool
+	contains: { self, substring :Self | :B
 	}
 	
 	trim'prefix: { self!, prefix :Self |

@@ -1,11 +1,13 @@
-;(
-minus operator:
-, unary: "-x" is equivalent to "x..neg()"
-, binary: "x - y" is equivalent to "x..sub(y)"
+;{ #include <flint/flint.h> }
+;ospkg-deb: libflint-dev
+;dlibs: -lflint
 
-https://flintlib.org/
-https://flintlib.org/doc/fmpz.html
-)
+;; https://flintlib.org/
+;; https://flintlib.org/doc/fmpz.html
+
+;;	minus operator:
+	, unary: "-x" is equivalent to "x..neg()"
+	, binary: "x - y" is equivalent to "x..sub(y)"
 
 Num = .
 	add: { self, other :Num\Num'z\Num'u | :Num

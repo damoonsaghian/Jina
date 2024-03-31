@@ -1,4 +1,7 @@
 ;{ #include <glib-2.0/gio/gio.h> }
+;ospkg-deb: libglib2.0-dev
+;dlibs: -lglib2
+
 ;; https://docs.gtk.org/gio/
 ;; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
