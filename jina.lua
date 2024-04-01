@@ -224,7 +224,7 @@ while root_paths[i] do
 	end
 	
 	--[[
-	find ";ospkg-*:" and ";dlibs:" lines/blocks
+	find ";ospkg-*" and ";dlibs" lines/blocks
 	install the os packages, and add dlibs
 	]]
 	

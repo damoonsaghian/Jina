@@ -226,5 +226,5 @@ defining the methods of a struct that implements some interfaces:
 		...
 
 to directly enter C code:
-	;{...}
-beware! with great power comes great resposibility
+	;c ...
+beware! with great power comes great responsibility
