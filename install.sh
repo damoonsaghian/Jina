@@ -1,4 +1,4 @@
-ospkg-deb add jina-std lua5.4 lua-penlight gcc
+ospkg-deb add jina-std lua5.4,lua-penlight,gcc
 
 project_dir="$(dirname "$0")"
 
