@@ -6,7 +6,7 @@ Iter = .
 	}
 	
 	each: { self, do !:{ elem :X' | Y' } |
-		;{}
+		;c
 		elem = self..poll(self.index + 1)
-		;{}
+		;c
 	}

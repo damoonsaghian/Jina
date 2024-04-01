@@ -1,6 +1,6 @@
-;{ #include <glib-2.0/glib.h> }
-;ospkg-deb: libglib2.0-dev
-;dlibs: -lglib2
+;include glib-2.0/glib.h
+;ospkg-deb libglib2.0-dev
+;dlibs -lglib2
 
 Actor := .
 	data': X'
@@ -9,13 +9,13 @@ Actor := .
 Actor = .
 	new: { data :X' | :Actor(X')
 		;; add a pointer in the global list of actors
-		;{}
+		;c
 		Actor. data []
 	}
 	
 	do: { self!, message ::{ :X' | } |
 		;; notify that there is a new message
-		;{}
+		;c
 		self.messages..append message
 	}
 	

@@ -1,6 +1,6 @@
-;{ #include <flint/flint.h> }
-;ospkg-deb: libflint-dev
-;dlibs: -lflint
+;include flint/flint.h
+;ospkg-deb libflint-dev
+;dlibs -lflint
 
 ;; https://flintlib.org/
 ;; https://flintlib.org/doc/fmpz.html
@@ -88,8 +88,8 @@ Num'u = .
 	pow: { self, other :Num'u | :Num'u
 	}
 	
-	min: ;{}
-	max: ;{}
+	min: ;c
+	max: ;c
 	
 	is'equal: {}
 	
@@ -98,7 +98,7 @@ Num'u = .
 	}
 		
 	to'z: { self | :Num'z
-		;{ return (double)self }
+		;c return (double)self
 	}
 
 & Ord.
