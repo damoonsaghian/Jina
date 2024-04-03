@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 local path = require"pl/path"
 local dir = require"pl/dir"
 require"pl.stringx".import()
