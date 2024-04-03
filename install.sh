@@ -1,16 +1,22 @@
-ospkg-deb add jina-std lua5.4,lua-penlight,gcc
+ospkg-deb add jina lua5.4,lua-penlight,gcc
 
 project_dir="$(dirname "$0")"
 
-cp "$project_dir/jina.lua" "$HOME/.local/bin/jina"
-chmod +x "$HOME/.local/bin/jina"
+mkdir -p "$HOME/.local/apps/jina/"
 
 jina "$project_dir"
-mkdir -p "$HOME/.local/packages/jina"
-cp "$project_dir/.cache/jina/out/*" "$HOME/.local/packages/jina/"
+cp "$project_dir/.cache/jina/out/std/libstd.jin.so" "$HOME/.local/apps/jina/"
 
-cat <<-'__EOF__' > "$HOME/.local/packages/jina/uninstall.sh"
+cp "$project_dir/jina/*.lua" "$HOME/.local/apps/jina/"
+
+echo '#!/usr/bin/sh
+lua "$HOME/.local/apps/jina/jina.lua"
+' > "$HOME/.local/bin/jina"
+chmod +x "$HOME/.local/bin/jina"
+
+cat <<-'__EOF__' > "$HOME/.local/apps/jina/uninstall.sh"
 rm "$HOME/.local/bin/jina"
-rm -r "$HOME/.local/packages/jina"
+rm -r "$HOME/.local/apps/jina"
+ospkg-deb remove jina
 ospkg-deb remove jina-std
 __EOF__
