@@ -35,14 +35,24 @@ function generate_t_file(project_path, jin_file_path)
 	local t_file_handle = io.open(t_file_path)
 end
 
-function generate_c_file(project_path, jin_file_path)
+dlibs = {}
+
+ospkg = {}
+ospkg.type = ""
+os.execute("command -v ospkg-deb 1>/dev/null") and ospkg.type = "deb"
+ospkg.packages = ""
+
+function generate_c_file(package, jin_file_path)
+	local project_path = path.dirname(package.path)
+	local package_name = path.basename(package.path)
+	
 	local extensionless_file_name = path.splitext(
-		path.relpath(jin_file_path, project_path)
+		path.relpath(jin_file_path, root_path)
 	):replace(path.sep, "__")
 	
-	local h_file_path = path.join(project_path, ".cache/jina/c", extensionless_file_name..".h")
+	local h_file_path = path.join(project_path, ".cache/jina/h", package_name, extensionless_file_name..".h")
 	
-	local c_file_path = path.join(project_path, ".cache/jina/c", extensionless_file_name..".c")
+	local c_file_path = path.join(project_path, ".cache/jina/c", package_name, extensionless_file_name..".c")
 	local c_file_mtime = path.getmtime(c_file_path)
 	
 	local jin_file_mtime = path.getmtime(jin_file_path)
@@ -53,6 +63,8 @@ function generate_c_file(project_path, jin_file_path)
 	then
 		return
 	end
+	
+	package.needs_update or do package.needs_update = true end
 	
 	-- fill the table of definitions and their types
 	-- check for type consistency in the module, and with (cached) .t files
@@ -68,6 +80,13 @@ function generate_c_file(project_path, jin_file_path)
 		if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
 		otherwise use the first word as the function's name
 		if it's a definition, add it to the table of local definition which contains their types
+		]]
+		
+		--[[
+		";ospkg-"..ospkg.type
+			append to ospkg.packages
+		";dlibs"
+			add ot dlibs[package_name]
 		]]
 		c_file:write(c_code)
 	end
@@ -196,90 +215,90 @@ if not path.isdir(arg[1]) then
 	error("there is no directory at \""..arg[1].."\"\n")
 end
 
-local root_paths = omap{}
-
--- find all directories named "*.jin" inside the project directory, and add them to root_paths
-root_paths:set()
-
-local dlibs = {}
+packages_omap = omap{}
+-- each package has these fields: path, deps (list of dep paths), dlibs, ospkg
+-- find all directories named "*.jin" inside arg[1] directory, and add them to packages
+packages_omap:set()
 
 --[[
-for each directory in root_paths, go through all its files (recursively) and:
+for each package in packages, go through all files in package.path (recursively) and:
 , from .jin files generate .t files
-, for each "package_name.p" file, download the package (if needed)
+, for each "package_name.p" file, if it's not a "lib://" protocol package:
+	download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
-	add it to root_paths (if it's not a "lib://" protocol package)
+	add it to root_paths
 ]]
 local i = 1
-while root_paths[i] do
-	local root_path = root_path[i]
-	local project_path = path.dirname(root_path)
+while packages_omap[i] do
+	local package = packages_omap[i]
+	local project_path = path.dirname(package.path)
+	local package_name = path.basename(package.path)
 	
-	dir.rmtree(project_path.."/.cahce/jina/lib")
+	local out_path = project_path.."/.cache/jina/out/"..package_name
+	dir.makepath(out_path)
 	
-	local root_name = path.basename(root_path)
-	if root_name ~= "std.jin" then
-		dlib[root_name] = "-lstd.jin "
-		-- ln "$HOME/.local/packages/jina/libstd.jin.so" "project_path/.cache/jina/out/package_name"
-	end
-	
-	--[[
-	find ";ospkg-*" and ";dlibs" lines/blocks
-	install the os packages, and add dlibs
-	]]
-	
-	dir.getallfiles(root_path):foreach(function (file_path)
+	dir.getallfiles(package.path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
-			local url
+			local url, key
+			local url_is_available = false
 			for line in io.lines(file_path) do
-				url =
-				-- if protocol is lib:// and the lib exists on the system
+				-- if gnunet or git is needed to add a package, and they are not installed on the system,
+				-- ask the user to install them first, then exit with error
+				-- dep_package will be downloaded to ~/.local/share/jina/packages/url_hash/dep_package_name
+				if line_is_a_url then
+					if url_is_available then break end
+					url =
+					key = nil
+					-- test if url is available, url_is_available = true
+				else
+					key =
+				end
 			end
 			
+			-- if url protocol is lib:// and the lib exists on the system,
+			-- just hard link it from system to out directory, and return
+			--os.execute("ln /usr/lib/*/libpackage_name.jin.so "..out_path.."/")
+			
 			local url_hash
-			local package_name = path.basename(file_path)
-			local package_path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, package_name)
+			local dep_package = {
+				path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, dep_name)
+			}
+			local dep_name = path.basename(deb_package.path)
 			
 			-- if there is no entry in the .p file
 			if not url then
-				package_path = path.join(project_path, package_name)
+				dep_package.path = path.join(project_path, package_name)
+			end
+			
+			if not path.isdir(dep_package.path) then
+				error('package:\n\t'..package.path..'\nneeds package:\n'..dep_package.path..
+					"\nwhich does not exists")
 			end
 			
 			--[[
-			if gnunet or git is needed to add a package, and they are not installed on the system,
-			ask the user to install them first, then exit with error
-			packages will be downloaded to ~/.local/share/jina/packages/url_hash/
-			before starting to update, first remove the compiled lib (.so file)
+			packages_omap:set(package_name, dep_package)
 			
-			root_paths:set(package_name, package_path)
-			
-			if there is a key named "package_name" in root_dirs:
+			if there is a key named "package_name" in packages_omap:
 			, if its index is greater than "i", do nothing
 			, else, sort elements between them, according to their dependecies
-			{package_name = "~/.local/share/jina/packages/$package-name/src"}
 			
 			do not allow cyclic dependencies
 			
-			add the the libs compiled from the package "-lpackage_name.jin " to dlibs[]
-			
-			if this is a "lib://" protocol package:
-			os.execute("ln /usr/lib/*/libpackage_name.jin.so "..arg[1].."/.cahce/jina/out/")
+			package.dlibs = package.dlibs.."-l"..dep_package_name..".jin"
 			]]
 		end
 	end)
 	i = i + 1
 end
 
--- go through all files in all directories in root_paths (recursively)
+-- recursively go through all files in all packages in packages_omap
 -- generate .c and .h files from .jin and .t files
-for _, root_path in ipairs(root_paths) do
-	local project_path = path.dirname(root_path)
-	
-	dir.getallfiles(root_path):foreach(function (file_path)
+for _, package in ipairs(packages_omap) do
+	dir.getallfiles(package.path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
-			generate_c_file(project_path, file_path)
+			generate_c_file(package, file_path)
 		end
 	end)
 end
@@ -293,10 +312,10 @@ https://lualanes.github.io/lanes/
 
 local process_handles = {}
 
--- go through all ".cache/jina/c/package_name" subdirectories of all directories in "root_paths/.."
+-- go through all files in all ".cache/jina/c/package_name" directories of all packages in packages_omap
 -- compile C files to object files
-for _, root_path in ipairs(root_paths) do
-	local project_path, package_name = path.splitpath(root_path)
+for package_name, package in package_omap:iter() do
+	local project_path = path.dirname(package.path)
 	local c_dir_path = path.join(project_path, ".cache/jina/c", package_name)
 	
 	for _, c_file_path in ipairs(dir.getfiles(c_dir_path)) do
@@ -361,8 +380,21 @@ end
 for i = #root_paths, 1, -1 do
 	local project_path, package_name = path.splitpath(root_paths[i])
 	local o_dir_path = path.join(project_path, ".cache/jina/o", package_name)
+	local out_path = path.join(project_path, ".cache/jina/out", package_name)
+	
+	if package.needs_update then
+		path.isdir(out_path) and dir.rmtree(out_path)
+		dir.makepath(out_path)
+	end
+	
+	if package_name ~= "std" then
+		package.dlib = "-lstd.jin "
+		os.execute("ln "..path.expanduser("~/.local/packages/jina/libstd.jin.so").." "..out_path)
+	end
 	
 	-- if .so file exists, goto skip
+	
+	-- hardlink .so files of dependencies into out directory
 	
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local out_executable_path = path.join(project_path, ".cache/jina/out/lib"..package_name..".jin.so")
@@ -370,16 +402,13 @@ for i = #root_paths, 1, -1 do
 			"gcc -Wl,-rpath-link=. -L. "..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_executable_path
 		) or os.exit(false)
-		if package_name == "test" then
-			os.execute("LD_LIBRARY_PATH=."..executable_path)
-		end
+		os.execute("LD_LIBRARY_PATH=. "..executable_path)
 	else
-		local out_lib_path = path.join(project_path, ".cache/jina/out", package_name)
+		local out_lib_path = path.join(out_path, package_name)
 		os.execute(
 			"gcc -shared -Wl,-rpath-link=. -L. "..dlibs[package_name]..gcc_options..
 			o_dir_path.."/*.o -o "..out_lib_path
 		) or os.exit(false)
-		-- "ln ~/.local/share/jina/packages/url-hash/.cache/jina/out/libpackage_name.jin.so "..arg[1].."/.cahce/jina/out/")
 	end
 	
 	::skip::
