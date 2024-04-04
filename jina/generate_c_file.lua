@@ -74,8 +74,7 @@ return function (package, jin_file_path)
 		https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Pointers
 	https://sourceware.org/glibc/manual/latest/html_node/index.html
 	https://en.cppreference.com/w/c
-	https://en.cppreference.com/w/c/language/value_category
-	https://en.cppreference.com/w/c/language/restrict
+	https://devdocs.io/c/
 	https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 	https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
 
@@ -94,7 +93,18 @@ return function (package, jin_file_path)
 		https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html
 	https://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
 	https://docs.openeuler.org/en/docs/20.09/docs/ApplicationDev/using-gcc-for-compilation.html
-
+	
+	https://www.bottomupcs.com/
+	https://begriffs.com/posts/2021-07-04-shared-libraries.html
+	https://www.gnu.org/software/libtool/manual/html_node/Installing-libraries.html
+	https://www.gnu.org/software/libtool/manual/html_node/Inter_002dlibrary-dependencies.html
+	
+	ABI change:
+	, exported data items change (exception: adding optional items to the ends of structures is okay,
+		as long as those structures are only allocated within the library)
+	, an exported function is removed
+	, the interface of an exported function changes
+	
 	only the actor can destroy the heap references it creates
 		other actors just send reference'counting messages
 		so we do not need atomic reference counting

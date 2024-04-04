@@ -43,7 +43,7 @@ while package_names_list[i] do
 	local project_path = path.dirname(package.path)
 	local package_name = path.basename(package.path)
 	
-	local out_path = project_path.."/.cache/jina/out/"..package_name
+	local out_path = project_path .. "/.cache/jina/out/" .. package_name
 	dir.makepath(out_path)
 	
 	dir.getallfiles(package.path):foreach(function (file_path)
@@ -87,11 +87,11 @@ while package_names_list[i] do
 			end
 			
 			if not path.isdir(dep_package.path) then
-				error('package:\n\t'..package.path..'\nneeds package:\n'..dep_package.path..
+				error('package:\n\t' .. package.path .. '\nneeds package:\n' .. dep_package.path ..
 					"\nwhich does not exists")
 			end
 			
-			package.dlibs = package.dlibs.."-l"..dep_package_name..".jin "
+			package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
 			
 			packages_table.package_name = dep_package
 		end
@@ -118,7 +118,7 @@ https://lualanes.github.io/lanes/
 
 if ospkg_type ~= "" then
 	for package_name, package in pairs(packages_table) do
-		os.execute("ospkg-"..ospkg_type.." add jina-"..package_name.." '"..package.ospkg.."'")
+		os.execute("ospkg-" .. ospkg_type .. " add jina-" .. package_name .. " '" .. package.ospkg .. "'")
 	end
 end
 
@@ -156,13 +156,13 @@ for package_name, package in pairs(packages_table) do
 			dir.makepath(o_dir_path)
 			if path.isfile(path.join(package.path, "0.jin")) then
 				local handle = io.popen(
-					"gcc -Wall -Wextra -Wpedantic -c "..c_file_path.." -o "..o_file_path,
+					"gcc -Wall -Wextra -Wpedantic -c " .. c_file_path .. " -o " .. o_file_path,
 					"r"
 				)
 				table.insert(process_handles, handle)
 			else
 				local handle = io.popen(
-					"gcc -Wall -Wextra -Wpedantic -fPIC -c "..c_file_path.." -o "..o_file_path,
+					"gcc -Wall -Wextra -Wpedantic -fPIC -c " .. c_file_path .. " -o " .. o_file_path,
 					"r"
 				)
 				table.insert(process_handles, handle)
@@ -181,7 +181,7 @@ end
 
 local gcc_options = ""
 for i = 2, #arg, 1 do
-	gcc_options = gcc_options..arg[i].." "
+	gcc_options = gcc_options .. arg[i] .. " "
 end
 
 -- go through all files in all ".cache/jina/o/package_name" directories of all packages in packages_table
@@ -200,7 +200,7 @@ for i = package_name_list.len(), 1, -1 do
 	
 	if package_name ~= "std" then
 		package.dlib = package.dlib.."-lstd.jin "
-		os.execute("ln "..path.expanduser("~/.local/apps/jina/libstd.jin.so").." "..out_path)
+		os.execute("ln " .. path.expanduser("~/.local/apps/jina/libstd.jin.so") .. " " .. out_path)
 	end
 	
 	-- if .so file exists, goto skip
@@ -210,15 +210,15 @@ for i = package_name_list.len(), 1, -1 do
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local out_executable_path = path.join(out_path, package_name)
 		os.execute(
-			"gcc -Wl,-rpath-link=. -L. "..package.dlibs..gcc_options..
-			o_dir_path.."/*.o -o "..out_executable_path
+			"gcc -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
+			o_dir_path .. "/*.o -o " .. out_executable_path
 		) or os.exit(false)
-		os.execute("LD_LIBRARY_PATH=. "..executable_path)
+		os.execute("LD_LIBRARY_PATH=. " .. executable_path)
 	else
-		local out_lib_path = path.join(out_path, "lib"..package_name..".jin.so")
+		local out_lib_path = path.join(out_path, "lib" .. package_name .. ".jin.so")
 		os.execute(
-			"gcc -shared -Wl,-rpath-link=. -L. "..package.dlibs..gcc_options..
-			o_dir_path.."/*.o -o "..out_lib_path
+			"gcc -shared -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
+			o_dir_path .. "/*.o -o " .. out_lib_path
 		) or os.exit(false)
 	end
 	
