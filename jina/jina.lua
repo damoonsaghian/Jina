@@ -32,7 +32,7 @@ local packages_table = {}
 --[[
 for each package in packages_table, go through all files in package.path (recursively) and:
 , from .jin files generate .t files
-, for each "package_name.p" file, if it's not a "lib://" protocol package:
+, for each "package_name.p" file:
 	download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
 	add it to root_paths
@@ -70,10 +70,6 @@ while package_names_list[i] do
 					key =
 				end
 			end
-			
-			-- if url protocol is lib:// and the lib exists on the system,
-			-- just hard link it from system to out directory, and return
-			--os.execute("ln /usr/lib/*/libpackage_name.jin.so "..out_path.."/")
 			
 			local url_hash
 			local dep_package = {

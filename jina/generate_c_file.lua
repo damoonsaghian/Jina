@@ -96,8 +96,6 @@ return function (package, jin_file_path)
 	
 	https://www.bottomupcs.com/
 	https://begriffs.com/posts/2021-07-04-shared-libraries.html
-	https://www.gnu.org/software/libtool/manual/html_node/Installing-libraries.html
-	https://www.gnu.org/software/libtool/manual/html_node/Inter_002dlibrary-dependencies.html
 	
 	ABI change:
 	, exported data items change (exception: adding optional items to the ends of structures is okay,
