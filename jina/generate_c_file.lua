@@ -91,7 +91,6 @@ return function (package, jin_file_path)
 		https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html
 		https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
 		https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html
-	https://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
 	https://docs.openeuler.org/en/docs/20.09/docs/ApplicationDev/using-gcc-for-compilation.html
 	
 	https://www.bottomupcs.com/

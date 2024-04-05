@@ -207,14 +207,14 @@ for i = package_name_list.len(), 1, -1 do
 		local out_executable_path = path.join(out_path, package_name)
 		os.execute(
 			"gcc -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
-			o_dir_path .. "/*.o -o " .. out_executable_path
+			" -o " .. out_executable_path .. " " .. o_dir_path.."/*.o"
 		) or os.exit(false)
 		os.execute("LD_LIBRARY_PATH=. " .. executable_path)
 	else
 		local out_lib_path = path.join(out_path, "lib" .. package_name .. ".jin.so")
 		os.execute(
 			"gcc -shared -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
-			o_dir_path .. "/*.o -o " .. out_lib_path
+			" -o " .. out_lib_path .. " " .. o_dir_path.."/*.o"
 		) or os.exit(false)
 	end
 	
