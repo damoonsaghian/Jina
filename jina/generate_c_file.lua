@@ -79,19 +79,11 @@ return function (package, jin_file_path)
 	https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
 
 	https://web.archive.org/web/20051224211528/http://www.network-theory.co.uk/docs/gccintro/
-		https://web.archive.org/web/20051215144235/http://www.network-theory.co.uk/docs/gccintro/gccintro_13.html
-		https://web.archive.org/web/20051215144300/http://www.network-theory.co.uk/docs/gccintro/gccintro_14.html
-		https://web.archive.org/web/20060116041513/http://www.network-theory.co.uk/docs/gccintro/gccintro_16.html
-		https://web.archive.org/web/20051215144452/http://www.network-theory.co.uk/docs/gccintro/gccintro_18.html
-		https://web.archive.org/web/20051215144519/http://www.network-theory.co.uk/docs/gccintro/gccintro_19.html
-	https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
-		https://gcc.gnu.org/onlinedocs/gcc/Overall-Options.html
-		https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html
-		https://gcc.gnu.org/onlinedocs/gcc/Spec-Files.html
-		https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html
-		https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
-		https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html
-	https://docs.openeuler.org/en/docs/20.09/docs/ApplicationDev/using-gcc-for-compilation.html
+	https://web.archive.org/web/20051215144235/http://www.network-theory.co.uk/docs/gccintro/gccintro_13.html
+	https://web.archive.org/web/20051215144300/http://www.network-theory.co.uk/docs/gccintro/gccintro_14.html
+	https://web.archive.org/web/20060116041513/http://www.network-theory.co.uk/docs/gccintro/gccintro_16.html
+	https://web.archive.org/web/20051215144452/http://www.network-theory.co.uk/docs/gccintro/gccintro_18.html
+	https://web.archive.org/web/20051215144519/http://www.network-theory.co.uk/docs/gccintro/gccintro_19.html
 	
 	https://www.bottomupcs.com/
 	https://begriffs.com/posts/2021-07-04-shared-libraries.html
