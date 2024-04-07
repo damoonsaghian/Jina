@@ -51,9 +51,6 @@ return function (package, jin_file_path)
 	
 	-- if correspoding .t file is newer than corresponding .h file, regenerate the .h file
 	
-	-- prefeix all exported identifiers with "package_name__"
-	-- except when package name is "std"
-	
 	--[[
 	https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
 		https://github.com/edubart/nelua-lang/blob/master/lualib/nelua/ccompiler.lua
@@ -77,29 +74,17 @@ return function (package, jin_file_path)
 	https://devdocs.io/c/
 	https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 	https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
-
-	https://web.archive.org/web/20051224211528/http://www.network-theory.co.uk/docs/gccintro/
-	https://web.archive.org/web/20051215144235/http://www.network-theory.co.uk/docs/gccintro/gccintro_13.html
-	https://web.archive.org/web/20051215144300/http://www.network-theory.co.uk/docs/gccintro/gccintro_14.html
-	https://web.archive.org/web/20060116041513/http://www.network-theory.co.uk/docs/gccintro/gccintro_16.html
-	https://web.archive.org/web/20051215144452/http://www.network-theory.co.uk/docs/gccintro/gccintro_18.html
-	https://web.archive.org/web/20051215144519/http://www.network-theory.co.uk/docs/gccintro/gccintro_19.html
 	
 	https://www.bottomupcs.com/
+	https://web.archive.org/web/20051224211528/http://www.network-theory.co.uk/docs/gccintro/
 	https://begriffs.com/posts/2021-07-04-shared-libraries.html
-	
-	ABI change:
-	, exported data items change (exception: adding optional items to the ends of structures is okay,
-		as long as those structures are only allocated within the library)
-	, an exported function is removed
-	, the interface of an exported function changes
 	
 	only the actor can destroy the heap references it creates
 		other actors just send reference'counting messages
 		so we do not need atomic reference counting
 	self'referential fields of structures are necessarily private, and use weak references
 	https://docs.gtk.org/glib/reference-counting.html
-
+	
 	c closures
 	https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 	this defines a function named "fun" that takes a *char,
@@ -107,28 +92,37 @@ return function (package, jin_file_path)
 	int (*fun(char* s)) (int, int) {}
 	int (*fun2)(int, int) = fun("")
 	funtion namse are automatically converted to a pointer
-
+	
 	http://blog.pkh.me/p/20-templating-in-c.html
-
+	
 	string literals and functions in C are stored in code
 	https://stackoverflow.com/questions/3473765/string-literal-in-c
 	https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
-
+	
+	prefeix all exported identifiers with "package_name__"
+	except when package name is "std"
+	
 	records and modules are implemented similarly:
 	record_name__field_name
 	module_name__var_name
-
+	
 	note that record types are not compiled to c structs
 	records are implemented as multiple variables
-
+	
 	functions are compiled to c functions with only one arg, which is a struct
 	adding members to the end of structs do not change ABI
-
+	
 	all these means that there is a one to one relation between API and ABI
 	API change imply ABI change; API invarience imply ABI invarience
 	so for recompiling an object file, we just need to track the corresponding .c file,
 		and not all the included .h files
-
+	
+	ABI change:
+	, exported data items change (exception: adding optional items to the ends of structures is okay,
+		as long as those structures are only allocated within the library)
+	, an exported function is removed
+	, the interface of an exported function changes
+	
 	https://github.com/Microsoft/mimalloc
 	libmimalloc-dev
 	]]

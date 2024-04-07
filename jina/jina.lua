@@ -51,6 +51,7 @@ while package_names_list[i] do
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
 			if package_table[package_name] then
+				package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
 				table.insert(package_names_list, package_name)
 				return
 			end
@@ -88,7 +89,7 @@ while package_names_list[i] do
 			end
 			
 			package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
-			
+			table.insert(package_names_list, package_name)
 			packages_table.package_name = dep_package
 		end
 	end)
@@ -206,15 +207,15 @@ for i = package_name_list.len(), 1, -1 do
 	if path.isfile(path.join(project_path, "0.jin")) then
 		local out_executable_path = path.join(out_path, package_name)
 		os.execute(
-			"gcc -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
-			" -o " .. out_executable_path .. " " .. o_dir_path.."/*.o"
+			"gcc -Wl,-rpath-link=. -L. " .. gcc_options.." " .. o_dir_path.."/*.o " .. package.dlibs ..
+			" -o " .. out_executable_path
 		) or os.exit(false)
 		os.execute("LD_LIBRARY_PATH=. " .. executable_path)
 	else
 		local out_lib_path = path.join(out_path, "lib" .. package_name .. ".jin.so")
 		os.execute(
-			"gcc -shared -Wl,-rpath-link=. -L. " .. package.dlibs .. gcc_options ..
-			" -o " .. out_lib_path .. " " .. o_dir_path.."/*.o"
+			"gcc -shared -Wl,-rpath-link=. -L. " .. gcc_options.." " .. o_dir_path.."/*.o " .. package.dlibs ..
+			" -o " .. out_lib_path
 		) or os.exit(false)
 	end
 	
