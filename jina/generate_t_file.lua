@@ -17,13 +17,10 @@ return function (project_path, jin_file_path)
 	
 	local t_file_path = path.join(project_path, ".cache/jina/h", relative_extensionless_path..".t")
 	
-	--[[
-	generate a string containing the exported definitions and their types
-	then write the string into the .t file, if:
-	, there is no old .t file remained from the last compilation
-	, or there is an old .t file, but it's not equal to the generated string (compare their hashes)
-	]]
-	
 	dir.makepath(path.dirname(t_file_path))
 	local t_file_handle = io.open(t_file_path)
+	
+	-- extract exported definitions and their types, and write it to the .t file
+	
+	t_file_handle:close()
 end

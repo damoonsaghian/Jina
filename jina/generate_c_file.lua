@@ -75,10 +75,6 @@ return function (package, jin_file_path)
 	https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 	https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
 	
-	https://www.bottomupcs.com/
-	https://web.archive.org/web/20051224211528/http://www.network-theory.co.uk/docs/gccintro/
-	https://begriffs.com/posts/2021-07-04-shared-libraries.html
-	
 	only the actor can destroy the heap references it creates
 		other actors just send reference'counting messages
 		so we do not need atomic reference counting
@@ -108,6 +104,7 @@ return function (package, jin_file_path)
 	
 	note that record types are not compiled to c structs
 	records are implemented as multiple variables
+	a list of records, will be converted to a record of arrays
 	
 	functions are compiled to c functions with only one arg, which is a struct
 	adding members to the end of structs do not change ABI
@@ -116,6 +113,7 @@ return function (package, jin_file_path)
 	API change imply ABI change; API invarience imply ABI invarience
 	so for recompiling an object file, we just need to track the corresponding .c file,
 		and not all the included .h files
+	https://begriffs.com/posts/2021-07-04-shared-libraries.html#api-vs-abi
 	
 	ABI change:
 	, exported data items change (exception: adding optional items to the ends of structures is okay,

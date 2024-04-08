@@ -2,8 +2,9 @@ local path = require"pl/path"
 local dir = require"pl/dir"
 require"pl.stringx".import()
 
-local generate_t_file = require"generate_t_file"
-local generate_c_file = require"generate_c_file"
+local here_dir = path.direname(arg[0])
+local generate_t_file = dofile(here_dir.."/generate_t_file.lua")
+local generate_t_file = dofile(here_dir.."/generate_c_file.lua")
 
 if os.execute("command -v ospkg-deb 1>/dev/null") then
 	ospkg_type = "deb"
@@ -51,6 +52,7 @@ while package_names_list[i] do
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
 			if package_table[package_name] then
+				-- this line is for compatiblity with linkers in which the order of given libs are important
 				package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
 				table.insert(package_names_list, package_name)
 				return
