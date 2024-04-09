@@ -98,13 +98,10 @@ return function (package, jin_file_path)
 	prefeix all exported identifiers with "package_name__"
 	except when package name is "std"
 	
-	records and modules are implemented similarly:
-	record_name__field_name
-	module_name__var_name
-	
-	note that record types are not compiled to c structs
-	records are implemented as multiple variables
-	a list of records, will be converted to a record of arrays
+	records:
+	, constructed using anonymous structs
+	, stored in variables with type void*
+	, type casted to anonymous structs when accessed
 	
 	functions are compiled to c functions with only one arg, which is a struct
 	adding members to the end of structs do not change ABI
