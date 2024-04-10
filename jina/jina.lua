@@ -2,9 +2,8 @@ local path = require"pl/path"
 local dir = require"pl/dir"
 require"pl.stringx".import()
 
-local here_dir = path.direname(arg[0])
-local generate_t_file = dofile(here_dir.."/generate_t_file.lua")
-local generate_t_file = dofile(here_dir.."/generate_c_file.lua")
+local generate_t_file = require"jina.generate_t_file"
+local generate_c_file = require"jina.generate_c_file"
 
 if os.execute("command -v ospkg-deb 1>/dev/null") then
 	ospkg_type = "deb"

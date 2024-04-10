@@ -99,9 +99,9 @@ return function (package, jin_file_path)
 	except when package name is "std"
 	
 	records:
-	, constructed using anonymous structs
+	, constructed using anonymous structs (fields sorted alphabetically)
 	, stored in variables with type void*
-	, type casted to anonymous structs when accessed
+	, casted to anonymous structs (fields sorted alphabetically) when accessed
 	
 	functions are compiled to c functions with only one arg, which is a struct
 	adding members to the end of structs do not change ABI
