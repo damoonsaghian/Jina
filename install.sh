@@ -10,7 +10,8 @@ cp "$project_dir/.cache/jina/out/std/libstd.jin.so" "$HOME/.local/apps/jina/"
 cp "$project_dir/jina/*.lua" "$HOME/.local/apps/jina/"
 
 echo '#!/usr/bin/sh
-exec lua "$HOME/.local/apps/jina/jina.lua"
+cd "$HOME/.local/apps"
+exec lua jina/jina.lua
 ' > "$HOME/.local/bin/jina"
 chmod +x "$HOME/.local/bin/jina"
 
