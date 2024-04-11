@@ -8,30 +8,30 @@
 
 List :=
 
-List = .
-	new: {}
+;ns List
+	new = {}
 	
-	get: { self ::List(X'), index :Num'u | :?X'
+	get = { self ::List(X'), index :Num'u | :?X'
 		;; checks if index is less than the length
 	}
 	
-	append: { self !List(X'), element :X' |
+	append = { self !List(X'), element :X' |
 	}
 	
-	extend: { self !List(X'), extention :List(X') |
+	extend = { self !List(X'), extention :List(X') |
 	}
 	
-	put: { self !List(X'), element :X', index :Num'u |
+	put = { self !List(X'), element :X', index :Num'u |
 	}
 	
-	insert: { self !List(X'), element :X', index :Num'u |
+	insert = { self !List(X'), element :X', index :Num'u |
 	}
 	
-	trim: { self!, index :Num'u |
+	trim = { self!, index :Num'u |
 	}
 	
-	remove: { self!, index :Num'u |
+	remove = { self!, index :Num'u |
 	}
 	
-	iter: { self ::List(X') | :Iter(X')
+	iter = { self ::List(X') | :Iter(X')
 	}

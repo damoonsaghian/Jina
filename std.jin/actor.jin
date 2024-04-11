@@ -2,23 +2,23 @@
 ;ospkg-deb libglib2.0-dev
 ;dlibs -lglib2
 
-Actor := .
-	data': X'
+Actor :=
+	state': X',
 	messages: Array { :X' | }
 
-Actor = .
-	new: { data :X' | :Actor(X')
+;ns Actor
+	new = { data :X' | :Actor(X')
 		;; add a pointer in the global list of actors
 		;c
-		Actor. data []
+		state, messages: []
 	}
 	
-	do: { self!, message ::{ :X' | } |
+	do = { self!, message ::{ state :X' } |
 		;; notify that there is a new message
 		;c
-		self.messages..append message
+		self..messages.append message
 	}
 	
-	repeat: { self!, message ::{ :X' | }, til :B |
+	repeat = { self!, message ::{ state :X' }, til :B |
 		;; repeatedly send message until "til" becomes true
 	}

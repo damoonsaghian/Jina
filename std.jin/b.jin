@@ -5,29 +5,29 @@ B1 = B1. ()
 
 B := B0 \ B1
 
-B = .
-	and: { self, arg2 :{B} | :B
+;ns B
+	and = { self, arg2 :{B} | :B
 		self # {
 			B0 | B0
 			B1 | arg2()
 		}
 	}
 	
-	or: { self, arg2 :{B} | :B
+	or = { self, arg2 :{B} | :B
 		self # {
 			B0 | arg2()
 			B1 | B1
 		}
 	}
 	
-	neg: { self | :B
+	neg = { self | :B
 		self # {
 			B0 | B1
 			B1 | B0
 		}
 	}
 	
-	then: { self, then !{T'}, else !{T'} | :T'
+	then = { self, then !{T'}, else !{T'} | :T'
 		self # {
 			B0 | else()
 			B1 | then()
