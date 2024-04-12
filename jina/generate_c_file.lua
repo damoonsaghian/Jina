@@ -6,14 +6,6 @@ https://github.com/edubart/nelua-lang/tree/master/lualib/nelua
 https://github.com/ceu-lang/ceu/tree/master/src/lua
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 
-#include <stdlib.h>
-#include <glib-2.0/glib.h>
-; https://packages.debian.org/bookworm/amd64/libglib2.0-dev/filelist
-
-int main(int argc, char* argv[]) {}
-]]
-
---[[
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 	https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Pointers
 https://sourceware.org/glibc/manual/latest/html_node/index.html
@@ -21,12 +13,6 @@ https://en.cppreference.com/w/c
 https://devdocs.io/c/
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
-
-only the actor can destroy the heap references it creates
-	other actors just send reference'counting messages
-	so we do not need atomic reference counting
-self'referential fields of structures are necessarily private, and use weak references
-https://docs.gtk.org/glib/reference-counting.html
 
 c closures
 https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
@@ -87,6 +73,12 @@ the main loop runs messages of UI actors, and then polls (non'waiting) more even
 use mutexes to hold the list of actors and their message queues
 https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 https://docs.gtk.org/glib/struct.RWLock.html
+
+only the actor can destroy the heap references it creates
+	other actors just send reference'counting messages
+	so we do not need atomic reference counting
+self'referential fields of structures are necessarily private, and use weak references
+https://docs.gtk.org/glib/reference-counting.html
 ]]
 
 return function (package, jin_file_path)
@@ -119,6 +111,13 @@ return function (package, jin_file_path)
 	
 	local jin_file = io.open(jin_file_path)
 	local c_file = io.open(c_file_path, "w")
+
+	--[[
+	#include <stdlib.h>
+	#include <glib-2.0/glib.h>
+
+	int main(int argc, char* argv[]) {}
+	]]
 	
 	for line in jin_file:lines() do
 		local c_code = ""
