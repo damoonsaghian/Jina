@@ -6,6 +6,11 @@ comments:
 	block
 	;
 
+identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
+	abc'efg0123
+template identifiers ("x" and "y" will be used in the definition of the variable):
+	abc[x, y]
+
 immutable borrow variable definition:
 	v :T = ...
 	v = ...
@@ -13,11 +18,11 @@ mutable borrow variable:
 	v !T = ...
 	v! = ...
 immutable own variable:
-	v ::T = ...
-	v :: = ...
+	v &T = ...
+	v& = ...
 mutable own variable:
-	v !:T = ...
-	v !: = ...
+	v $T = ...
+	v$ = ...
 assignment after definition (only possible for mutable variables):
 	v = ...
 
@@ -36,7 +41,7 @@ literal numbers:
 	0x ;; Num'c (ASCII code for "a" character)
 
 lists:
-	l :List(Num) = [1, 2, 3]
+	l :List[Num] = [1, 2, 3]
 indexing:
 	l_1
 negative indices count from the end of the list
@@ -61,7 +66,7 @@ which is equivalent to:
 	["first line", "\tsecond line"]
 
 dictionaries are indexed using strings (instead of integers as in lists):
-	d :Dict(Num) = ["a": 1, "b": 2, "c": 3]
+	d :Dict[Num] = ["a": 1, "b": 2, "c": 3]
 when keys are one word strings, this can also be written as:
 	[a: 1, b: 2, c: 3]
 indexing:
@@ -77,12 +82,14 @@ records can be matched on smaller records:
 	a, b = 1, 2, 3
 tagged fields can be matched on untagged ones, if the name of variables match:
 	a, b = a: 1, b: 2
+and vice versa:
+	a: x, b: y, c: z = a, b, c: d
 mutating a record:
 	r..a = 10
 
 function:
 	f = { a :A , b !B | :C ... }
-note that the type of above function is:
+note that the type of the above function is:
 	f :{ a :A , b !B | C }
 this rather strange type is to avoid contravarient behavior of function arguments, when we introduce interfaces
 function call:
@@ -119,12 +126,12 @@ matching:
 		() | ...
 	}
 
+there is no loop; just iterators:
+	iter.each { x | ... }
+
 actor:
 	a = Actor.new B.new(x, y)
 	a.do { b !B | ... }
-
-iterators:
-	iter.each { x | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -138,6 +145,8 @@ to hide a module so it can't be accessed from modules in the parent directory,
 a package is a collection of modules
 in a project directory, we can have multiple package directories
 	the name of the package directory is the package name, plus a ".jin" extension
+packages that contain a file named "0.jina" (which must contain the init function) are program packages
+
 to use a package in a project, create a file named "package_name.p" with this format:
 , double semicolons start a comment line
 , entries are separated with empty new line
@@ -149,10 +158,10 @@ entries will be tried in the given order, until one is available
 if there is no entry in the .p file, it refers to a directory with the same name as the .p file,
 	in the current project
 
-to use a module inside a package:
+to use the definitions of a package:
 	package'file'name.Definition
-definitions in "std" package are directly accessible; there is no need for a ".p" file
-packages that contain a file named "0.jina" (which must contain the init function) are program packages
+definitions in "std" package are directly accessible
+	there is no need for a ".p" file, or prefixing with "std."
 
 structs:
 	S :=
@@ -160,7 +169,7 @@ structs:
 		b: B
 defining methods (using a namespace):
 	;ns S
-		new = { a :A | :S
+		{ a :A | :S
 			b = ...
 			a, b
 		}
@@ -172,11 +181,11 @@ defining methods (using a namespace):
 		}
 to create an instance of a struct:
 	s :S = a: x, b: y
-	s = S'new a: x
+	s = S a: x
 calling a method:
 	s.m x
 which is equivalent to:
-	S'm s x
+	S.m s x
 
 singletons:
 	B0 := () ;; false
@@ -185,12 +194,12 @@ singletons:
 	B1 :B1 = ()
 unions:
 	B := B0 \ B1
-type "?A" is a shortcut for "A\()"
+type "A?" is a shortcut for "A\()"
 
 interfaces:
 	;i I
-		m3 :{ self :A', x :X | Y }
-		m4 = { self !A' |
+		m1 :{ self, x :X | Y }
+		m2 = { self! |
 			;; default implementation
 		}
 interface inheritance:
@@ -207,9 +216,9 @@ defining the methods of a struct that implements some interfaces:
 		...
 
 generics:
-	S := a: X', b: X'
+	S[X] := a: X, b: X
 bounded generics:
-	S := a: X':I, b: X'
+	S[X:I] := a: X, b: X
 
 to directly enter C code:
 	;c ...
