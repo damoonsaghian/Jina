@@ -3,17 +3,17 @@
 	https://www.lua.org/pil/7.5.html
 	https://www.lua.org/pil/9.3.html
 
-Iter' :=
+Iter[X]' :=
 	index: Num'u,
-	poll: { index :Num'u | ?X' }
+	poll: { index :Num'u | X? }
 
-Iter = .
-	new: { poll ::{ index :Num'u | ?X' } | :Iter(X')
+;ns Iter[X]
+	{ poll &{ index :Num'u | X? } | :Iter(X')
 		index: 0, poll
 	}
 	
-	each: { self, do !:{ elem :X' | Y' } |
+	each: { self, do ${elem :X} |
 		;c
-		elem = self..poll(self.index + 1)
+		elem = self.poll(self..index + 1)
 		;c
 	}

@@ -1,6 +1,6 @@
 ;i Ord
-	is'equal :{ self :X', other :X' | B }
-	is'less :{ self :X', other :X' | B }
-	is'less'or'equal = { self :X', other :X' | :B
+	is'equal :{self, other :Self | B}
+	is'less :{self, other :Self | B}
+	is'less'or'equal = { self, other :Self | :B
 		self < other \\ self == other
 	}

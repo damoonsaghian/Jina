@@ -6,8 +6,8 @@
 ;; https://flintlib.org/doc/fmpz.html
 
 ;;	minus operator:
-	, unary: "-x" is equivalent to "x..neg()"
-	, binary: "x - y" is equivalent to "x..sub(y)"
+	, unary: "-x" is equivalent to "x.neg()"
+	, binary: "x - y" is equivalent to "x.sub(y)"
 
 ;ns Num
 	add = { self, other :Num\Num'z\Num'u | :Num
@@ -96,7 +96,7 @@
 	is'equal = {}
 	
 	;; creates a range iterator
-	to = { self, rhs :Num'u | :Iter(Num'u)
+	to = { self, arg2 :Num'u | :Iter[Num'u]
 	}
 	
 	to'z = { self | :Num'z

@@ -10,7 +10,7 @@
 	print'err = { message :String |
 	}
 	
-	read = { cb ::{} | :String
+	read = { cb &{} | :String
 		;; read from stdin (non'blocking io)
 	}
 	
