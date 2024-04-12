@@ -6,7 +6,7 @@
 ;; https://flintlib.org/doc/fmpz.html
 
 ;;	minus operator:
-	, unary: "-x" is equivalent to "x.neg()"
+	, unary: "-x" (no space after minus sign) is equivalent to "x.neg()"
 	, binary: "x - y" is equivalent to "x.sub(y)"
 
 ;ns Num
