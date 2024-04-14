@@ -115,7 +115,7 @@ https://lualanes.github.io/lanes/
 ]]
 
 local _, _, project_path_hash = require"pl.utils".executeex('echo -n "$project_dir" | md5sum | cut -d " " -f1')
-local ospkg_packages
+local ospkg_packages = ""
 for _, package in pairs(packages_table) do
 	ospkg_packages = ospkg_packages..package.ospkg..","
 end
