@@ -72,6 +72,8 @@ while package_names_list[i] do
 					key =
 				end
 			end
+
+			-- use the public key in .p file to check the signature (".data/sig")
 			
 			local url_hash
 			local dep_package = {
