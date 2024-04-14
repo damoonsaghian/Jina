@@ -35,7 +35,7 @@ for each package in packages_table, go through all files in package.path (recurs
 , for each "package_name.p" file:
 	download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
-	add it to root_paths
+	add it to packages_table
 ]]
 local i = 1
 while package_names_list[i] do
@@ -114,10 +114,13 @@ number of spawn threads will be equal to the number of CPU cores,
 https://lualanes.github.io/lanes/
 ]]
 
+local _, _, project_path_hash = require"pl.utils".executeex('echo -n "$project_dir" | md5sum | cut -d " " -f1')
+local ospkg_packages
+for _, package in pairs(packages_table) do
+	ospkg_packages = ospkg_packages..package.ospkg..","
+end
 if ospkg_type ~= "" then
-	for package_name, package in pairs(packages_table) do
-		os.execute("ospkg-" .. ospkg_type .. " add jina-" .. package_name .. " '" .. package.ospkg .. "'")
-	end
+	os.execute("ospkg-"..ospkg_type .. " add jina-"..project_path_hash .. " " .. ospkg_packages)
 end
 
 local process_handles = {}
