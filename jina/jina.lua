@@ -25,17 +25,23 @@ end
 
 local package_names_list = {}
 local packages_table = {}
--- { package_name = package }
--- each package has these fields: path, deps (list of dep paths), dlibs, ospkg
--- find all directories named "*.jin" inside arg[1] directory, and add them to packages
+-- { package_name = { path = "", dlibs = "-la -lb ", ospkg ="a,b," } }
+
+-- find all directories named "*.jin" inside arg[1] directory
+-- add them to package_names_list and packages_table
+for dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
+	local package_name = path.basename(dir_path:rstrip".jin")
+	package_names_list = table.insert(package_names_list, package_name)
+	packages_table[package_name] = { path = dir_path }
+end
 
 --[[
-for each package in packages_table, go through all files in package.path (recursively) and:
+for each package in package_names_list, go through all files in package.path (recursively) and:
 , from .jin files generate .t files
 , for each "package_name.p" file:
 	download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
-	add it to packages_table
+	add it to package_names_list and packages_table
 ]]
 local i = 1
 while package_names_list[i] do
@@ -50,6 +56,7 @@ while package_names_list[i] do
 		if file_path:find"%.jin$" then
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
+			local package_name = path.basename(file_path:rstrip".p")
 			if package_table[package_name] then
 				-- this line is for compatiblity with linkers in which the order of given libs are important
 				package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
@@ -93,7 +100,7 @@ while package_names_list[i] do
 			
 			package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
 			table.insert(package_names_list, package_name)
-			packages_table.package_name = dep_package
+			packages_table[package_name] = dep_package
 		end
 	end)
 	i = i + 1
