@@ -7,7 +7,7 @@ project_dir="$(dirname "$0")"
 mkdir -p "$HOME/.local/apps/jina/"
 
 jina "$project_dir"
-ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$HOME/.local/apps/jina/"
+ln "$project_dir/.cache/jina/lib.so" "$HOME/.local/apps/jina/libstd.so"
 
 ln "$project_dir/jina/*.lua" "$HOME/.local/apps/jina/"
 

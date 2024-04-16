@@ -142,12 +142,11 @@ to access the definitions in a module which is inside a directory: dir.Definitio
 to hide a module so it can't be accessed from modules in the parent directory,
 	append an apostrophe at the end of its file name
 
-a package is a collection of modules
-in a project directory, we can have multiple package directories
-	the name of the package directory is the package name, plus a ".jin" extension
-packages that contain a file named "0.jina" (which must contain the init function) are program packages
+the directory containing a Jina project is called a package
+a package can contain these directories: "app", "lib", "test"
+"app" and "test" directories contain a file named "0.jina" which contains the "init" function
 
-to use a package in a project, create a file named "package_name.p" with this format:
+to use the modules in the "lib" directory of a package,	create a file named "your_chosen_name.p" with this format:
 , double semicolons start a comment line
 , entries are separated with empty new line
 , each entry contains a URL of the form (where protocol can be gnunet, git):
@@ -155,13 +154,12 @@ to use a package in a project, create a file named "package_name.p" with this fo
 , the next line of the entry can contain a public key,
 	which will be used to check the signature provided by the package
 entries will be tried in the given order, until one is available
-if there is no entry in the .p file, it refers to a directory with the same name as the .p file,
-	in the current project
+if there is no entry in the .p file, it refers to current package
 
 to use the definitions of a package:
-	package'file'name.Definition
+	dot'p'file'name.Definition
 definitions in "std" package are directly accessible
-	there is no need for a ".p" file, or prefixing with "std."
+	there is no need for a "std.p" file, or prefixing with "std."
 
 structs:
 	S :=
