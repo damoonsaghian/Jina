@@ -28,7 +28,7 @@ string literals and functions in C are stored in code
 https://stackoverflow.com/questions/3473765/string-literal-in-c
 https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
 
-prefeix all exported identifiers with "package_name__"
+prefeix all exported identifiers with "package_name_url_hash_"
 except when package name is "std"
 
 records:

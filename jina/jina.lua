@@ -23,47 +23,33 @@ if not path.isdir(arg[1]) then
 	error("there is no directory at \""..arg[1].."\"\n")
 end
 
-local package_names_list = {}
+local package_paths_list = {}
 local packages_table = {}
--- { package_name = { path = "", dlibs = "-la -lb ", ospkg ="a,b," } }
+-- { package_path = { dlibs = "-la -lb ", ospkg ="a,b," } }
 
--- find all directories named "*.jin" inside arg[1] directory
--- add them to package_names_list and packages_table
+-- find all directories named "*.jin" inside arg[1] directory, and add them to package_names_list
 for dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
-	local package_name = path.basename(dir_path:rstrip".jin")
-	package_names_list = table.insert(package_names_list, package_name)
-	packages_table[package_name] = { path = dir_path }
+	table.insert(package_paths_list, dir_path)
 end
 
 --[[
-for each package in package_names_list, go through all files in package.path (recursively) and:
+for each package in package_paths_list, go through all files in package.path (recursively) and:
 , from .jin files generate .t files
 , for each "package_name.p" file:
 	download the package (if needed)
 	inside the download, the directory with the name "package_name" contains the source of the package
-	add it to package_names_list and packages_table
+	add it to package_paths_list
 ]]
 local i = 1
-while package_names_list[i] do
-	local package = packages_table[package_names_list[i]]
-	local project_path = path.dirname(package.path)
-	local package_name = path.basename(package.path)
+while package_paths_list[i] do
+	local package_path = package_paths_list[i]
+	local package = packages_table[package_path]
+	local project_path = path.dirname(packag_path)
 	
-	local out_path = project_path .. "/.cache/jina/out/" .. package_name
-	dir.makepath(out_path)
-	
-	dir.getallfiles(package.path):foreach(function (file_path)
+	dir.getallfiles(package_path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
-			local package_name = path.basename(file_path:rstrip".p")
-			if package_table[package_name] then
-				-- this line is for compatiblity with linkers in which the order of given libs are important
-				package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
-				table.insert(package_names_list, package_name)
-				return
-			end
-			
 			local url, key
 			local url_is_available = false
 			for line in io.lines(file_path) do
@@ -83,24 +69,33 @@ while package_names_list[i] do
 			-- use the public key in .p file to check the signature (".data/sig")
 			
 			local url_hash
-			local dep_package = {
-				path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, dep_name)
-			}
-			local dep_name = path.basename(deb_package.path)
-			
+			local dep_package_name = path.basename(file_path:rstrip".p")
+
+			local dep_package_path = path.join(
+				path.expanduser"~/.local/share/jina/packages",
+				url_hash,
+				dep_package_name
+			)
+
 			-- if there is no entry in the .p file
 			if not url then
-				dep_package.path = path.join(project_path, package_name)
+				dep_package_path = path.join(project_path, dep_package_name)
 			end
 			
-			if not path.isdir(dep_package.path) then
-				error('package:\n\t' .. package.path .. '\nneeds package:\n' .. dep_package.path ..
+			if packages_table[dep_package_path] then
+				-- this line is for compatiblity with linkers in which the order of given libs are important
+				package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
+				table.insert(package_paths_list, package_path)
+				return
+			end
+			
+			if not path.isdir(dep_package_path) then
+				error('package:\n\t' .. package_path .. '\nneeds package:\n' .. dep_package_path ..
 					"\nwhich does not exists")
 			end
 			
-			package.dlibs = package.dlibs .. "-l" .. dep_package_name .. ".jin "
-			table.insert(package_names_list, package_name)
-			packages_table[package_name] = dep_package
+			package.dlibs = package.dlibs .. "-l" .. dep_package_name .. "." .. ".jin " .. url_hash
+			table.insert(package_paths_list, dep_package_path)
 		end
 	end)
 	i = i + 1
