@@ -20,7 +20,8 @@ if arg[1]:char(1) == "-" then
 end
 
 if not path.isdir(arg[1]) then
-	error("there is no directory at \""..arg[1].."\"\n")
+	print('directory "'..arg[1]..'" does not exists')
+	os.exit(false)
 end
 
 local package_paths_list = {}
@@ -204,7 +205,7 @@ for i = package_name_list.len(), 1, -1 do
 	dir.makepath(out_path)
 	
 	if package_name ~= "std" then
-		package.dlib = package.dlib.."-lstd.jin "
+		package.dlib = package.dlib.."-lstd "
 		os.execute("ln " .. path.expanduser("~/.local/apps/jina/libstd.jin.so") .. " " .. out_path)
 	end
 	
