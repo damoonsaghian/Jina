@@ -80,17 +80,17 @@ self'referential fields of structures are necessarily private, and use weak refe
 https://docs.gtk.org/glib/reference-counting.html
 ]]
 
-return function (package, jin_file_path)
-	local project_path = path.dirname(package.path)
-	local package_name = path.basename(package.path)
+return function (src, jin_file_path)
+	local project_path = path.dirname(src.path)
+	local package_name = 
 	
-	local extensionless_file_name = path.splitext(
-		path.relpath(jin_file_path, root_path)
+	local extless_file_name = path.splitext(
+		path.relpath(jin_file_path, src.path)
 	):replace(path.sep, "__")
 	
-	local h_file_path = path.join(project_path, ".cache/jina/h", package_name, extensionless_file_name..".h")
+	local h_file_path = path.join(project_path, ".cache/jina/h", path.basename(src.path), extless_file_name..".h")
 	
-	local c_file_path = path.join(project_path, ".cache/jina/c", package_name, extensionless_file_name..".c")
+	local c_file_path = path.join(project_path, ".cache/jina/c", path.basename(src.path), extless_file_name..".c")
 	local c_file_mtime = path.getmtime(c_file_path)
 	
 	local jin_file_mtime = path.getmtime(jin_file_path)
@@ -102,7 +102,7 @@ return function (package, jin_file_path)
 		return
 	end
 	
-	package.needs_update or do package.needs_update = true end
+	src.needs_update or do src.needs_update = true end
 	
 	-- fill the table of definitions and their types
 	-- check for type consistency in the module, and with (cached) .t files
@@ -110,7 +110,7 @@ return function (package, jin_file_path)
 	
 	local jin_file = io.open(jin_file_path)
 	local c_file = io.open(c_file_path, "w")
-
+	
 	--[[
 	#include <stdlib.h>
 	#include <glib-2.0/glib.h>
