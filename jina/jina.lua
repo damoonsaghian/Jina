@@ -206,7 +206,7 @@ for i = package_name_list.len(), 1, -1 do
 	
 	if package_name ~= "std" then
 		package.dlib = package.dlib.."-lstd "
-		os.execute("ln " .. path.expanduser("~/.local/apps/jina/libstd.jin.so") .. " " .. out_path)
+		os.execute("ln " .. path.expanduser("~/.local/apps/jina/libjina.so") .. " " .. out_path)
 	end
 	
 	-- if .so file exists, goto skip

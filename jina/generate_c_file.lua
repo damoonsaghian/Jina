@@ -29,7 +29,6 @@ https://stackoverflow.com/questions/3473765/string-literal-in-c
 https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
 
 if there is a url_hash, prefix all exported identifiers with "p<url_hash>_"
-except when package name is "std"
 
 records:
 , constructed using anonymous structs (fields sorted alphabetically)
