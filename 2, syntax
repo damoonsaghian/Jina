@@ -154,12 +154,12 @@ to use the modules in the "lib" directory of a package,	create a file named "you
 , the next line of the entry can contain a public key,
 	which will be used to check the signature provided by the package
 entries will be tried in the given order, until one is available
-if there is no entry in the .p file, it refers to current package
+if there is no entry in the .p file, it refers to the current package
 
 to use the definitions of a package:
 	dot'p'file'name.Definition
-definitions in "std" package are directly accessible
-	there is no need for a "std.p" file, or prefixing with "std."
+definitions in "jina" package itself, are directly accessible
+	there is no need for a "jina.p" file, and prefixing with "jina."
 
 structs:
 	S :=
