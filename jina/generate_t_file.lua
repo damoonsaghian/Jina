@@ -17,10 +17,19 @@ return function (project_path, jin_file_path)
 	
 	local t_file_path = path.join(project_path, ".cache/jina/h", relative_extensionless_path..".t")
 	
+	-- extract exported identifiers and their types
+	local identifiers = {}
+	local types = {}
+	local mode
+	for line in io.lines(jina_file_path) do
+		line
+	end
+	
+	-- write it to the .t file
 	dir.makepath(path.dirname(t_file_path))
-	local t_file_handle = io.open(t_file_path)
-	
-	-- extract exported definitions and their types, and write it to the .t file
-	
-	t_file_handle:close()
+	local t_file = io.open(t_file_path)
+	for i = 1, #identifiers, 1 do
+		t_file:write(identifiers[i] .. " : " .. types[i] .. "\n")
+	end
+	t_file:close()
 end
