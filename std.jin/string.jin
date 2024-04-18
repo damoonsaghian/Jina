@@ -1,0 +1,44 @@
+String := Array[Num'c]
+
+;ns String
+	;; change array methods to respect UTF8 encoding
+	
+	replace = { self, substring :String, replacement :String | :B
+	}
+	
+	split =
+	join =
+	
+	find = { self, substring :String | :Num'u?
+	}
+	contains = { self, substring :Self | :B
+	}
+	
+	trim'prefix = { self!, prefix :Self |
+	}
+	trim'suffix = { self!, suffix :Self |
+	}
+	;; trim ASCII whitespace from the start of the string
+	trim'start = { self! |
+	}
+	;; trim ASCII whitespace from the end of the string
+	trim'end = { self! |
+	}
+	;; trim ASCII whitespace from the start and end of the string
+	trim = { self! |
+	}
+	
+	truncate = { self!, max'len :Num'u |
+	}
+	
+	clear = { self! | Array.clear self }
+	
+	to'lower = { self! |
+	}
+	to'upper = { self! |
+	}
+	
+	to'num = { self | :Num? }
+
+;i String'rep
+	to'string :{ self | String }
