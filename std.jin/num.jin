@@ -1,6 +1,6 @@
 ;include flint/flint.h
 ;ospkg-deb libflint-dev
-;dlibs -lflint
+;dlibs flint
 
 ;; https://flintlib.org/
 ;; https://flintlib.org/doc/fmpz.html
