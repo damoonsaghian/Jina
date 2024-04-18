@@ -129,8 +129,8 @@ return function (pkg, pkg_id, jin_file_path)
 		
 		--[[
 		";ospkg-" .. ospkg_type
+			if package is not already present in pkg.ospkg string
 			pkg.ospkg = pkg.ospkg .. package .. ","
-			append to pkg.ospkg, if not already
 		";dlibs"
 			pkg.dlibs = pkg.dlibs .. "-l" .. dlib .. " "
 		]]

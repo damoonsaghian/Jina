@@ -34,7 +34,7 @@ local pkg_table = {}
 for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
 	local dir_name = path.basename(pkg_path:rstrip".jin")
 	table.insert(pkg_id_list, dir_name)
-	pkg_table[dir_name] = { path = dir_path }
+	pkg_table[dir_name] = { path = dir_path, dlibs = "", ospkg = "" }
 end
 
 --[[
@@ -61,9 +61,7 @@ while pkg_id_list[i] do
 			
 			local dep_pkg_id, dep_pkg_path
 			if url then
-				-- if gnunet or git is needed to add a package, and they are not installed on the system,
-				-- os.execute("ospkg-"..ospkg_type .. " add gnunet gnunet")
-			
+				local url_protocol = url:split"://"
 				local _, _, url_hash = utils.executeex('echo -n ' .. url .. ' | md5sum | cut -d " " -f1')
 				-- download the url to ~/.local/share/jina/packages/url_hash/
 				
@@ -80,14 +78,13 @@ while pkg_id_list[i] do
 				dep_pkg_path = path.join(project_path, dep_pkg_name)
 			end
 			
-			if not pkg_table[dep_pkg_id] then
+			if
+				not pkg_table[dep_pkg_id] or
+				require"pl.tablex".find(pkg_id_list, dep_pkg_id) < i
+			then
 				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_id .. " "
 				table.insert(pkg_id_list, dep_pkg_id)
-				pkg_table[dep_pkg_id] = { path = dep_pkg_path }
-			else
-				-- cyclic dependency
-				-- this line is for compatiblity with linkers in which the order of given libs are important
-				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_name
+				pkg_table[dep_pkg_id] = { path = dep_pkg_path, dlibs = "", ospkg = "" }
 			end
 		end
 	end)
@@ -105,7 +102,7 @@ for pkg_id, pkg in pairs(pkg_table) do
 		end
 	end)
 	
-	ospkg_packages = ospkg_packages..pkg.ospkg..","
+	ospkg_packages = ospkg_packages .. pkg.ospkg .. ","
 end
 
 --[[
@@ -118,19 +115,19 @@ https://lualanes.github.io/lanes/
 local _, _, project_path_hash = utils.executeex('echo -n ' .. arg[1] .. ' | md5sum | cut -d " " -f1')
 if ospkg_type == "" then
 	print"these packages must be installed on your system:"
-	print("\t" .. ospkg_packages)
+	print("\t" .. ospkg_packages:replace(",", "\n\t"))
 else
 	os.execute("ospkg-"..ospkg_type .. " add jina-"..project_path_hash .. " " .. ospkg_packages)
 end
 
 local process_handles = {}
 
--- go through all files in all c_dir_path of all sources in src_table
+-- go through all files in all ".cache/jina/c/package_name" directories of all packages in pkg_table
 -- compile C files to object files
-for _, src in pairs(src_table) do
-	local project_path = path.dirname(src.path)
-	local c_dir_path = path.join(project_path, ".cache/jina/c", path.basename(src.path))
-	local o_dir_path = path.join(project_path, ".cache/jina/o", path.basename(src.path))
+for _, pkg in pairs(pkg_table) do
+	local project_path, pkg_name = path.splitpath(pkg.path)
+	local c_dir_path = path.join(project_path, ".cache/jina/c", pkg_name)
+	local o_dir_path = path.join(project_path, ".cache/jina/o", pkg_name)
 	
 	for _, c_file_path in ipairs(dir.getfiles(c_dir_path)) do
 		local file_name = path.splitext(path.basename(c_file_path))
@@ -139,7 +136,7 @@ for _, src in pairs(src_table) do
 		local jin_file_path = path.join(project_path, file_name:replace("__", path.sep) .. ".jin")
 		if not path.isfile(jin_file_path) then
 			os.remove(c_file_path)
-			os.remove(path.join(project_path, ".cache/jina/h", path.basename(src.path), file_name..".h"))
+			os.remove(path.join(project_path, ".cache/jina/h", pkg_name, file_name..".h"))
 			os.remove(path.join(o_dir_path, file_name..".o"))
 			goto skip
 		end
@@ -155,7 +152,7 @@ for _, src in pairs(src_table) do
 			o_file_mtime > os.time() -- o_file is from future!
 		then
 			dir.makepath(o_dir_path)
-			if path.isfile(path.join(src.path, "0.jin")) then
+			if path.isfile(path.join(pkg.path, "0.jin")) then
 				local handle = io.popen(
 					"gcc -Wall -Wextra -Wpedantic -c " .. c_file_path .. " -o " .. o_file_path,
 					"r"
@@ -185,51 +182,47 @@ for i = 2, #arg, 1 do
 	gcc_options = gcc_options .. arg[i] .. " "
 end
 
--- go through all files in all o_dir_path of all sources in src_table
+-- go through all files in all ".cache/jina/o/package_name" directories of all packages in pkg_table
 -- link object files
 -- iteration is done backward from the end, to create dependecies before dependants
-for i = #src_id_list, 1, -1 do
-	local src_id = src_id_list[i]
-	local src = src_table[src_id]
-	local project_path, root_dir = path.splitpath(src.path)
-	local o_dir_path = path.join(project_path, ".cache/jina/o", root_dir)
-	local out_path = path.join(project_path, ".cache/jina/out", root_dir)
+for i = #pkg_id_list, 1, -1 do
+	local pkg_id = pkg_id_list[i]
+	local pkg = pkg_table[pkg_id]
+	local project_path, pkg_name = path.splitpath(pkg.path)
+	local o_dir_path = path.join(project_path, ".cache/jina/o", pkg_name)
+	local out_path = path.join(project_path, ".cache/jina/out", pkg_name)
 	
-	if src.needs_compile then
+	if pkg.needs_compile then
 		path.isdir(out_path) and dir.rmtree(out_path)
 	end
 	dir.makepath(out_path)
 	
-	os.execute("ln -f " .. path.expanduser("~/.local/apps/jina/libjina.so") .. " " .. out_path) or do
-		src.dlib = src.dlib .. "-lstd "
+	if package_name ~= "std" then
+		os.execute("ln -f " .. path.expanduser("~/.local/apps/jina/libstd.jin.so") .. " " .. out_path)
+		pkg.dlib = pkg.dlib .. "-lstd.jin "
 	end
 	
 	-- hardlink .so files of dependencies into out directory
 	
-	local url_hash = ""
-	if src_id ~= "app" and src_id ~= "test" and src_id ~= "lib" then
-		url_hash = src_id
-	end
-	
 	-- if compilation result exists already, goto skip
 	if 
-		path.isfile(path.join(out_path, pkg_name, "lib" .. url_hash .. ".so")) or
-		path.isfile(path.join(out_path, pkg_name, pkgname))
+		path.isfile(path.join(out_path, "lib" .. pkg_id .. ".jin.so")) or
+		path.isfile(path.join(out_path, pkgname))
 	then
 		goto skip
 	end
 	
-	if path.isfile(path.join(src.path, "0.jin")) then
-		local out_executable_path = path.join(out_path, "0")
+	if path.isfile(path.join(pkg.path, "0.jin")) then
+		local out_executable_path = path.join(out_path, pkg_name)
 		os.execute(
-			"gcc -Wl,-rpath-link=. -L. " .. gcc_options .. o_dir_path.."/*.o " .. src.dlibs ..
+			"gcc -Wl,-rpath-link=. -L. " .. gcc_options .. o_dir_path.."/*.o " .. pkg.dlibs ..
 			" -o " .. out_executable_path
 		) or os.exit(false)
 		os.execute("LD_LIBRARY_PATH=. " .. out_executable_path)
 	else
-		local out_lib_path = path.join(out_path, "lib" .. url_hash .. ".so")
+		local out_lib_path = path.join(out_path, "lib" .. pkg_id .. ".jin.so")
 		os.execute(
-			"gcc -shared -Wl,-rpath-link=. -L. " .. gcc_options .. o_dir_path.."/*.o " .. src.dlibs ..
+			"gcc -shared -Wl,-rpath-link=. -L. " .. gcc_options .. o_dir_path.."/*.o " .. pkg.dlibs ..
 			" -o " .. out_lib_path
 		) or os.exit(false)
 	end
