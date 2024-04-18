@@ -27,14 +27,14 @@ end
 
 local pkg_id_list = {}
 local pkg_table = {}
--- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", ospkg ="a,b," } }
+-- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", ospkg ="a,b," }, dep_out_paths = {} }
 -- pkg_id is "package_name_url_hash", where the "url_hash" part is only for dependency packages
 
--- find all directories named "*.jin" inside arg[1] directory, and add them to package_names_list
+-- find all directories named "*.jin" inside arg[1] directory, and add them to pkg_id_list and pkg_table
 for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
 	local dir_name = path.basename(pkg_path:rstrip".jin")
 	table.insert(pkg_id_list, dir_name)
-	pkg_table[dir_name] = { path = dir_path, dlibs = "", ospkg = "" }
+	pkg_table[dir_name] = { path = dir_path, dlibs = "", ospkg = "", dep_out_paths = {} }
 end
 
 --[[
@@ -78,13 +78,18 @@ while pkg_id_list[i] do
 				dep_pkg_path = path.join(project_path, dep_pkg_name)
 			end
 			
+			table.insert(
+				pkg.dep_paths,
+				path.join(path.dirname(dep_pkg_path), ".cache", "jina", "out", dep_pkg_name)
+			)
+			
 			if
 				not pkg_table[dep_pkg_id] or
 				require"pl.tablex".find(pkg_id_list, dep_pkg_id) < i
 			then
 				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_id .. " "
 				table.insert(pkg_id_list, dep_pkg_id)
-				pkg_table[dep_pkg_id] = { path = dep_pkg_path, dlibs = "", ospkg = "" }
+				pkg_table[dep_pkg_id] = { path = dep_pkg_path, dlibs = "", ospkg = "", dep_out_paths = {} }
 			end
 		end
 	end)
@@ -202,7 +207,10 @@ for i = #pkg_id_list, 1, -1 do
 		pkg.dlib = pkg.dlib .. "-lstd.jin "
 	end
 	
-	-- hardlink .so files of dependencies into out directory
+	-- hardlink .so files of dependencies into "out" directory
+	for _, dep_out_path in ipairs(pkg.dep_out_paths) do
+		os.execute("ln -f " .. dep_out_path .. "/* " .. out_path)
+	end
 	
 	-- if compilation result exists already, goto skip
 	if 
