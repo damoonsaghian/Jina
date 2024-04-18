@@ -25,114 +25,87 @@ if not path.isdir(arg[1]) then
 	os.exit(false)
 end
 
-local src_id_list = {}
-local src_table = {}
--- { src_id = { path = "", dlibs = "-la -lb ", ospkg ="a,b," } }
--- src_id can be "app", "lib", "test", or the url_hash of a package
+local pkg_id_list = {}
+local pkg_table = {}
+-- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", ospkg ="a,b," } }
+-- pkg_id is "package_name_url_hash", where the "url_hash" part is only for dependency packages
 
-if path.isfile(path.join(arg[1], "app", "0.jina")) then
-	table.insert(src_id_list, "app")
-end
-if path.isfile(path.join(arg[1], "test", "0.jina")) then
-	table.insert(src_id_list, "test")
-end
-if path.isdir(path.join(arg[1], "lib")) then
-	table.insert(src_id_list, "lib")
-end
-if #src_id_list == 0 then
-	print'there is no "app/0.jin" file, nor a "lib" directory, in the project directory'
-	os.exit()
+-- find all directories named "*.jin" inside arg[1] directory, and add them to package_names_list
+for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
+	local dir_name = path.basename(pkg_path:rstrip".jin")
+	table.insert(pkg_id_list, dir_name)
+	pkg_table[dir_name] = { path = dir_path }
 end
 
 --[[
-for each entry in src_id_list, go through all files in package.path (recursively) and:
+for each pkg_id in pkg_id_list, go through all files in pkg_table[pkg_id].path (recursively) and:
 , from .jin files generate .t files
-, for each ".p" file:
-	download the package (if needed)
-	add its url_has to src_id_list
+, for each ".p" file, download the package (if needed), and add it to pkg_id_list and pkg_table
 ]]
 local i = 1
-while src_id_list[i] do
-	local src_id = src_id_list[i]
-	
-	local src_path
-	if src_id == "app" then
-		src_path = path.join(arg[1], "app")
-	elseif src_id == "test" then
-		src_path = path.join(arg[1], "test")
-	elseif src_id = "lib" then
-		src_path = path.join(arg[1], "lib")
-	else
-		src_path = path.join(path.expanduser"~/.local/share/jina/packages", src_id,	"lib")
-	end
+while pkg_id_list[i] do
+	local pkg_id = pkg_id_list[i]
 
-	local src = src_table[src_id]
-	local project_path = path.dirname(src_path)
+	local pkg = pkg_table[pkg_id]
+	local project_path = path.dirname(src.path)
 	
-	dir.getallfiles(src_path):foreach(function (file_path)
+	dir.getallfiles(pkg.path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
 			generate_t_file(project_path, file_path)
 		elseif file_path:find"%.p$" then
-			local url, public_key
-			local url_is_available = false
-			for line in io.lines(file_path) do
-				if url then
-					if url_is_available then break end
-					
-					url = line
-					public_key = nil
-					
-					-- if gnunet or git is needed to add a package, and they are not installed on the system,
-					-- ask the user to install them first, then exit with error
-					
-					-- try to download the url to ~/.local/share/jina/packages/url_hash/
-					-- if successful: url_is_available=true
-				else
-					public_keykey =
-				end
-			end
+			local file = io.open(file_path)
+			local dep_pkg_name = file:read()
+			local url = file:read()
+			local public_key = file:read()
+			file:close()
 			
-			if public_key then
-				-- use the public key to check the signature (".data/sig")
-				-- if invalid, notice then os.exit(false)
-			end
-			
-			local _, _, url_hash = utils.executeex('echo -n ' .. url .. ' | md5sum | cut -d " " -f1')
-			
-			local dep_ser_id, dep_src_path, dep_name
+			local dep_pkg_id, dep_pkg_path
 			if url then
-				dep_src_id = url_hash
-				dep_src_path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, "lib")
-				dep_name = path.splitext(path.basename(file_path)) .. "-" .. url_hash
+				-- if gnunet or git is needed to add a package, and they are not installed on the system,
+				-- os.execute("ospkg-"..ospkg_type .. " add gnunet gnunet")
+			
+				local _, _, url_hash = utils.executeex('echo -n ' .. url .. ' | md5sum | cut -d " " -f1')
+				-- download the url to ~/.local/share/jina/packages/url_hash/
+				
+				if public_key then
+					-- use the public key to check the signature ("dep_project_path/.data/sig")
+					-- if invalid, notice the user, then os.exit(false)
+				end
+				
+				dep_pkg_id = dep_pkg_name .. "_" .. url_hash
+				dep_pkg_path = path.join(path.expanduser"~/.local/share/jina/packages", url_hash, dep_pkg_name)
 			else
 				-- if there is no entry in the .p file
-				dep_src_id = "lib"
-				dep_src_path = path.join(project_path, "lib")
-				dep_name = path.splitext(path.basename(file_path))
+				dep_pkg_id = dep_pkg_name
+				dep_pkg_path = path.join(project_path, dep_pkg_name)
 			end
 			
-			if not src_table[dep_src_id] then
-				src.dlibs = src.dlibs .. "-l" .. dep_name
-				table.insert(src_id_list, dep_src_id)
-				src_table[dep_src_id] = { path = dep_src_path }
+			if not pkg_table[dep_pkg_id] then
+				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_id .. " "
+				table.insert(pkg_id_list, dep_pkg_id)
+				pkg_table[dep_pkg_id] = { path = dep_pkg_path }
 			else
 				-- cyclic dependency
 				-- this line is for compatiblity with linkers in which the order of given libs are important
-				src.dlibs = src.dlibs .. "-l" .. dep_name
+				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_name
 			end
 		end
 	end)
 	i = i + 1
 end
 
--- recursively go through all files in all sources in src_table
+local ospkg_packages = ""
+
+-- recursively go through all files in all packages in pkg_table
 -- generate .c and .h files from .jin and .t files
-for _, src in pairs(src_table) do
-	dir.getallfiles(src.path):foreach(function (file_path)
+for pkg_id, pkg in pairs(pkg_table) do
+	dir.getallfiles(pkg.path):foreach(function (file_path)
 		if file_path:find"%.jin$" then
-			generate_c_file(src, file_path)
+			generate_c_file(pkg, pkg_id, file_path)
 		end
 	end)
+	
+	ospkg_packages = ospkg_packages..pkg.ospkg..","
 end
 
 --[[
@@ -143,11 +116,10 @@ https://lualanes.github.io/lanes/
 ]]
 
 local _, _, project_path_hash = utils.executeex('echo -n ' .. arg[1] .. ' | md5sum | cut -d " " -f1')
-local ospkg_packages = ""
-for _, src in pairs(src_table) do
-	ospkg_packages = ospkg_packages..src.ospkg..","
-end
-if ospkg_type ~= "" then
+if ospkg_type == "" then
+	print"these packages must be installed on your system:"
+	print("\t" .. ospkg_packages)
+else
 	os.execute("ospkg-"..ospkg_type .. " add jina-"..project_path_hash .. " " .. ospkg_packages)
 end
 
@@ -223,7 +195,7 @@ for i = #src_id_list, 1, -1 do
 	local o_dir_path = path.join(project_path, ".cache/jina/o", root_dir)
 	local out_path = path.join(project_path, ".cache/jina/out", root_dir)
 	
-	if src.needs_update then
+	if src.needs_compile then
 		path.isdir(out_path) and dir.rmtree(out_path)
 	end
 	dir.makepath(out_path)
@@ -241,9 +213,8 @@ for i = #src_id_list, 1, -1 do
 	
 	-- if compilation result exists already, goto skip
 	if 
-		root_dir == "lib" and path.isfile(path.join(out_path, "lib"..url_hash..".so")) or
-		root_dir == "test" and path.isfile(path.join(out_path, "0")) or
-		root_dir == "app" and path.isfile(path.join(out_path, "0"))
+		path.isfile(path.join(out_path, pkg_name, "lib" .. url_hash .. ".so")) or
+		path.isfile(path.join(out_path, pkg_name, pkgname))
 	then
 		goto skip
 	end

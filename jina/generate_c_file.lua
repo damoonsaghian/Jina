@@ -28,8 +28,6 @@ string literals and functions in C are stored in code
 https://stackoverflow.com/questions/3473765/string-literal-in-c
 https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
 
-if there is a url_hash, prefix all exported identifiers with "p<url_hash>_"
-
 records:
 , constructed using anonymous structs (fields sorted alphabetically)
 , assigned to variables with type void*
@@ -80,17 +78,17 @@ self'referential fields of structures are necessarily private, and use weak refe
 https://docs.gtk.org/glib/reference-counting.html
 ]]
 
-return function (src, jin_file_path)
-	local project_path = path.dirname(src.path)
-	local package_name = 
+return function (pkg, pkg_id, jin_file_path)
+	local project_path = path.dirname(pkg.path)
+	local pkg_name = path.basename(pkg.path)
 	
-	local extless_file_name = path.splitext(
-		path.relpath(jin_file_path, src.path)
+	local file_name_without_ext = path.splitext(
+		path.relpath(jin_file_path, pkg.path)
 	):replace(path.sep, "__")
 	
-	local h_file_path = path.join(project_path, ".cache/jina/h", path.basename(src.path), extless_file_name..".h")
+	local h_file_path = path.join(project_path, ".cache/jina/h", pkg_name, file_name_without_ext..".h")
 	
-	local c_file_path = path.join(project_path, ".cache/jina/c", path.basename(src.path), extless_file_name..".c")
+	local c_file_path = path.join(project_path, ".cache/jina/c", pkg_name, file_name_without_ext..".c")
 	local c_file_mtime = path.getmtime(c_file_path)
 	
 	local jin_file_mtime = path.getmtime(jin_file_path)
@@ -102,7 +100,7 @@ return function (src, jin_file_path)
 		return
 	end
 	
-	src.needs_update or do src.needs_update = true end
+	pkg.needs_compile or do pkg.needs_compile = true end
 	
 	-- fill the table of definitions and their types
 	-- check for type consistency in the module, and with (cached) .t files
@@ -127,13 +125,14 @@ return function (src, jin_file_path)
 		if it's a definition, add it to the table of local definition which contains their types
 		]]
 		
-		--[[
-		";ospkg-"..ospkg_type
-			append to package.ospkg
-		";dlibs"
-			package.dlibs = package.dlib.."-l"..dlib.." "
+		-- prefix all exported identifiers with pkg_id_
 		
-		if ospkg_type = "" then print("these packages must be installed on your system:") end
+		--[[
+		";ospkg-" .. ospkg_type
+			pkg.ospkg = pkg.ospkg .. package .. ","
+			append to pkg.ospkg, if not already
+		";dlibs"
+			pkg.dlibs = pkg.dlibs .. "-l" .. dlib .. " "
 		]]
 		c_file:write(c_code)
 	end
