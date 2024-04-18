@@ -142,24 +142,25 @@ to access the definitions in a module which is inside a directory: dir.Definitio
 to hide a module so it can't be accessed from modules in the parent directory,
 	append an apostrophe at the end of its file name
 
-the directory containing a Jina project is called a package
-a package can contain these directories: "app", "lib", "test"
-"app" and "test" directories contain a file named "0.jina" which contains the "init" function
+a package is a collection of modules
+in a project directory, we can have multiple package directories
+	the name of the package directory is the package name, plus a ".jin" extension
+packages are of two kinds:
+, application packages that contain a file named "0.jina" (which must contain the init function)
+, library packages
 
-to use the modules in the "lib" directory of a package,	create a file named "your_chosen_name.p" with this format:
-, double semicolons start a comment line
-, entries are separated with empty new line
-, each entry contains a URL of the form (where protocol can be gnunet, git):
+to use a library package in a another package, create a file named "your_chosen_name.p" with this format:
+, first line is the name of the package
+, second line is the URL of the project containing the package
+, the format of the URL (where protocol can be gnunet, git):
 	protocol://address'of'the'project'containing'package'directory
-, the next line of the entry can contain a public key,
-	which will be used to check the signature provided by the package
-entries will be tried in the given order, until one is available
-if there is no entry in the .p file, it refers to the current package
+, the third line can contain a public key, which will be used to check the signature provided by the project
+if there is no URL, it refers to the current project
 
 to use the definitions of a package:
 	dot'p'file'name.Definition
-definitions in "jina" package itself, are directly accessible
-	there is no need for a "jina.p" file, and prefixing with "jina."
+definitions in "std" package, are directly accessible
+	there is no need for a "std.p" file, and prefixing with "std."
 
 structs:
 	S :=
