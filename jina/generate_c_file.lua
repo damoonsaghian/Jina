@@ -7,7 +7,6 @@ https://github.com/ceu-lang/ceu/tree/master/src/lua
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
-	https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Pointers
 https://sourceware.org/glibc/manual/latest/html_node/index.html
 https://en.cppreference.com/w/c
 https://devdocs.io/c/
@@ -49,6 +48,9 @@ libmimalloc-dev
 ]]
 
 --[[
+stacks are designed for sync computation
+using a lot of them as async cores (stackful green threads) is inefficient
+
 after calling the init function, create a fixed number of threads (as many as CPU cores),
 	and then run the main loop
 each thread runs a loop that processes the messages
@@ -137,5 +139,5 @@ return function (pkg, pkg_id, jin_file_path)
 		c_file:write(c_code)
 	end
 	
-	-- if correspoding .t file is newer than corresponding .h file, regenerate the .h file
+	-- generate .h file from .t file
 end
