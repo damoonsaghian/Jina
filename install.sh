@@ -1,6 +1,6 @@
 [ -f "$HOME/.local/apps/jina/uninstall.sh" ] && sh "$HOME/.local/apps/jina/uninstall.sh"
 
-ospkg-deb add jina lua5.4,lua-penlight,gcc
+ospkg-deb add jina lua5.3,lua-penlight,gcc,gnunet,git
 
 project_dir="$(dirname "$0")"
 
