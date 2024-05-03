@@ -1,10 +1,17 @@
-local path = require"pl/path"
-local dir = require"pl/dir"
+local path = require"pl.path"
+local dir = require"pl.dir"
 local utils = require"pl.utils"
 require"pl.stringx".import()
 
-local generate_t_file = require"jina.generate_t_file"
-local generate_c_file = require"jina.generate_c_file"
+function import(module_name)
+	local old_package_path = package.path
+	package.path = path.join(path.dirname(debug.getinfo(1, "S").short_src), "?.lua")
+	require(module_name)
+	package.path = old_package_path
+end
+
+local generate_t_file = import"generate_t_file"
+local generate_c_file = import"generate_c_file"
 
 if os.execute("command -v ospkg-deb 1>/dev/null") then
 	ospkg_type = "deb"
