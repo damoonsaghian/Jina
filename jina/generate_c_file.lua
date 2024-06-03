@@ -130,9 +130,9 @@ return function (pkg, pkg_id, jin_file_path)
 		-- prefix all exported identifiers with pkg_id_
 		
 		--[[
-		";ospkg-" .. ospkg_type
-			if package is not already present in pkg.ospkg string
-			pkg.ospkg = pkg.ospkg .. package .. ","
+		";upm"
+			if package is not already present in pkg.upm string
+			pkg.upm = pkg.upm .. package .. ","
 		";dlibs"
 			pkg.dlibs = pkg.dlibs .. "-l" .. dlib .. " "
 		]]
