@@ -8,7 +8,7 @@ Iter[X]' :=
 	poll: { index :Num'u | X? }
 
 ;ns Iter[X]
-	{ poll &{ index :Num'u | X? } | :Iter(X')
+	{ poll &{ index :Num'u | X? } | :Iter[X]
 		index: 0, poll
 	}
 	

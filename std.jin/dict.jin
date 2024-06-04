@@ -1,5 +1,5 @@
 ;include glib-2.0/glib/ghash.h
-;ospkg-deb libglib2.0-dev
+;upm-deb libglib2.0-dev
 ;dlibs glib2
 
 ;; for now just use glib2 hashtables
