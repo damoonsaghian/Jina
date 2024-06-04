@@ -110,7 +110,7 @@ for pkg_id, pkg in pairs(pkg_table) do
 		end
 	end)
 	
-	upm_packages = upm_packages .. pkg.upm .. ","
+	upm_packages = upm_packages .. pkg.upm .. " "
 end
 
 --[[
