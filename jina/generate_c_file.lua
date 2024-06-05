@@ -130,10 +130,9 @@ return function (pkg, pkg_id, jin_file_path)
 		-- prefix all exported identifiers with pkg_id_
 		
 		--[[
-		pkg.upm = "--deb="
-		";upm-deb"
-			if package is not already present in pkg.upm string
-			pkg.upm = pkg.upm .. package .. ","
+		";spm'"..spm_type
+			first remove those packages already in pkg.spm, then:
+			pkg.spm = pkg.spm .. packages .. "\n"
 		";dlibs"
 			pkg.dlibs = pkg.dlibs .. "-l" .. dlib .. " "
 		]]

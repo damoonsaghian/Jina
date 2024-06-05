@@ -13,6 +13,10 @@ end
 local generate_t_file = import"generate_t_file"
 local generate_c_file = import"generate_c_file"
 
+if os.execute("command -v dpkg 1>/dev/null") then
+	spm_type = "deb"
+end
+
 if arg[1] == nil then
 	print"interactive Jina is not yet implemented"
 	print"to compile a project: jina <project_path> [gcc_options]"
@@ -30,14 +34,14 @@ end
 
 local pkg_id_list = {}
 local pkg_table = {}
--- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", upm = "a,b," }, dep_out_paths = {} }
+-- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", spm = "a,b," }, dep_out_paths = {} }
 -- pkg_id is "package_name_url_hash", where the "url_hash" part is only for dependency packages
 
 -- find all directories named "*.jin" inside arg[1] directory, and add them to pkg_id_list and pkg_table
 for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
 	local dir_name = path.basename(pkg_path:rstrip".jin")
 	table.insert(pkg_id_list, dir_name)
-	pkg_table[dir_name] = { path = dir_path, dlibs = "", upm = "", dep_out_paths = {} }
+	pkg_table[dir_name] = { path = dir_path, dlibs = "", spm = "", dep_out_paths = {} }
 end
 
 --[[
@@ -92,14 +96,14 @@ while pkg_id_list[i] do
 			then
 				pkg.dlibs = pkg.dlibs .. "-l" .. dep_pkg_id .. " "
 				table.insert(pkg_id_list, dep_pkg_id)
-				pkg_table[dep_pkg_id] = { path = dep_pkg_path, dlibs = "", upm = "", dep_out_paths = {} }
+				pkg_table[dep_pkg_id] = { path = dep_pkg_path, dlibs = "", spm = "", dep_out_paths = {} }
 			end
 		end
 	end)
 	i = i + 1
 end
 
-local upm_packages = ""
+local spm_packages = ""
 
 -- recursively go through all files in all packages in pkg_table
 -- generate .c and .h files from .jin and .t files
@@ -110,7 +114,8 @@ for pkg_id, pkg in pairs(pkg_table) do
 		end
 	end)
 	
-	upm_packages = upm_packages .. pkg.upm .. " "
+	-- first remove those packages already in spm_packages, then:
+	-- spm_packages = spm_packages .. pkg.spm .. "\n"
 end
 
 --[[
@@ -122,7 +127,14 @@ https://lualanes.github.io/lanes/
 
 local _, _, project_path_hash = utils.executeex('echo -n ' .. arg[1] .. ' | md5sum | cut -d " " -f1')
 
-os.execute("upm" .. " add jina-"..project_path_hash .. " " .. upm_packages)
+if os.execute("command -v spm-os 1>/dev/null") then
+	spm_packages:replace("\n", " ")
+	spm_packages:replace(" ", ",")
+	os.execute("spm-os add jina-"..project_path_hash .. " " .. spm_packages)
+else
+	print("these packages must be installed on your system")
+	print(spm_packages)
+end
 
 local process_handles = {}
 
