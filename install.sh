@@ -1,6 +1,10 @@
 [ -f "$HOME/.local/apps/jina/uninstall.sh" ] && sh "$HOME/.local/apps/jina/uninstall.sh"
 
-upm add jina --deb=lua5.3,lua-penlight,gcc,gnunet,git
+if command -v dpkg 1>/dev/null; then
+	smp-os add jina lua5.3,lua-penlight,gcc,gnunet,git ||
+	echo "these packages must be installed on the system:
+	lua5.3 lua-penlight gcc gnunet git"
+fi
 
 project_dir="$(dirname "$0")"
 
@@ -21,6 +25,6 @@ project_path_hash="$(echo -n "$project_dir" | md5sum | cut -d ' ' -f1)"
 cat <<-__EOF__ > "$HOME/.local/apps/jina/uninstall.sh"
 rm ~/.local/bin/jina
 rm -r ~/.local/apps/jina
-upm remove jina
-upm remove jina-$project_path_hash
+spm-os remove jina 2>/dev/null
+spm-os remove jina-$project_path_hash 2>/dev/null
 __EOF__
