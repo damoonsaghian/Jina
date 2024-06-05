@@ -1,5 +1,5 @@
 ;include glib-2.0/glib/garray.h
-;upm-deb libglib2.0-dev
+;spm'deb libglib2.0-dev
 ;dlibs glib2
 
 ;; https://docs.gtk.org/glib/struct.PtrArray.html

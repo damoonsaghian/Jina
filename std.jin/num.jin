@@ -1,5 +1,5 @@
 ;include flint/flint.h
-;upm-deb libflint-dev
+;spm'deb libflint-dev
 ;dlibs flint
 
 ;; https://flintlib.org/
