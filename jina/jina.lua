@@ -13,10 +13,6 @@ end
 local generate_t_file = import"generate_t_file"
 local generate_c_file = import"generate_c_file"
 
-if os.execute("command -v dpkg 1>/dev/null") then
-	spm_type = "deb"
-end
-
 if arg[1] == nil then
 	print"interactive Jina is not yet implemented"
 	print"to compile a project: jina <project_path> [gcc_options]"
@@ -70,7 +66,7 @@ while pkg_id_list[i] do
 			if url then
 				local url_protocol = url:split"://"
 				local _, _, url_hash = utils.executeex('echo -n ' .. url .. ' | md5sum | cut -d " " -f1')
-				-- download the url to ~/.local/share/jina/packages/url_hash/
+				-- download (using gnunet/git) the url to ~/.local/share/jina/packages/url_hash/
 				
 				if public_key then
 					-- use the public key to check the signature ("dep_project_path/.data/sig")
@@ -127,10 +123,10 @@ https://lualanes.github.io/lanes/
 
 local _, _, project_path_hash = utils.executeex('echo -n ' .. arg[1] .. ' | md5sum | cut -d " " -f1')
 
-if os.execute("command -v spm-os 1>/dev/null") then
+if os.execute("command -v spm 1>/dev/null") then
 	spm_packages:replace("\n", " ")
 	spm_packages:replace(" ", ",")
-	os.execute("spm-os add jina-"..project_path_hash .. " " .. spm_packages)
+	os.execute("spm add jina-"..project_path_hash .. " " .. spm_packages)
 else
 	print("these packages must be installed on your system")
 	print(spm_packages)

@@ -80,6 +80,11 @@ self'referential fields of structures are necessarily private, and use weak refe
 https://docs.gtk.org/glib/reference-counting.html
 ]]
 
+local spm_type = ""
+if os.execute("command -v dpkg 1>/dev/null") then
+	spm_type = "deb"
+end
+
 return function (pkg, pkg_id, jin_file_path)
 	local project_path = path.dirname(pkg.path)
 	local pkg_name = path.basename(pkg.path)
