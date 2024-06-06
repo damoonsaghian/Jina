@@ -1,5 +1,5 @@
 ;include glib-2.0/gio/gio.h
-;spm'deb libglib2.0-dev
+;upm'deb libglib2.0-dev
 ;dlibs glib2
 
 ;; https://docs.gtk.org/gio/
