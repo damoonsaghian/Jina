@@ -6,14 +6,14 @@ fi
 
 project_dir="$(dirname "$0")"
 
-mkdir -p "$project_dir/.cache/spm/app"
+mkdir -p "$project_dir/.cache/spm/app/jina"
 jina "$project_dir"
-ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/app/"
+ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/app/jina/"
 
-ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/app/"
+ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/app/jina/"
 
 mkdir -p "$project_dir/.cache/spm/bin"
 echo "#!/usr/bin/sh
-exec lua ../app/jina.lua
+exec lua ../app/jina/jina.lua
 " > "$project_dir/.cache/spm/bin/jina"
 chmod +x "$project_dir/.cache/spm/bin/jina"
