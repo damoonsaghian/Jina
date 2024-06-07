@@ -13,7 +13,7 @@ ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/app
 ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/app/jina/"
 
 mkdir -p "$project_dir/.cache/spm/bin"
-echo "#!/usr/bin/sh
-exec lua ../app/jina/jina.lua
-" > "$project_dir/.cache/spm/bin/jina"
+echo '#!/usr/bin/sh
+exec lua "$(dirname "$0")/../app/jina/jina.lua"
+' > "$project_dir/.cache/spm/bin/jina"
 chmod +x "$project_dir/.cache/spm/bin/jina"
