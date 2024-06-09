@@ -6,15 +6,15 @@ fi
 
 project_dir="$(dirname "$0")"
 
-mkdir -p "$project_dir/.cache/spm/app"
+mkdir -p "$project_dir/.cache/spm"
 
 jina "$project_dir"
-ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/app/"
+ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/"
 
-ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/app/"
+ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/"
 
 echo '#!/usr/bin/sh
 this_script_real_path="$(readlink $0)"
 exec lua "$(dirname "$this_script_real_path")/jina.lua"
-' > "$project_dir/.cache/spm/app/0"
-chmod +x "$project_dir/.cache/spm/bin/0"
+' > "$project_dir/.cache/spm/0"
+chmod +x "$project_dir/.cache/spm/0"
