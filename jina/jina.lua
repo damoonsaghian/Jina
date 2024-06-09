@@ -121,12 +121,12 @@ number of spawn threads will be equal to the number of CPU cores,
 https://lualanes.github.io/lanes/
 ]]
 
-local _, _, project_path_hash = utils.executeex('echo -n ' .. arg[1] .. ' | md5sum | cut -d " " -f1')
+local project_path_hash = 
 
 if os.execute("command -v spm 1>/dev/null") then
 	spm_packages:replace("\n", " ")
 	spm_packages:replace(" ", ",")
-	os.execute("spm add jina-"..project_path_hash .. " " .. spm_packages)
+	os.execute("spm add '".. path.abspath(arg[1]) .. "' '" .. spm_packages .. "'")
 else
 	print("these packages must be installed on your system")
 	print(spm_packages)
