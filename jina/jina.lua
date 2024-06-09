@@ -210,7 +210,7 @@ for i = #pkg_id_list, 1, -1 do
 	dir.makepath(out_path)
 	
 	if package_name ~= "std" then
-		os.execute("ln -f " .. path.expanduser("~/.local/apps/jina/libstd.jin.so") .. " " .. out_path)
+		os.execute("ln -f " .. path.dirname(debug.getinfo(1, "S").short_src).."/libstd.jin.so " .. out_path)
 		pkg.dlib = pkg.dlib .. "-lstd.jin "
 	end
 	
