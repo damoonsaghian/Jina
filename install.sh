@@ -1,7 +1,6 @@
 if command -v dpkg 1>/dev/null; then
-	spm add jina lua5.3,lua-penlight,gcc,gnunet,git 2>/dev/null ||
-	echo "these packages must be installed on the system:
-	lua5.3 lua-penlight gcc gnunet git"
+	spm add "$(dirname "$(realpath $0)")" lua5.3,lua-penlight,gcc,gnunet,git,libglib2.0-0,libflint
+	echo "required packages: lua5.3 lua-penlight gcc gnunet git libglib2.0-0 libflint17"
 fi
 
 project_dir="$(dirname "$0")"
