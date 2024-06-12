@@ -10,7 +10,7 @@ mkdir -p "$project_dir/.cache/spm"
 jina "$project_dir"
 ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/"
 
-ln "$project_dir/jina/*.lua" "$project_dir/.cache/spm/"
+ln "$project_dir"/jina/*.lua "$project_dir/.cache/spm/"
 
 echo '#!/usr/bin/sh
 this_script_real_path="$(readlink $0)"
