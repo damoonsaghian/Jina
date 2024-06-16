@@ -15,16 +15,17 @@ local generate_c_file = import"generate_c_file"
 
 if arg[1] == nil then
 	print"interactive Jina is not yet implemented"
-	print"to compile a project: jina <project_path> [gcc_options]"
-	os.exit()
-end
-if arg[1]:char(1) == "-" then
-	print"usage: jina <project_path> [gcc_options]"
+	print"usage: jina build|run <project_path> [gcc_options]"
 	os.exit()
 end
 
-if not path.isdir(arg[1]) then
-	print('directory "'..arg[1]..'" does not exists')
+if arg[1] ~= 'run' and arg[1] ~= 'build' then
+	print"usage: jina build|run <project_path> [gcc_options]"
+	os.exit()
+end
+
+if not path.isdir(arg[2]) then
+	print('directory "'..arg[2]..'" does not exists')
 	os.exit(false)
 end
 
@@ -33,8 +34,8 @@ local pkg_table = {}
 -- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", spm = "a,b," }, dep_out_paths = {} }
 -- pkg_id is "package_name_url_hash", where the "url_hash" part is only for dependency packages
 
--- find all directories named "*.jin" inside arg[1] directory, and add them to pkg_id_list and pkg_table
-for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[1]), "*.jin")) do
+-- find all directories named "*.jin" inside arg[2] directory, and add them to pkg_id_list and pkg_table
+for _, dir_path in ipairs(dir.filter(dir.getdirectories(arg[2]), "*.jin")) do
 	local dir_name = path.basename(pkg_path:rstrip".jin")
 	table.insert(pkg_id_list, dir_name)
 	pkg_table[dir_name] = { path = dir_path, dlibs = "", spm = "", dep_out_paths = {} }
@@ -126,7 +127,7 @@ local project_path_hash =
 if os.execute("command -v spm 1>/dev/null") then
 	spm_packages:replace("\n", " ")
 	spm_packages:replace(" ", ",")
-	os.execute("spm add '".. path.abspath(arg[1]) .. "' '" .. spm_packages .. "'")
+	os.execute("spm add '".. path.abspath(arg[2]) .. "' '" .. spm_packages .. "'")
 else
 	print("these packages must be installed on your system")
 	print(spm_packages)
@@ -233,7 +234,7 @@ for i = #pkg_id_list, 1, -1 do
 			"gcc -Wl,-rpath-link=. -L. " .. gcc_options .. o_dir_path.."/*.o " .. pkg.dlibs ..
 			" -o " .. out_executable_path
 		) or os.exit(false)
-		os.execute("LD_LIBRARY_PATH=. " .. out_executable_path)
+		if arg[1] == 'run' then os.execute("LD_LIBRARY_PATH=. " .. out_executable_path) end
 	else
 		local out_lib_path = path.join(out_path, "lib" .. pkg_id .. ".jin.so")
 		os.execute(
