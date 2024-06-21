@@ -1,4 +1,4 @@
-return function (project_path, jin_file_path)
+function generate_t_file (project_path, jin_file_path)
 	local relative_extensionless_path = path.splitext(
 		path.relpath(jin_file_path, project_path)
 	)

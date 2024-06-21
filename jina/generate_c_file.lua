@@ -85,7 +85,7 @@ if os.execute("command -v dpkg 1>/dev/null") then
 	spm_type = "deb"
 end
 
-return function (pkg, pkg_id, jin_file_path)
+function generate_c_file (pkg, pkg_id, jin_file_path)
 	local project_path = path.dirname(pkg.path)
 	local pkg_name = path.basename(pkg.path)
 	
