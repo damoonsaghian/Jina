@@ -76,16 +76,16 @@ records:
 	r :(a: Num, b: Num, c: Num) = a: 1, b: 2, c: 3
 	r :(Num, Num, c: Num) = 1, 2, c: 3
 to access an element:
-	r..a
-	r..0
+	r.a
+	r.0
 records can be matched on smaller records:
 	a, b = 1, 2, 3
 tagged fields can be matched on untagged ones, if the name of variables match:
 	a, b = a: 1, b: 2
 and vice versa:
 	a: x, b: y, c: z = a, b, c: d
-mutating a record:
-	r..a = 10
+mutating a record (if "r" is a mutable variable):
+	r.a = 10
 
 function:
 	f = { a :A , b !B | :C ... }
@@ -181,7 +181,9 @@ defining methods (using a namespace):
 to create an instance of a struct:
 	s :S = a: x, b: y
 	s = S a: x
-calling a method:
+accessing a member:
+	s.a
+calling a method (note that there is no record field named "m", otherwise this does not work):
 	s.m x
 which is equivalent to:
 	S.m s x
