@@ -16,7 +16,7 @@ Actor[X]' :=
 	do = { self!, message &{state :X} |
 		;; notify that there is a new message
 		;c
-		self..messages.append message
+		self.messages.append message
 	}
 	
 	repeat = { self!, message &{state :X}, til :B |
