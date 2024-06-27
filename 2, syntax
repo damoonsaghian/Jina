@@ -128,6 +128,8 @@ matching:
 
 there is no loop; just iterators:
 	iter.each { x | ... }
+any type that implements "Iter" interface, must define an "iter" method,
+	whose returned value stores the mutable state
 
 actor:
 	a = Actor.new B.new(x, y)
