@@ -88,10 +88,9 @@ mutating a record (if "r" is a mutable variable):
 	r.a = 10
 
 function:
-	f = { a :A , b !B | :C ... }
+	f = {a :A, b !B -> C | ...}
 note that the type of the above function is:
-	f :{ a :A , b !B | C }
-this rather strange type is to avoid contravarient behavior of function arguments, when we introduce interfaces
+	f :{a :A, b !B -> C}
 function call:
 	f x y
 which is equivalent to these forms:
@@ -100,17 +99,17 @@ which is equivalent to these forms:
 	f b: y a: x
 
 default values for parameters:
-	f = { a :A = ... , b !B = ... | :C ... }
-	f b: y
-	f x
+	f = {a :Num = 1 , b :Num = 2 | ...}
+	f b: 22
+	f 11
 	f()
 
-{ f x y } can be written as: || f x y
+{f x y} can be written as: || f x y
 
 conditional expression:
-	condition.then { } else: { }
-	condition.then { } { }
-	condition.then { } || c.then { } || c.then { } { }
+	condition.then {} else: {}
+	condition.then {} {}
+	condition.then {} || c.then {} || c.then {} {}
 
 and or:
 	a && b
@@ -127,13 +126,13 @@ matching:
 	}
 
 there is no loop; just iterators:
-	iter.each { x | ... }
+	iter.each {x | ...}
 any type that implements "Iter" interface, must define an "iter" method,
 	whose returned value stores the mutable state
 
 actor:
-	a = Actor.new B.new(x, y)
-	a.do { b !B | ... }
+	a = Actor B(x, y)
+	a.do {b !B | ...}
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -165,19 +164,17 @@ definitions in "std" package, are directly accessible
 	there is no need for a "std.p" file, and prefixing with "std."
 
 structs:
-	S :=
-		a: A,
-		b: B
+	S := a: A, b: B
 defining methods (using a namespace):
 	;ns S
-		{ a :A | :S
+		{a :A -> Self |
 			b = ...
 			a, b
 		}
-		m1 = { self, x :X | :Y
+		m1 = {self, x :X -> Y |
 			...
 		}
-		m2 = { self! |
+		m2 = {self! |
 			...
 		}
 to create an instance of a struct:
@@ -185,7 +182,7 @@ to create an instance of a struct:
 	s = S a: x
 accessing a member:
 	s.a
-calling a method (note that there is no record field named "m", otherwise this does not work):
+calling a method (note that there is no record field named "m", otherwise this will not work):
 	s.m x
 which is equivalent to:
 	S.m s x
@@ -199,29 +196,29 @@ unions:
 	B := B0 \ B1
 type "A?" is a shortcut for "A\()"
 
-interfaces:
-	;i I
-		m1 :{ self, x :X | Y }
-		m2 = { self! |
+traits:
+	;tr T
+		m1 :{self, x :X -> Y}
+		m2 = {self! |
 			;; default implementation
 		}
-interface inheritance:
-	;i I I1 I2
+trait inheritance:
+	;tr T : T1, T2
 		...
-defining the methods of a struct that implements some interfaces:
+defining the methods of a struct that implements some traits:
 	;ns S
 		m1 = ...
 		m2 = ...
-	;impl I1
+	;impl T1
 		m3 = ...
 		m4 = ...
-	;impl I2
+	;impl T2
 		...
 
 generics:
 	S[X] := a: X, b: X
 bounded generics:
-	S[X:I] := a: X, b: X
+	S[X :I] := a: X, b: X
 
 to directly enter C code:
 	;c ...

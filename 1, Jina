@@ -7,7 +7,11 @@ at her funeral, these words were written on a stone above her grave:
 memory management is done in a sane way, by distinguishing 2 kinds of variables:
 , immutable/mutable borrow variables
 , immutable/mutable own variables:
-note that in Jina, mutability and ownership are properties of variables, not types
+
+note that in Jina, mutability and ownership of a standalone type is meaningless
+it's only meaningful in two situations:
+, variable types
+, function parameters types
 
 immutable borrow var can only be put into immutable borrow var
 mutable borrow var can only be put into immutable/mutable borrow var
