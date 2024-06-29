@@ -10,57 +10,57 @@
 	, binary: "x - y" is equivalent to "x.sub(y)"
 
 ;ns Num
-	add = { self, other :Num\Num'z\Num'u | :Num
+	add = {self, other :Num\Num'z\Num'u -> Num |
 	}
-	sub = { self, other :Num\Num'z\Num'u | :Num
-	}
-	
-	neg = { self | :Num
-	}
-	abs = { self | :Num
+	sub = {self, other :Num\Num'z\Num'u -> Num |
 	}
 	
-	mul = { self, other :Nums | :Num
+	neg = {self -> Num |
 	}
-	div = { self, other :Nums | :Num
-	}
-	pow = { self, other :Nums | :Num
+	abs = {self -> Num |
 	}
 	
-	next'up = { self | :Num
+	mul = {self, other :Nums -> Num |
+	}
+	div = {self, other :Nums -> Num |
+	}
+	pow = {self, other :Nums -> Num |
 	}
 	
-	next'down = { self | :Num
+	next'up = {self -> Num |
 	}
 	
-	cos = { self | :Num
-	}
-	acos = { self | :Num
-	}
-	cosh = { self | :Num
-	}
-	atanh = { self | :Num
-	}
-	sin = { self | :Num
-	}
-	asin = { self | :Num
-	}
-	sinh = { self | :Num
-	}
-	tan = { self | :Num
-	}
-	atan = { self | :Num
-	}
-	atan2 = { self | :Num
-	}
-	tanh = { self | :Num
+	next'down = {self -> Num |
 	}
 	
-	log = { self | :Num
+	cos = {self | -> Num
 	}
-	log2 = { self | :Num
+	acos = {self -> Num |
 	}
-	log10 = { self | :Num
+	cosh = {self -> Num |
+	}
+	atanh = {self -> Num |
+	}
+	sin = {self -> Num |
+	}
+	asin = {self -> Num |
+	}
+	sinh = {self -> Num |
+	}
+	tan = {self -> Num |
+	}
+	atan = {self -> Num |
+	}
+	atan2 = {self -> Num |
+	}
+	tanh = {self -> Num |
+	}
+	
+	log = {self -> Num |
+	}
+	log2 = {self -> Num |
+	}
+	log10 = {self -> Num |
 	}
 	
 	nan =
@@ -78,16 +78,16 @@
 ;ns Num'z
 
 ;ns Num'u
-	add = { self, other :Num'u | :Num'u
+	add = {self, other :Num'u -> Num'u |
 	}
-	sub = { self, other :Num'u | :Num'u
+	sub = {self, other :Num'u -> Num'u |
 	}
 	
-	mul = { self, other :Num'u | :Num'u
+	mul = {self, other :Num'u -> Num'u |
 	}
-	div = { self, other :Num'u | :Num'u
+	div = {self, other :Num'u -> Num'u |
 	}
-	pow = { self, other :Num'u | :Num'u
+	pow = {self, other :Num'u -> Num'u |
 	}
 	
 	min = ;c
@@ -96,10 +96,10 @@
 	is'equal = {}
 	
 	;; creates a range iterator
-	to = { self, arg2 :Num'u | :Iter[Num'u]
+	to = {self, arg2 :Num'u -> Iter[Num'u] |
 	}
 	
-	to'z = { self | :Num'z
+	to'z = {self -> Num'z |
 		;c return (double)self
 	}
 

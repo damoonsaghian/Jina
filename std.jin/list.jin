@@ -7,27 +7,27 @@
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
 
 ;ns List[X]
-	get = { self&, index :Num'u | :X?
+	get = {self&, index :Num'u -> X? |
 		;; checks if index is less than the length
 	}
 	
-	append = { self!, element :X |
+	append = {self!, element :X |
 	}
 	
-	extend = { self!, extention :Self |
+	extend = {self!, extention :Self |
 	}
 	
-	put = { self!, element :X, index :Num'u |
+	put = {self!, element :X, index :Num'u |
 	}
 	
-	insert = { self!, element :X, index :Num'u |
+	insert = {self!, element :X, index :Num'u |
 	}
 	
-	trim = { self!, index :Num'u |
+	trim = {self!, index :Num'u |
 	}
 	
-	remove = { self!, index :Num'u |
+	remove = {self!, index :Num'u |
 	}
 	
-	iter = { self& | :Iter(X)
+	iter = {self& | :Iter[X]
 	}

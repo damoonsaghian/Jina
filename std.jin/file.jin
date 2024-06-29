@@ -13,22 +13,22 @@
 	
 	append = {}
 	
-	delete = { path :String, cb &{} = {} |
+	delete = {path :String, cb &{} = {} |
 	}
 	
-	move = { source'path :String, destination'path :String, cb &{} = {} |
+	move = {source'path :String, destination'path :String, cb &{} = {} |
 	}
 	
-	copy = { source'path :String, destination'path :String, cb &{} = {} |
+	copy = {source'path :String, destination'path :String, cb &{} = {} |
 	}
 	
 	;; max'size is in megabytes
-	read = { self, max'size :Num'u, cb &{buf :Array[Num'c]} |
+	read = {self, max'size :Num'u, cb &{buf :Array[Num'c]} |
 	}
 	
-	write = { self, data :Array[Num'c], cb &{} = {} |
+	write = {self, data :Array[Num'c], cb &{} = {} |
 	}
 	
-	destructor = { self |
+	destructor = {self |
 		;; close the file descriptor
 	}
