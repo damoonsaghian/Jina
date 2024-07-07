@@ -22,7 +22,7 @@ function main(mode, project_dir)
 	
 	local pkg_id_list = {}
 	local pkg_table = {}
-	-- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", spm = "a,b," }, dep_out_paths = {} }
+	-- { pkg_id = { path = "project_path/package_name.jin", dlibs = "-la -lb ", spm = "a b c" }, dep_out_paths = {} }
 	-- pkg_id is "package_name_url_hash", where the "url_hash" part is only for dependency packages
 	
 	-- find all directories named "*.jin" inside project_dir, and add them to pkg_id_list and pkg_table
@@ -103,7 +103,7 @@ function main(mode, project_dir)
 		end)
 		
 		-- first remove those packages already in spm_packages, then:
-		-- spm_packages = spm_packages .. pkg.spm .. "\n"
+		-- spm_packages = spm_packages .. pkg.spm .. " "
 	end
 	
 	--[[
@@ -115,14 +115,7 @@ function main(mode, project_dir)
 	
 	local project_path_hash = 
 	
-	if os.execute("command -v spm 1>/dev/null") then
-		spm_packages:replace("\n", " ")
-		spm_packages:replace(" ", ",")
-		os.execute("spm add '".. path.abspath(project_dir) .. "' '" .. spm_packages .. "'")
-	else
-		print("these packages must be installed on your system")
-		print(spm_packages)
-	end
+	os.execute("spm install " .. spm_packages) || os.exit(false)
 	
 	local process_handles = {}
 	

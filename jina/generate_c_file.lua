@@ -12,6 +12,7 @@ https://en.cppreference.com/w/c
 https://devdocs.io/c/
 https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
+https://stackoverflow.com/questions/11656532/returning-an-array-using-c
 
 c closures
 https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
@@ -80,11 +81,6 @@ self'referential fields of structures are necessarily private, and use weak refe
 https://docs.gtk.org/glib/reference-counting.html
 ]]
 
-local spm_type = ""
-if os.execute("command -v dpkg 1>/dev/null") then
-	spm_type = "deb"
-end
-
 function generate_c_file (pkg, pkg_id, jin_file_path)
 	local project_path = path.dirname(pkg.path)
 	local pkg_name = path.basename(pkg.path)
@@ -117,9 +113,9 @@ function generate_c_file (pkg, pkg_id, jin_file_path)
 	local c_file = io.open(c_file_path, "w")
 	
 	--[[
-	#include <stdlib.h>
-	#include <glib-2.0/glib.h>
-
+	#include "../include/libc/stdlib.h"
+	#include "../include/glib2/glib.h"
+	
 	int main(int argc, char* argv[]) {}
 	]]
 	
@@ -135,11 +131,11 @@ function generate_c_file (pkg, pkg_id, jin_file_path)
 		-- prefix all exported identifiers with pkg_id_
 		
 		--[[
-		";spm'"..spm_type
+		";include h-file package-name"
 			first remove those packages already in pkg.spm, then:
-			pkg.spm = pkg.spm .. packages .. "\n"
+			pkg.spm = pkg.spm .. package-name .. " "
 		";dlibs"
-			pkg.dlibs = pkg.dlibs .. "-l" .. dlib .. " "
+			pkg.dlibs = pkg.dlibs .. "-l" .. package-name .. " "
 		]]
 		c_file:write(c_code)
 	end
