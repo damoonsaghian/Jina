@@ -179,6 +179,7 @@ defining methods (using a namespace):
 		}
 to create an instance of a struct:
 	s :S = a: x, b: y
+	s = S. a: x, b: y
 	s = S a: x
 accessing a member:
 	s.a
