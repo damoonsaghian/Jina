@@ -1,6 +1,4 @@
-;include flint/flint.h
-;upm'deb libflint-dev
-;dlibs flint
+;include flint.h flint
 
 ;; https://flintlib.org/
 ;; https://flintlib.org/doc/fmpz.html

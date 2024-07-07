@@ -1,6 +1,4 @@
-;include glib-2.0/gio/gio.h
-;upm'deb libglib2.0-dev
-;dlibs glib2
+;include gio/gio.h glib2
 
 ;; https://docs.gtk.org/gio/
 ;; https://docs.gtk.org/gio/class.VolumeMonitor.html
