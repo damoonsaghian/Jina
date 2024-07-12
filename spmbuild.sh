@@ -1,6 +1,7 @@
-spm install python gcc gnunet git
-
 project_dir="$(dirname "$0")"
+
+spm add python gcc gnunet git
+# hardlink the required files into $project_dir/.cache/spm/
 
 mkdir -p "$project_dir/.cache/spm"
 
