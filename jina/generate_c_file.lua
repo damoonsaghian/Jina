@@ -14,6 +14,28 @@ https://pdos.csail.mit.edu/6.828/2017/readings/pointers.pdf
 https://wiki.sei.cmu.edu/confluence/display/c/EXP35-C.+Do+not+modify+objects+with+temporary+lifetime
 https://stackoverflow.com/questions/11656532/returning-an-array-using-c
 
+variable, constant
+pointer, constant pointer
+array names are in fact constant pointers
+
+multi'dimensional arrays in C cant have variable length
+	so function parameters can't be multi'dimensional arrays
+variable length arrays can't be used in a struct, except as the last item
+
+incomplete (unsized) types can't have a value
+1, void
+2, unsized array, that are usually in a header as an extern
+	they will be completed when linked
+3, struct or union when self refering
+	completedat the end of definition
+
+struct members are not lvalues; so "&" can't be used; and if indexed,
+	they can't be modified in the same function call
+
+string literals and functions in C are stored in code
+https://stackoverflow.com/questions/3473765/string-literal-in-c
+https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
+
 c closures
 https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 this defines a function named "fun" that takes a *char,
@@ -22,11 +44,13 @@ int (*fun(char* s)) (int, int) {}
 int (*fun2)(int, int) = fun("")
 funtion namse are automatically converted to a pointer
 
-http://blog.pkh.me/p/20-templating-in-c.html
+pointers to functions (unlike function) are objects
+the only thing we can do with functions, is to call them
+but function pointer in addition to being called, can do other things that objects can
 
-string literals and functions in C are stored in code
-https://stackoverflow.com/questions/3473765/string-literal-in-c
-https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
+to create inline functions, use macros
+
+http://blog.pkh.me/p/20-templating-in-c.html
 
 records:
 , constructed using anonymous structs (fields sorted alphabetically)
@@ -127,6 +151,8 @@ function generate_c_file (pkg, pkg_id, jin_file_path)
 		otherwise use the first word as the function's name
 		if it's a definition, add it to the table of local definition which contains their types
 		]]
+		
+		-- there is no char literal in C, so 0a in Jina will be compiled to: (char)'a'
 		
 		-- prefix all exported identifiers with pkg_id_
 		
