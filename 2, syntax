@@ -129,6 +129,7 @@ there is no loop; just iterators:
 	iter.each {x | ...}
 any type that implements "Iter" interface, must define an "iter" method,
 	whose returned value stores the mutable state
+iterators store all states in their internal memory, so no memory allocation is done in the loop
 
 actor:
 	a = Actor B(x, y)
