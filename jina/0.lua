@@ -1,3 +1,9 @@
+--[[ this must be corrected in the following code:
+compiled files will be put into $out_dir
+dependency file will be put into $out_dir/deps
+LD_LIBRARY_PATH=.:./deps
+]]
+
 local path = require "pl.path"
 local dir = require "pl.dir"
 
