@@ -8,8 +8,8 @@ memory management is done in a sane way, by distinguishing 2 kinds of variables:
 , immutable/mutable borrow variables
 , immutable/mutable own variables:
 
-note that in Jina, mutability and ownership of a standalone type is meaningless
-it's only meaningful in two situations:
+note that in Jina, mutability and ownership are features of variables (not types)
+so they only appear in two situations:
 , variable types
 , function parameters types
 
