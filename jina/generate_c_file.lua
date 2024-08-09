@@ -94,6 +94,8 @@ the main loop only runs messages of UI actors (which are kept in a separate list
 the main loop runs messages of UI actors, and then polls (non'waiting) more events (glib2)
 	if there is no more messages for UI actors, wait for events
 
+GTK is not thread safe, but it can be made thread aware using "gdk_threads_enter" and "gdk_threads_leave"
+
 use mutexes to hold the list of actors and their message queues
 https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 https://docs.gtk.org/glib/struct.RWLock.html
