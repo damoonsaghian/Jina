@@ -7,6 +7,7 @@ https://github.com/ceu-lang/ceu/tree/master/src/lua
 	https://github.com/ceu-lang/ceu/blob/master/src/lua/codes.lua
 
 https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+https://grothoff.org/christian/teaching/2009/2355/
 https://sourceware.org/glibc/manual/latest/html_node/index.html
 https://en.cppreference.com/w/c
 https://devdocs.io/c/
