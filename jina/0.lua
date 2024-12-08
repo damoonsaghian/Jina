@@ -4,6 +4,8 @@ dependency file will be put into $out_dir/deps
 LD_LIBRARY_PATH=.:./deps
 ]]
 
+-- if gnunet or git is needed but not present: spm install ...
+
 local path = require "pl.path"
 local dir = require "pl.dir"
 
