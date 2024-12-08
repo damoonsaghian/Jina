@@ -76,8 +76,8 @@ Jina compiles to C, and can easily use existing C libraries
 the compiled binary will at least need "glib2" and "flint" dynamic libraries to be installed on the system
 
 to install Jina in SPM Linux:
-; spm install jina <jina-repo-url> [<public-key>]
-in other Unix'like systems, install "gcc gnunet git", download SPM Linux source, then:
-; cp spm.sh ~/.local/bin/spm
-; chmod +x ~/.local/bin/spm
-; spm install jina <jina-repo-url> [<public-key>]
+; spm install $gnunet_namespace jina
+in other Unix'like systems, install "gnunet", then:
+; gnunet-download -o spm/ gnunet://fs/sks/$gnunet_namespace/packages/spm
+; sh spm/install.sh
+; spm install $gnunet_namespace jina
