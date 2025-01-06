@@ -1,17 +1,17 @@
 project_dir="$(dirname "$0")"
 
-spm_include $gnunet_namespace python
-spm_include $gnunet_namespace clang
+spm_import $gnunet_namespace python
+spm_import $gnunet_namespace clang
 
 mkdir -p "$project_dir/.cache/spm"
 
-python "$project_dir/jina/" "$project_dir"
-ln "$project_dir/.cache/jina/out/std/libstd.jin.so" "$project_dir/.cache/spm/"
+python "$project_dir/jina/" "$project_dir" -target "$ARCH"
+ln "$project_dir/.cache/jina/out/$ARCH/std/libstd.jin.so" "$project_dir/.cache/spm/$ARCH/"
 
-ln "$project_dir"/jina/*.lua "$project_dir/.cache/spm/"
+ln "$project_dir"/jina/*.py "$project_dir/.cache/spm/$ARCH/"
 
-cat <<-'__EOF__' > "$project_dir/.cache/spm/0"
-#!/usr/bin/sh
+cat <<-'__EOF__' > "$project_dir/.cache/spm/$ARCH/cmd/jina"
+#!/usr/bin/env sh
 this_dir = "$(dirname "$(realpath "$0")")"
 args="$(printf "'%s', " "$@")"
 find "$this_dir" -name '?*.lua' -type f -printf "%P\n" | lua5.3 -e "
@@ -27,4 +27,3 @@ find "$this_dir" -name '?*.lua' -type f -printf "%P\n" | lua5.3 -e "
 	main($args)
 "
 __EOF__
-chmod +x "$project_dir/.cache/spm/0"
