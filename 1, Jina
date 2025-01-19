@@ -1,32 +1,34 @@
 Jina is a programming language with sane memory management, actors, and a coherent syntax
 
-Mahsa Jina Amini was a 22 years old girl, murdered by the evil regime in Iran
+Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in Iran
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, by distinguishing 2 kinds of variables:
-, immutable/mutable borrow variables
-, immutable/mutable own variables:
+memory management is done in a sane way, by using of type tags:
+, immutable own: #T
+, mutable own: !T
+, immutable borrow: &T
+, mutable borrow variable: $T
 
-note that in Jina, mutability and ownership are features of variables (not types)
-so they only appear in two situations:
-, variable types
-, function parameters types
-
-immutable borrow var can only be put into immutable borrow var
-mutable borrow var can only be put into immutable/mutable borrow var
-note that here "put into" means:
+a var with heap type T can be put into all above tagged types, but the reverse isn't possible
+and by "put into" i mean:
 , variable assignment
 , field assignment
 , variable capture in functions
 
+a var with heap type T initially has (static) ref count 1
+when it is put into another var, it take the reference, and ref count is decremented to zero
+if it's put into other vars again (with ref count zero), it will be copied
+at the end of the functions, vars with (static) ref count equal to zero will be destroyed
+stack types have initial ref count 0
+static types always have ref count 1
+
+immutable borrow var can only be put into immutable borrow var (takes the reference)
+mutable borrow var can only be put into immutable/mutable borrow var (takes the reference)
 putting immutable own var into immutable/mutable borrow var is/isn't possible
-putting mutable own var into immutable/mutable borrow var is possible
-putting immutable/mutable own var into immutable/mutable own var:
-, if on stack: copy
-, if on heap: if reference count is zero and it isn't used in the following code, move,
-	otherwise increase reference count
-putting immutable/mutable own var into mutable/immutable own var is not possible
+putting mutable own var into immutable/mutable borrow var is possible (takes the reference)
+putting immutable/mutable own var into immutable/mutable own var is possible (takes the reference)
+putting immutable/mutable own var into mutable/immutable own var isn't possible
 
 numbers are stored on the stack (thus don't need memory management)
 lists and dictionaries are stored on the heap
@@ -70,9 +72,9 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to avoid this problem, some languages (eg Rust) have two kinds of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
-Jina does the same, without actually spliting types into two kinds
+Jina does the same, without actually splitting types into two kinds
 
-Jina compiles to C, and can easily use existing C libraries
+Jina compiles to C3 "https://c3-lang.org/", and thus can easily use existing C libraries
 the compiled binary will at least need "glib2" and "flint" dynamic libraries to be installed on the system
 
 to install Jina in SPM Linux:
