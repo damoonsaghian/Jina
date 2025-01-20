@@ -5,23 +5,21 @@ at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
 memory management is done in a sane way, by using of type tags:
+, unique own: T
 , immutable own: #T
 , mutable own: !T
 , immutable borrow: &T
-, mutable borrow variable: $T
+, mutable borrow: $T
 
-a var with heap type T can be put into all above tagged types, but the reverse isn't possible
-and by "put into" i mean:
+unique own can be put into any tagged type
+	it has a static bit that is initially zero (for a newly created data, or for return value)
+	when it's moved into a unique var, the bit turns into one
+	when a unique own var with bit 1 is put into another own var, it will be copied
+	at the end of a function the bit gets zero again, so it can be moved out of function without copying
+by "put into" i mean:
 , variable assignment
 , field assignment
 , variable capture in functions
-
-a var with heap type T initially has (static) ref count 1
-when it is put into another var, it take the reference, and ref count is decremented to zero
-if it's put into other vars again (with ref count zero), it will be copied
-at the end of the functions, vars with (static) ref count equal to zero will be destroyed
-stack types have initial ref count 0
-static types always have ref count 1
 
 immutable borrow var can only be put into immutable borrow var (takes the reference)
 mutable borrow var can only be put into immutable/mutable borrow var (takes the reference)
