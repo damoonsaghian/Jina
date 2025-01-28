@@ -3,7 +3,6 @@
 script_dir="$(dirname "$(realpath "$0")")"
 
 project_dir="$1"
-c3c_options="$@"
 
 if [ -z "$project_dir" ]; then
 	echo "interactive Jina is not yet implemented"
@@ -94,7 +93,7 @@ for pkg in $(echo "$project_dir"/*.jin/); do
 	{
 		"dependencies": [ "flint" ],
 		"targets": {
-    		"linux-x64": {
+    		"linux-$ARCH": {
 				"type": "executable",
 			},
 		}
