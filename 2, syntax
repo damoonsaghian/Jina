@@ -30,18 +30,17 @@ assignment to mutable variables:
 	v = ...
 
 numeric types:
-, Num: floating point with mid-rad interval arithmetics
-, Num'z: multi'precision integer
-, Num'u: compiled to "unsigned int" type in C
-, Num'c: compiled to "char" type in C
-Num'u follows modular arithmetic (ie it wraps around on overflow)
+, Num: floating point with mid-rad interval arithmetics (or C3 "double" if --no-flint)
+, Num'i: multi'precision integer (or C3 "isz" if --no-flint)
+, Num'w: word sized unsigned integers; compiled to "usz" type in C3
+, Num8: compiled to "char" type in C3
 literal numbers:
-	1'234'567'890 ;; Num (by default), can be Num'z, or Num'u too
+	1'234'567'890 ;; Num (by default), can be Num'i, or Num'w too
 	1.23e4 ;; Num
-	123z ;; Num'z
-	0x1234'5678'9abc'def0 ;; Num'u (on 32 bits systems, this number will be stored as 0x9abc'def0)
-	0'ab ;; Num'c (the character with hexadecimal ASCII code 0xab)
-	0x ;; Num'c (ASCII code for "a" character)
+	123' ;; Num'i
+	0x1234'5678'9abc'def0 ;; Num'w (on 32 bits systems, this number will be stored as 0x9abc'def0)
+	0x ;; Num8 (ASCII code for character "a")
+	0'SP ;; Num8 (ASCII code for control character "SP")
 
 lists:
 	l :List[Num] = [1, 2, 3]
@@ -184,11 +183,11 @@ singletons:
 unions:
 	B := B0 \ B1
 type "A?" is a shortcut for "A\()"
-enumerate on a union:
+match on a union:
 	x :A? = ()
-	x.enum { a :A |
+	x.match { a :A |
 		...
-	} .enum { () |
+	} .match { () |
 		...
 	}
 

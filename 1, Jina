@@ -4,14 +4,16 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, by using of type tags:
+memory management is done in a sane way, by using type tags:
+, static: functions and module definitions
 , unique own: T
 , immutable own: #T
 , mutable own: !T
 , immutable borrow: &T
 , mutable borrow: $T
 
-unique own can be put into any tagged type
+statics can be put into all
+unique own can be put into all
 	it has a static bit that is initially zero (for a newly created data, or for return value)
 	when it's moved into a unique var, the bit turns into one
 	when a unique own var with bit 1 is put into another own var, it will be copied
@@ -54,7 +56,6 @@ to deal with it, programming languages choose different approaches:
 , use the approach taken by Pony "https://www.ponylang.io/"
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
-	i think the main reason for its complexities is that even class fields have reference capabilities
 
 in Jina, as shown above, mutable variables can't be captured in immutable own functions
 messages are sent to actors via immutable own functions
@@ -72,8 +73,7 @@ to avoid this problem, some languages (eg Rust) have two kinds of types:
 , abstract types cannot be instantiated, but can have subtypes
 Jina does the same, without actually splitting types into two kinds
 
-Jina compiles to C3 "https://c3-lang.org/", and thus can easily use existing C libraries
-the compiled binary will at least need "glib2" and "flint" dynamic libraries to be installed on the system
+Jina compiles to C3, and thus can easily use existing C libraries
 
 to install Jina in SPM Linux:
 ; spm install $gnunet_namespace jina

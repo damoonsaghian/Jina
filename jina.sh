@@ -3,7 +3,7 @@
 script_dir="$(dirname "$(realpath "$0")")"
 
 project_dir="$1"
-c3c_config="$2"
+c3c_options="$@"
 
 if [ -z "$project_dir" ]; then
 	echo "interactive Jina is not yet implemented"
@@ -17,55 +17,11 @@ fi
 }
 
 generate_c3_file() {
-	# variable, constant
-	# pointer, constant pointer
-	# array names are in fact constant pointers
-	
 	# multi'dimensional arrays in C cant have variable length
 	# 	so function parameters can't be multi'dimensional arrays
 	# variable length arrays can't be used in a struct, except as the last item
 	
-	# incomplete (unsized) types can't have a value
-	# 1, void
-	# 2, unsized array, that are usually in a header as an extern
-	# 	they will be completed when linked
-	# 3, struct or union when self refering
-	# 	completedat the end of definition
-	
-	# struct members are not lvalues; so "&" can't be used; and if indexed,
-	# 	they can't be modified in the same function call
-	
-	# string literals and functions in C are stored in code
-	# https://stackoverflow.com/questions/3473765/string-literal-in-c
-	# https://stackoverflow.com/questions/73685459/is-string-literal-in-c-really-not-modifiable
-	
-	# closures
-	# https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
-	# this defines a function named "fun" that takes a *char,
-	# 	and returns a function that takes two ints and returns an int:
-	# int (*fun(char* s)) (int, int) {}
-	# int (*fun2)(int, int) = fun("")
-	# function names are automatically converted to a pointer
-	
-	# pointers to functions (unlike function) are objects
-	# the only thing we can do with functions, is to call them
-	# but function pointer in addition to being called, can do other things that objects can
-	
-	# use generics and linked lists to implement records
-	# sort the fields according to a deterministic rule by checking the types
-	# https://andreyor.st/posts/2022-03-15-generic-tuples-in-c/
-	
-	# API:
-	# , exported types
-	# , type of exported definitions
-	
-	# in Jina, API change implies ABI change; and API invariance implies ABI invariance
-	# so for recompiling an object file, we just need to track the corresponding .c file,
-	# 	and not all the included .h files
-	# https://begriffs.com/posts/2021-07-04-shared-libraries.html#api-vs-abi
-	
-	# https://github.com/Microsoft/mimalloc
-	# libmimalloc-dev
+	# named tuples
 	
 	# stacks are designed for sync computation
 	# using a lot of them as async cores (stackful green threads) is inefficient
@@ -94,24 +50,21 @@ generate_c3_file() {
 	# https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	# https://docs.gtk.org/glib/struct.RWLock.html
 	#
-	# only the actor can destroy the heap references it creates
-	# 	other actors just send reference'counting messages
-	# 	so we do not need atomic reference counting
 	# self'referential fields of structures are necessarily private, and use weak references
 	# https://docs.gtk.org/glib/reference-counting.html
 	
 	local jin_file_path="$1"
 	
 	cat "$jin_file_path" | while read line; do
-		# words: alpha'numerics plus apostrophe, dot or colon at the start or end
-		# if the second word is an operator (=, +, .add), find the type of first word, then build the function's name
-		# otherwise use the first word as the function's name
-		# if it's a definition, add it to the table of local definition which contains their types
+		# words: alpha'numerics plus apostrophe, dot at start or colon at start or end
 	done
 }
 
 for pkg in $(echo "$project_dir"/*.jin/); do
-	# spm import glib and flint
+	# if --no-evloop is not used
+	spm import $gnunet_namespace glib
+	# if --no-flint is not used
+	spm import $gnunet_namespace flint
 	
 	# go through all files (recursively) and find ".p" files
 	for p_file in $(find .p); do
@@ -120,12 +73,34 @@ for pkg in $(echo "$project_dir"/*.jin/); do
 		# spm import <gnunet-namespace> <package-name>
 	done
 	
-	# recursively go through all files in all packages in pkg_table
-	# generate .c3 files from .jin files
+	mkdir -p "$project_dir/.cache/jina/c3"
+	
+	# find all .jina files (recursively), and if it's newer that the last generated .c3 file,
+	# 	regenerate the .c3 file
 	# number of parallel processes will be equal to the number of CPU cores,
-	# 	or the number of Jina files, either one which is smaller
+	# 	or the number of .jin files, either one which is smaller
+	c3_file_path=
+	c3_file_mtime=
+	jin_file_mtime=
+	if [ ! jin_file_mtime ] || [ ! c3_file_mtime ] ||
+		[ -gt jin_file_mtime c3_file_mtime ] ||
+		[ -gt c3_file_mtime "$(time)" ] # c3_file is from future!
+	then
+	fi
 	
 	# std.jin is compiled to c3 and imported to all the generated c3 files above
 	
-	# compile the generated c3 package
+	cat <<-EOF > "$project_dir/.cache/jina/c3/project.json"
+	{
+		"dependencies": [ "flint" ],
+		"targets": {
+    		"linux-x64": {
+				"type": "executable",
+			},
+		}
+	}
+	EOF
+	
+	# compile the generated c3 project
+	c3c build $c3c_options "$project_dir/.cache/jina/c3"
 done
