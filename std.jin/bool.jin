@@ -1,0 +1,34 @@
+Bool := 'true \ 'false
+
+;ns Bool
+	and = { self, arg2 :(Bool->'null) -> Bool |
+		self.enum {
+			arg2()
+		} .enum {
+			'false
+		}
+	}
+	
+	or = { self, arg2 :(Bool->'null) -> Bool |
+		self.enum {
+			'true
+		} .enum {
+			arg2()
+		}
+	}
+	
+	neg = { self -> Bool |
+		self.enum {
+			'false
+		} .enum {
+			'true
+		}
+	}
+	
+	then[T] = { self, then &(T->'null), else &(T->'null) -> T |
+		self.enum {
+			then()
+		} .enum {
+			else()
+		}
+	}
