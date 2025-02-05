@@ -5,34 +5,31 @@ at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
 memory management is done in a sane way, by using type tags:
-, static: functions and module definitions
-, unique own: T
-, immutable own: #T
-, mutable own: !T
-, immutable borrow: &T
-, mutable borrow: $T
+, unique: T
+, immutable: T!
+, borrow: &T
+, immutable borrow: &T!
 
-statics can be put into all
 unique own can be put into all
 	it has a static bit that is initially zero (for a newly created data, or for return value)
 	when it's moved into a unique var, the bit turns into one
 	when a unique own var with bit 1 is put into another own var, it will be copied
 	at the end of a function the bit gets zero again, so it can be moved out of function without copying
+	if static (functions and module definitions) they will be copied when mutated
 by "put into" i mean:
 , variable assignment
 , field assignment
 , variable capture in functions
-
 immutable borrow var can only be put into immutable borrow var (takes the reference)
 mutable borrow var can only be put into immutable/mutable borrow var (takes the reference)
 putting immutable own var into immutable/mutable borrow var is/isn't possible
-putting mutable own var into immutable/mutable borrow var is possible (takes the reference)
-putting immutable/mutable own var into immutable/mutable own var is possible (takes the reference)
-putting immutable/mutable own var into mutable/immutable own var isn't possible
+putting immutable own var into immutable own var is possible (takes the reference)
+	increase ref count, if it's not in the parent tree
 
 numbers are stored on the stack (thus don't need memory management)
-lists and dictionaries are stored on the heap
 small records will be kept on stack, big ones on the heap
+lists and dictionaries can initially be stored on the stack, if they are small
+	and when they grow they will be reallocated on the heap
 
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
@@ -57,11 +54,11 @@ to deal with it, programming languages choose different approaches:
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 
-in Jina, as shown above, mutable variables can't be captured in immutable own functions
-messages are sent to actors via immutable own functions
+in Jina, as shown above, only unique and immutable variables can be captured in immutable functions
+messages are sent to actors via immutable functions
 so in Jina, all mutations will be synchronous
-
-immutable functions with null return can be called asynchronously, since they can't affect their environment
+immutable functions with null return can safely be called asynchronously,
+	since they can't affect their environment
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:

@@ -14,20 +14,20 @@ template identifiers ("x" and "y" will be used in the definition of the variable
 
 unique own variable definition:
 	v :T = ...
-immutable own variable definition:
-	v :#T = ...
-	v #T = ...
-mutable own variable definition:
-	v :!T = ...
-	v !T = ...
-immutable borrow variable definition:
+	v = ...
+immutable variable definition:
+	v :T! = ...
+	v ! = ...
+borrow variable definition:
 	v :&T = ...
 	v &T = ...
-mutable borrow variable definition:
-	v :$T = ...
-	v $T = ...
+	v & = ...
+immutable borrow variable definition:
+	v :&T! = ...
+	v &T! = ...
+	v &! = ...
 assignment to mutable variables:
-	v = ...
+	v .= ...
 
 numeric types:
 , Num: floating point with mid-rad interval arithmetics (or C3 "double" if --no-flint)
@@ -35,12 +35,14 @@ numeric types:
 , Num'w: word sized unsigned integers; compiled to "usz" type in C3
 , Num8: compiled to "char" type in C3
 literal numbers:
-	1'234'567'890 ;; Num (by default), can be Num'i, or Num'w too
 	1.23e4 ;; Num
-	123' ;; Num'i
+	1.0 ;; Num
+	1'234'567'890 ;; Num'i
+	0123 ;; Num'w
 	0x1234'5678'9abc'def0 ;; Num'w (on 32 bits systems, this number will be stored as 0x9abc'def0)
-	0x ;; Num8 (ASCII code for character "a")
-	0'SP ;; Num8 (ASCII code for control character "SP")
+	#a ;; Num8 (ASCII code for character "a")
+	#\n ;; Num8 (ASCII code for character with escape code "\n")
+	#x12 ;; Num8 (ASCII code for character with hex code 12)
 
 lists:
 	l :List[Num] = [1, 2, 3]
@@ -55,8 +57,6 @@ heap allocation will be used only when the lists needs to grow beyond its initia
 
 strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
-one word string:
-	'abc
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	""
@@ -66,17 +66,18 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of integers as in lists):
-	d :Dict[Num] = ["a": 1, "b": 2, "c": 3]
-when keys are one word strings, this can also be written as:
-	[a: 1, b: 2, c: 3]
+symbols are their own types:
+	s :'s = 's
+
+dictionaries are indexed using symbols (instead of integers as in lists):
+	d :Dict[Num] = [a: 1, b: 2, c: 3]
 indexing:
 	d_'a
 
 records:
 	r :(a: Num, b: Num, c: Num) = a: 1, b: 2, c: 3
 	r :(Num, Num, c: Num) = 1, 2, c: 3
-to access an element:
+to access elements:
 	r.a
 	r.0
 multiple assignment using record expansion:
@@ -87,7 +88,9 @@ mutating a record (if "r" is a mutable variable):
 	r.a = 10
 
 function:
-	f :{a: A, b: !B -> C} = { a, b | ... }
+	f = { a :A, b !B -> C | ... }
+note that the type of above function is:
+	a: A, b: !B -> C
 function call:
 	f x y
 which is equivalent to these forms:
@@ -119,8 +122,8 @@ any type that implements "Iter" interface, must define an "iter" method,
 iterators store all states in their internal memory, so no memory allocation is done in the loop
 
 actor:
-	a = Actor B(x, y)
-	a.do { b !B | ... }
+	a := Actor.new B(x, y)
+	a.do { b &B | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
@@ -167,7 +170,8 @@ defining methods (using a namespace):
 		}
 to create an instance of a struct:
 	s :S = a: x, b: y
-	s :S = S.new a: x
+	s = S. a: x, b: y
+	s = S.new a: x
 accessing a member:
 	s.a
 calling a method (note that there is no record field named "m", otherwise this will not work):
@@ -175,26 +179,21 @@ calling a method (note that there is no record field named "m", otherwise this w
 which is equivalent to:
 	S.m s x
 
-singletons:
-	B0 := () ;; false
-	B0 :B0 = ()
-	B1 := () ;; true
-	B1 :B1 = ()
 unions:
-	B := B0 \ B1
-type "A?" is a shortcut for "A\()"
-match on a union:
-	x :A? = ()
-	x.match { a :A |
+	B := 'true \ 'false
+type "A?" is a shortcut for "A\'null"
+enumerate on a union:
+	x :A? = 'null
+	x.enum { a :A |
 		...
-	} .match { () |
+	} .enum {
 		...
 	}
 
 traits:
 	;tr T
-		m1 :{ self, x :X -> Y}
-		m2 = { self! |
+		m1 :(self, x: X -> Y)
+		m2 = { self & |
 			;; default implementation
 		}
 trait inheritance:

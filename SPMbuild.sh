@@ -2,8 +2,6 @@ project_dir="$(dirname "$0")"
 
 spm_import $gnunet_namespace c3c
 
-# a vapi file for flint
-
 mkdir -p "$project_dir/.cache/spm"
 
 sh "$project_dir/jina.sh" "$project_dir"
