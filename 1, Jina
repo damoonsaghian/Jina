@@ -4,27 +4,47 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, by using type tags:
-, unique: T
-, immutable: T!
-, borrow: &T
-, immutable borrow: &T!
+memory management is done in a sane way, by distinguishing three kind of variables:
+, unique variable:
+	v!! :T = ...
+, mutable borrow variable:
+	v! :T = ...
+, immutable borrow variable (including static variables):
+	v :T = ...
 
-unique own can be put into all
-	it has a static bit that is initially zero (for a newly created data, or for return value)
-	when it's moved into a unique var, the bit turns into one
-	when a unique own var with bit 1 is put into another own var, it will be copied
-	at the end of a function the bit gets zero again, so it can be moved out of function without copying
-	if static (functions and module definitions) they will be copied when mutated
+a newly created value of type T can be put into all three kind of variables of type T
+, unique var: move
+, immutable/mutable borrow var: borrow
 by "put into" i mean:
 , variable assignment
 , field assignment
-, variable capture in functions
-immutable borrow var can only be put into immutable borrow var (takes the reference)
-mutable borrow var can only be put into immutable/mutable borrow var (takes the reference)
-putting immutable own var into immutable/mutable borrow var is/isn't possible
-putting immutable own var into immutable own var is possible (takes the reference)
-	increase ref count, if it's not in the parent tree
+, variables captured in functions
+
+shared reference wrapper prevents data from being deleted at the end of a function
+	v :Shared[T] = Shared.new T.new()
+equivalently:
+	v :$T = $ T.new()
+it also prevents the wrapped data from being mutated or copied
+values of type Arc[T] can be put into immutable borrow variable of type T (stack: copy, heap: borrowed)
+when a value of type $T is put into another var of type $T, reference count is increased
+
+unique var:
+, put into unique var -> copy
+, put into mutable borrow var -> stack: borrow, heap: borrow
+, put into immutable borrow var -> stack: copy, heap: borrowed
+, returned from a function -> stack: copy, heap: move
+
+mutable borrow var:
+, put into unique var -> deny
+, put into mutable borrow var -> stack: borrow, heap: borrow
+, put into immutable borrow var -> stack: copy, heap: borrow
+, returned from a function -> copy
+
+immutable borrow var:
+, put into unique var -> deny
+, put into mutable borrow var -> deny
+, put into immutable borrow var -> stack: copy, heap: borrow
+, returned from a function -> copy
 
 numbers are stored on the stack (thus don't need memory management)
 small records will be kept on stack, big ones on the heap

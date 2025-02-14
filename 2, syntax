@@ -12,20 +12,6 @@ identifiers (variable names) start with an alphabetic character, and can include
 template identifiers ("x" and "y" will be used in the definition of the variable):
 	abc[x, y]
 
-unique own variable definition:
-	v :T = ...
-	v = ...
-immutable variable definition:
-	v :T! = ...
-	v ! = ...
-borrow variable definition:
-	v :&T = ...
-	v &T = ...
-	v & = ...
-immutable borrow variable definition:
-	v :&T! = ...
-	v &T! = ...
-	v &! = ...
 assignment to mutable variables:
 	v .= ...
 
@@ -48,21 +34,20 @@ lists:
 	l :List[Num] = [1, 2, 3]
 indexing:
 	l_1
-negative indices count from the end of the list
 mutating lists:
-	l.put 0 index: 0 ;; [0, 2, 3]
-	l.put 4 index: 3 ;; [0, 2, 3, 4]
+	l.put 0 at: 0 ;; [0, 2, 3]
+	l.put 4 at: 3 ;; [0, 2, 3, 4]
 initial value of lists will be kept on stack
-heap allocation will be used only when the lists needs to grow beyond its initial size
+heap allocation is done only when the lists needs to grow beyond its initial size
 
 strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
-	""
+	"""
 	first line
 		second line
-	""
+	"""
 which is equivalent to:
 	["first line", "\tsecond line"]
 
@@ -88,14 +73,22 @@ mutating a record (if "r" is a mutable variable):
 	r.a = 10
 
 function:
-	f = { a :A, b !B -> C | ... }
+	f = { a :A, b! :B -> C | ... }
 note that the type of above function is:
-	a: A, b: !B -> C
+	{a :A, b! :B -> C}
+function with multiple match:
+	f = {
+	a :A |
+		...
+	b :B |
+		...
+	}
 function call:
 	f x y
 which is equivalent to these forms:
 	f(x, y)
 	f b: y a: x
+	(x, y) @ f
 
 default values for parameters:
 	f = { a = 1 , b = 2 | ... }
@@ -103,9 +96,11 @@ default values for parameters:
 	f 11
 	f()
 
+{f x y} can be written as: & f x y
+
 conditional expression:
-	condition.then {} .else {}
-	condition1.then {} .elif condition2 {} .elif condition3 {} .else {}
+	condition.then {} else: {}
+	condition1.then {} & condition2.then {} & condition3.then {} else: {}
 
 and or:
 	a && b
@@ -122,17 +117,17 @@ any type that implements "Iter" interface, must define an "iter" method,
 iterators store all states in their internal memory, so no memory allocation is done in the loop
 
 actor:
-	a := Actor.new B(x, y)
-	a.do { b &B | ... }
+	a = Actor.new B(x, y)
+	a.do { b! :B | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,
 	and possibly an additional number or extension (separated with an apostrophe),
 	will be exported (ie is accessible outside of the module)
-to hide a definition, append an apostrophe at the end of its name: a' = ...
 to access the definitions in a module which is inside a directory: dir.Definition
 to hide a module so it can't be accessed from modules in the parent directory,
 	append an apostrophe at the end of its file name
+	this method can be used to make package private definitions too
 
 a package is a collection of modules
 in a project directory, we can have multiple package directories
@@ -162,10 +157,10 @@ defining methods (using a namespace):
 			b = ...
 			a, b
 		}
-		m1 = { self, x :X -> Y |
+		m1 = { self!, x :X -> Y |
 			...
 		}
-		m2 = { self! |
+		m2 = { self |
 			...
 		}
 to create an instance of a struct:
@@ -180,20 +175,23 @@ which is equivalent to:
 	S.m s x
 
 unions:
+	B := Union['true, 'false]
+equivalently:
 	B := 'true \ 'false
 type "A?" is a shortcut for "A\'null"
 enumerate on a union:
 	x :A? = 'null
-	x.enum { a :A |
+	x @ {
+	a :A |
 		...
-	} .enum {
+	:'null |
 		...
 	}
 
 traits:
 	;tr T
-		m1 :(self, x: X -> Y)
-		m2 = { self & |
+		m1 :{ self!, x :X -> Y }
+		m2 = { self! |
 			;; default implementation
 		}
 trait inheritance:
@@ -217,4 +215,8 @@ bounded generics:
 to directly enter C3 code:
 	;c3 ...
 		...
+or:
+	;c3
+	...
+	;
 beware! with great power comes great responsibility
