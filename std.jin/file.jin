@@ -1,32 +1,27 @@
-;include gio/gio.h glib2
-
+;; declare required functions and types from gio of glib2
+;c3 extern fn ...;
+;c3 distinct ... = any;
 ;; https://docs.gtk.org/gio/
 ;; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
 ;ns File
-	;; open a file or create it, if it doesn't already exist
-	open = { path :String, mode :String = "", cb &{f :File?} |
-		;; create an empty actor that will call "cb" when the file is open
+	delete = { path :String, cb :${} = {} |
 	}
 	
-	append = {}
-	
-	delete = {path :String, cb &{} = {} |
+	move = { source'path :String, destination'path :String, cb :${} = {} |
 	}
 	
-	move = {source'path :String, destination'path :String, cb &{} = {} |
-	}
-	
-	copy = {source'path :String, destination'path :String, cb &{} = {} |
+	copy = { source'path :String, destination'path :String, cb :${} = {} |
 	}
 	
 	;; max'size is in megabytes
-	read = {self, max'size :Num'u, cb &{buf :Array[Num'c]} |
+	read = { self, max'size :Num'w, cb :${buf :Array[Num8]} |
+		;; close the file descriptor
 	}
 	
-	write = {self, data :Array[Num'c], cb &{} = {} |
-	}
-	
-	destructor = {self |
+	write = { self, data :Array[Num8], cb :${} = {} |
+		;; overwrite?
+		;; append?
+		
 		;; close the file descriptor
 	}

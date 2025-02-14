@@ -1,4 +1,6 @@
-;include glib/ghash.h glib2
+;; declare required functions and types related to ghash from glib2
+;c3 extern fn ...;
+;c3 distinct ... = any;
 
 ;; for now just use glib2 hashtables
 	https://docs.gtk.org/glib/struct.HashTable.html

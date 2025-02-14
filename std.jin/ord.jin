@@ -1,6 +1,6 @@
 ;tr Ord
-	is'equal :{self, other :Self -> B}
-	is'less :{self, other :Self -> B}
-	is'less'or'equal = {self, other :Self -> B |
-		self < other \\ self == other
+	is'equal :{ self, other :Ord -> B }
+	is'less :{ self, other :Ord -> B }
+	is'less'or'equal = { self, other :Ord -> B |
+		self < other || self == other
 	}
