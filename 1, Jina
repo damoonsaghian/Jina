@@ -47,6 +47,10 @@ it also prevents the wrapped data from being mutated or copied
 values of type $T can be put into immutable borrow variable of type T (stack: copy, heap: borrowed)
 when a value of type $T is put into another var of type $T, reference count is increased
 
+in Jina, internal mutability is only possible through unique variables
+thus reference cycles are impossible
+"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
+
 numbers are stored on the stack (thus don't need memory management)
 small records will be kept on stack, big ones on the heap
 lists and dictionaries can initially be stored on the stack, if they are small
@@ -75,7 +79,7 @@ to deal with it, programming languages choose different approaches:
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 
-in Jina, all mutations are done inside actors and are thus synchronous
+in Jina, all mutations are done inside actors and are thus are synchronous
 messages sent to actors can safely be called asynchronously, since they can't change their captured environment
 
 types show us what we can do with the data, ie which operations are valid
