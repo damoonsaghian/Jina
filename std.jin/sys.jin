@@ -9,7 +9,7 @@
 	print'err = { message :String |
 	}
 	
-	read = { cb :${answer :String} |
+	read = { cb!! :{answer :String} |
 		;; read from stdin (non'blocking io)
 	}
 	

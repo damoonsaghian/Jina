@@ -4,7 +4,7 @@
 
 Actor[X]' :=
 	state: X,
-	messages: Array[{state :X}]
+	messages: Array[{state!!! :X}]
 
 ;ns Actor[X]
 	new = { state!! :X -> Actor[X] |
@@ -13,12 +13,12 @@ Actor[X]' :=
 		state, messages: []
 	}
 	
-	do = { self!, message :${state :X} |
+	do = { self!, message!! :{state!! :X} |
 		;; notify that there is a new message
 		;c3
 		self.messages.append message
 	}
 	
-	repeat = { self!, message :${state :X}, til :B |
+	repeat = { self!, message!! :{state!! :X}, til :B |
 		;; repeatedly send message until "til" becomes true
 	}
