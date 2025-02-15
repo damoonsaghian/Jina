@@ -117,8 +117,8 @@ any type that implements "Iter" interface, must define an "iter" method,
 iterators store all states in their internal memory, so no memory allocation is done in the loop
 
 actor:
-	a = Actor.new B(x, y)
-	a.do { b! :B | ... }
+	a = Actor.new B.(x, y)
+	a.do { b!! :B | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, with the first letter capitalized,

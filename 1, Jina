@@ -12,39 +12,40 @@ memory management is done in a sane way, by distinguishing three kind of variabl
 , immutable borrow variable (including static variables):
 	v :T = ...
 
-a newly created value of type T can be put into all three kind of variables of type T
+when a newly created value of is assigned to a variable:
 , unique var: move
 , immutable/mutable borrow var: borrow
-by "put into" i mean:
+
+unique var:
+, put into unique var -> move/copy
+	move if it's not used in the following code; copy otherwise
+, put into mutable borrow var -> stack: borrow, heap: borrow
+, put into immutable borrow var -> stack: copy, heap: borrow
+, put into a newly created value (including returning from a function) -> stack: copy, heap: move/copy
+and by "put into" i mean:
 , variable assignment
 , field assignment
 , variables captured in functions
+
+mutable borrow var:
+, put into unique var -> deny
+, put into mutable borrow var -> stack: borrow, heap: borrow
+, put into immutable borrow var -> stack: copy, heap: borrow
+, put into a newly created value (including returning from a function) -> deny
+
+immutable borrow var:
+, put into unique var -> copy
+, put into mutable borrow var -> deny
+, put into immutable borrow var -> stack: copy, heap: borrow
+, put into a newly created value (including returning from a function) -> copy
 
 shared reference wrapper prevents data from being deleted at the end of a function
 	v :Shared[T] = Shared.new T.new()
 equivalently:
 	v :$T = $ T.new()
 it also prevents the wrapped data from being mutated or copied
-values of type Arc[T] can be put into immutable borrow variable of type T (stack: copy, heap: borrowed)
+values of type $T can be put into immutable borrow variable of type T (stack: copy, heap: borrowed)
 when a value of type $T is put into another var of type $T, reference count is increased
-
-unique var:
-, put into unique var -> copy
-, put into mutable borrow var -> stack: borrow, heap: borrow
-, put into immutable borrow var -> stack: copy, heap: borrowed
-, returned from a function -> stack: copy, heap: move
-
-mutable borrow var:
-, put into unique var -> deny
-, put into mutable borrow var -> stack: borrow, heap: borrow
-, put into immutable borrow var -> stack: copy, heap: borrow
-, returned from a function -> copy
-
-immutable borrow var:
-, put into unique var -> deny
-, put into mutable borrow var -> deny
-, put into immutable borrow var -> stack: copy, heap: borrow
-, returned from a function -> copy
 
 numbers are stored on the stack (thus don't need memory management)
 small records will be kept on stack, big ones on the heap
@@ -74,11 +75,8 @@ to deal with it, programming languages choose different approaches:
 	it controls aliasing (sharing) and mutability, using reference capabilities
 	Pony's approach introduces many complexities, especially when dealing with generics
 
-in Jina, as shown above, only unique and immutable variables can be captured in immutable functions
-messages are sent to actors via immutable functions
-so in Jina, all mutations will be synchronous
-immutable functions with null return can safely be called asynchronously,
-	since they can't affect their environment
+in Jina, all mutations are done inside actors and are thus synchronous
+messages sent to actors can safely be called asynchronously, since they can't change their captured environment
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:
