@@ -1,0 +1,25 @@
+;; gtksink = Gst.ElementFactory.make("clappersink", "sink")
+;; gtksink.set_state(Gst.State.READY)
+;; widget = gtksink.props.widget
+;; bus = gtksink.get_bus()
+;; pipeline.set_state(Gst.State.PLAYING)
+
+;; an option to inhibit idle during video play
+;; https://docs.gtk.org/gtk4/method.Application.inhibit.html
+
+;; takes 3 gst elements for audio, video and subtitle
+;; subtitle can be null
+;; instead of video, can take an image
+;; mixe video and subtitle
+;; https://gstreamer.freedesktop.org/documentation/playback/subtitleoverlay.html
+
+;; audio diagram
+;; https://gitlab.gnome.org/World/vocalis
+
+;; https://gitlab.gnome.org/GNOME/pitivi
+;; generated media formats
+;; ideal: MP4/Matroska+AV1+Opus
+;; popular: MP4+H264+AAC
+
+;; subtitle editor
+;; https://github.com/otsaloma/gaupol/tree/master/gaupol
