@@ -4,50 +4,44 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, by distinguishing three kind of variables:
-, unique variable:
-	v!! :T = ...
-, mutable borrow variable:
-	v! :T = ...
-, immutable borrow variable (including static variables):
-	v :T = ...
+memory management is done in a sane way, using container types:
+, unique own: !!T
+, mutable borrow: !T
+, immutable ref type: T
+, shared own: $T
 
-when a newly created value of is assigned to a variable:
-, unique var: move
-, immutable/mutable borrow var: borrow
+at the end of the function:
+, for unique own values, if not moved, the memory will be deallocated
+, for shared own values, the atomic reference count will be decremented
 
-unique var:
-, put into unique var -> move/copy
-	move if it's not used in the following code; copy otherwise
-, put into mutable borrow var -> stack: borrow, heap: borrow
-, put into immutable borrow var -> stack: copy, heap: borrow
-, put into a newly created value (including returning from a function) -> stack: copy, heap: move/copy
+borrows have an associated function
+this associated function will be transferred to child borrows
+borrows can't leave their associated function
+for stack types (like numbers) the associated function is the global static space
+
+unique own can be put into:
+, unique own (move)
+, mutable borrow (borrow)
+, immutable borrow (copy stack, borrow heap)
+, shared own (move)
 and by "put into" i mean:
 , variable assignment
 , field assignment
-, variables captured in functions
+, captured in a closure
 
-mutable borrow var:
-, put into unique var -> deny
-, put into mutable borrow var -> stack: borrow, heap: borrow
-, put into immutable borrow var -> stack: copy, heap: borrow
-, put into a newly created value (including returning from a function) -> deny
+mutable borrow can be put into:
+, mutable borrow (borrow)
+, immutable borrow (copy stack, borrow heap)
 
-immutable borrow var:
-, put into unique var -> copy
-, put into mutable borrow var -> deny
-, put into immutable borrow var -> stack: copy, heap: borrow
-, put into a newly created value (including returning from a function) -> copy
+immutable borrow can be put into:
+, immutable borrow (copy stack, borrow heap)
 
-shared reference wrapper prevents data from being deleted at the end of a function
-	v :Shared[T] = Shared.new T.new()
-equivalently:
-	v :$T = $ T.new()
-it also prevents the wrapped data from being mutated or copied
-values of type $T can be put into immutable borrow variable of type T (stack: copy, heap: borrowed)
-when a value of type $T is put into another var of type $T, reference count is increased
+shared own can be put into:
+, immutable borrow (copy stack, borrow heap)
+, shared own (copy stack, borrow heap)
+	increments the reference counter
 
-in Jina, internal mutability is only possible through unique variables
+in Jina, shared mutability is only possible through unique own types
 thus reference cycles are impossible
 "https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
 
@@ -80,7 +74,9 @@ to deal with it, programming languages choose different approaches:
 	Pony's approach introduces many complexities, especially when dealing with generics
 
 in Jina, all mutations are done inside actors and are thus are synchronous
-messages sent to actors can safely be called asynchronously, since they can't change their captured environment
+messages sent to actors are shared own closures
+and as described above, they can only capture unique own and shared own variables
+thus messages can safely be called asynchronously, since they can't change their captured environment
 
 types show us what we can do with the data, ie which operations are valid
 inheritance is problematic:
