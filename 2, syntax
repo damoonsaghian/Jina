@@ -54,7 +54,6 @@ mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
 initial value of lists will be kept on stack
-heap allocation is done only when the lists needs to grow beyond its initial size
 
 strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
@@ -76,6 +75,9 @@ dictionaries are indexed using strings (instead of integers as in lists):
 indexing:
 	d_"a"
 
+lists and dictionaries can initially be stored on the stack, if they are small
+then when they grow beyond its initial size, they will be reallocated on the heap
+
 records:
 	r :(a: Num, b: Num, c: Num) = a: 1, b: 2, c: 3
 	r :(Num, Num, c: Num) = 1, 2, c: 3
@@ -88,6 +90,7 @@ tagged fields can be expanded too, if the name of variables match:
 	a, b = a: 1, b: 2
 mutating a record (if "r" is a mutable variable):
 	r.a = 10
+small records will be kept on stack, big ones on the heap
 
 function:
 	f = { a :A, b &B -> C | ... }

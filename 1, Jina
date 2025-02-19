@@ -4,56 +4,44 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, using type tags:
+memory management is done in a sane way, using type tags (inspired by Rust):
 , plain type: T
 , mutable borrow type: !T
 , immutable borrow type: &T
 , shared type: $T
+"https://www.toptal.com/software/eliminating-garbage-collector"
+"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 plain type values will be copied, or moved if not used any more in the following code
 	and at the end of the function, if they are not moved out, their memory will be deallocated
 type tags alter this behavior
 borrow types allow access by reference, but since the value is not moved into them,
 	they don't intervene in the deallocation at the end of the function
-	they can be returned from a function only if the primary lender is one of the function arguments
+	they can be returned from a function only if the primary lender is captured or is a function argument
 shared types allow access by reference, and they do run'time reference counting
 	when the reference count reaches zero, their memory will be deallocated
+	in Jina, there is no internal mutability; so reference cycles are impossible
+	"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
 
 plain type values can be put into:
-, plain (copy/move)
+, plain (copy stack, move/copy heap)
 , mutable borrow (borrow)
 , immutable borrow (copy stack, borrow heap)
-, shared (move)
+, shared (copy stack, move/copy heap)
 and by "put into" i mean:
-, variable assignment
+, variable definition and assignment
 , field assignment
 , captured in a closure
-
 mutable borrow can be put into:
 , mutable borrow (borrow)
 , immutable borrow (copy stack, borrow heap)
-
 immutable borrow can be put into:
 , immutable borrow (copy stack, borrow heap)
-
 shared own can be put into:
 , immutable borrow (copy stack, borrow heap)
-, shared own (copy stack, borrow heap)
+, shared (copy stack, borrow heap)
 	increments the reference counter
 
-in Jina, shared mutability is only possible through unique own types
-thus reference cycles are impossible
-"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
-
-numbers are stored on the stack (thus don't need memory management)
-small records will be kept on stack, big ones on the heap
-lists and dictionaries can initially be stored on the stack, if they are small
-	and when they grow they will be reallocated on the heap
-
-"https://www.toptal.com/software/eliminating-garbage-collector"
-"http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
-
-actors are used to achieve lock'free concurrency
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
 , two or more pointers access the same data at the same time
@@ -70,12 +58,13 @@ to deal with it, programming languages choose different approaches:
 	any how, the lack of direct mutability, and the need for aggressive garbage collection,
 		means that functional programming is not an efficient method
 , use the approach taken by Pony "https://www.ponylang.io/"
-	it controls aliasing (sharing) and mutability, using reference capabilities
+	it uses actors, and employs reference capabilities to control aliasing (sharing) and mutability
 	Pony's approach introduces many complexities, especially when dealing with generics
 
-in Jina, all mutations are done inside actors and are thus are synchronous
-messages sent to actors are shared own closures
-and as described above, they can only capture unique own and shared own variables
+Jina uses actors, and to control aliasing (sharing) and mutability, it relies on type tags
+	ie the same approach used to deal with memory management
+messages sent to actors are closures with shared type tag
+and as described above, they can only capture plain and shared (immutable) variables
 thus messages can safely be called asynchronously, since they can't change their captured environment
 
 types show us what we can do with the data, ie which operations are valid
@@ -86,7 +75,6 @@ i feel that this problem was the motivation behind dynamic typing (another bad d
 to avoid this problem, some languages (eg Rust) have two kinds of types:
 , concrete types can be instantiated, but cannot have subtypes
 , abstract types cannot be instantiated, but can have subtypes
-Jina does the same, without actually splitting types into two kinds
 
 Jina compiles to C3, and thus can easily use existing C libraries
 
