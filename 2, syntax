@@ -57,7 +57,6 @@ initial value of lists will be kept on stack
 
 strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
-as said for lists, double quotes creates a value with unique own type: !!String
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	"""
