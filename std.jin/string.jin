@@ -3,20 +3,20 @@ String := Array[Num8]
 ;ns String
 	;; change array methods to respect UTF8 encoding
 	
-	replace = { self!, substring :String, replacement :String |
+	replace = { self!, substring &String, replacement :String |
 	}
 	
 	split =
 	join =
 	
-	find = { self, substring :String -> Num'w? |
+	find = { self, substring &String -> Num'w? |
 	}
-	contains = { self, substring :String -> B |
+	contains = { self, substring &String -> Bool |
 	}
 	
-	trim'prefix = { self!, prefix :String |
+	trim'prefix = { self!, prefix &String |
 	}
-	trim'suffix = { self!, suffix :String |
+	trim'suffix = { self!, suffix &String |
 	}
 	;; trim ASCII whitespace from the start of the string
 	trim'start = { self! |
@@ -42,4 +42,4 @@ String := Array[Num8]
 	}
 
 ;tr String'rep
-	to'string :{ self -> String }
+	to'string :{ self& -> String }

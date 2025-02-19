@@ -5,21 +5,21 @@
 ;; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
 ;ns File
-	delete = { path :String, cb!! :{} = {} |
+	delete = { path :String, cb $(->) = {} |
 	}
 	
-	move = { source'path :String, destination'path :String, cb!! :{} = {} |
+	move = { source'path :String, destination'path :String, cb $(->) = {} |
 	}
 	
-	copy = { source'path :String, destination'path :String, cb!! :{} = {} |
+	copy = { source'path :String, destination'path :String, cb $(->) = {} |
 	}
 	
 	;; max'size is in megabytes
-	read = { self, max'size :Num'w, cb!! :{buf :Array[Num8]} |
+	read = { self, max'size :Num'w, cb $(buf: Array[Num8]->) |
 		;; close the file descriptor
 	}
 	
-	write = { self, data :Array[Num8], cb!! :{} = {} |
+	write = { self, data :Array[Num8], cb $(->) = {} |
 		;; overwrite?
 		;; append?
 		

@@ -3,10 +3,10 @@
 ;c3 distinct ... = any;
 
 ;; the initial list will be on stack, if it's small
-	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on heap
+	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 
 ;ns List[X]
-	get = { self, index :Num'w -> X? |
+	get = { self&, index :Num'w -> &X? |
 		;; checks if index is less than the length
 	}
 	
@@ -27,6 +27,6 @@
 	
 	remove = { self!, index :Num'w |
 	}
-	
-	iter = { self -> Iter[X] |
-	}
+
+;impl Iter
+	iter = {}
