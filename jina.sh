@@ -59,6 +59,10 @@ generate_c3_file() {
 	done
 }
 
+generate_jina_api_file() {
+	# distributed with compiled packages, for IDE hints
+}
+
 for pkg in $(echo "$project_dir"/*.jin/); do
 	# if --no-evloop is not used
 	spm import $gnunet_namespace glib
