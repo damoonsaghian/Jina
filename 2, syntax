@@ -33,15 +33,15 @@ assignment to mutable variables:
 
 numeric types:
 , Num: floating point with mid-rad interval arithmetics (or C3 "double" if --no-flint)
-, Num'i: multi'precision integer (or C3 "isz" if --no-flint)
-, Num'w: word sized unsigned integers; compiled to "usz" type in C3
+, NumI: multi'precision integer (or C3 "isz" if --no-flint)
+, NumW: word sized unsigned integers; compiled to "usz" type in C3
 , Num8: compiled to "char" type in C3
 literal numbers:
 	1.23e4 ;; Num
 	1.0 ;; Num
-	1'234'567'890 ;; Num'i
-	0123 ;; Num'w
-	0x1234'5678'9abc'def0 ;; Num'w (on 32 bits systems, this number will be stored as 0x9abc'def0)
+	1'234'567'890 ;; NumI
+	0123 ;; NumW
+	0x1234'5678'9abc'def0 ;; NumW (on 32 bits systems, this number will be stored as 0x9abc'def0)
 	#a ;; Num8 (ASCII code for character "a")
 	#\n ;; Num8 (ASCII code for character with escape code "\n")
 	#x12 ;; Num8 (ASCII code for character with hex code 12)
@@ -131,13 +131,14 @@ actor:
 	a.do { b !B | ... }
 
 modules are files containing definitions
-any definition whose name is the module's name, with the first letter capitalized,
-	and possibly an additional number or extension (separated with an apostrophe),
-	will be exported (ie is accessible outside of the module)
+any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
+exported names can have these kind of extensions:
+, a number
+, a word starting with capital letter
+, letters inside brackets
 to access the definitions in a module which is inside a directory: dir.Definition
-to hide a module so it can't be accessed from modules in the parent directory,
+to hide a module so it can't be accessed from modules in the parent directory, or outside of the package,
 	append an apostrophe at the end of its file name
-	this method can be used to make package private definitions too
 
 a package is a collection of modules
 in a project directory, we can have multiple package directories
@@ -146,7 +147,7 @@ packages are of two kinds:
 , application packages that contain a file named "0.jina" (which must contain the init function)
 , library packages
 
-to use a library package in a another package, create a file named "your_chosen_name.p" with this format:
+to use a library package in a another package, create a file named "your'chosen'name.p" with this format:
 , first line is the name of the package
 , second line is the URL of the project containing the package
 , the format of the URL (where protocol can be gnunet, git):
@@ -157,7 +158,7 @@ if there is no URL, it refers to the current project
 to use the definitions of a package:
 	dot'p'file'name.Definition
 definitions in "std" package, are directly accessible
-	there is no need for a "std.p" file, and prefixing with "std."
+	so there is no need for a "std.p" file, and prefixing with "std."
 
 structs:
 	S := a: A, b: B
