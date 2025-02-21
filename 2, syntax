@@ -100,15 +100,6 @@ function call:
 which is equivalent to these forms:
 	f(x, y)
 	f b: y a: x
-	(x, y) @ f
-
-function with multiple match:
-	f = {
-	a :A |
-		...
-	b !B |
-		...
-	}
 
 default values for parameters:
 	f = { a = 1 , b = 2 | ... }
@@ -198,10 +189,9 @@ unions:
 type "A?" is a shortcut for "A\'null"
 enumerate on a union:
 	x :A? = 'null
-	x @ {
-	a :A |
+	x :A {
 		...
-	:'null |
+	} :'null {
 		...
 	}
 
