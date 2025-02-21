@@ -9,7 +9,7 @@ String := Array[Num8]
 	split =
 	join =
 	
-	find = { self, substring &String -> Num'w? |
+	find = { self, substring &String -> NumW? |
 	}
 	contains = { self, substring &String -> Bool |
 	}
@@ -28,7 +28,7 @@ String := Array[Num8]
 	trim = { self! |
 	}
 	
-	truncate = { self!, max'len :Num'w |
+	truncate = { self!, max'len :NumW |
 	}
 	
 	clear = { self! | Array.clear self }

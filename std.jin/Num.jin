@@ -10,9 +10,9 @@
 
 ;; if --no-flint, implement using c3 "double" to implement
 ;ns Num
-	add = { self, other :Num\Num'i\Num'w -> Num |
+	add = { self, other :Num\NumI\NumW -> Num |
 	}
-	sub = { self, other :Num\Num'z\Num'u -> Num |
+	sub = { self, other :Num\NumI\NumW -> Num |
 	}
 	
 	neg = { self -> Num |
@@ -20,11 +20,11 @@
 	abs = { self -> Num |
 	}
 	
-	mul = { self, other :Nums -> Num |
+	mul = { self, other :Num -> Num |
 	}
-	div = { self, other :Nums -> Num |
+	div = { self, other :Num -> Num |
 	}
-	pow = { self, other :Nums -> Num |
+	pow = { self, other :Num -> Num |
 	}
 	
 	next'up = { self -> Num |
@@ -76,19 +76,19 @@
 	to'string = {}
 
 ;; if --no-flint, use C3 "isz" to implement
-;ns Num'i
+;ns NumI
 
-;ns Num'w
-	add = { self, other :Num'w -> Num'w |
+;ns NumW
+	add = { self, other :NumW -> NumW |
 	}
-	sub = { self, other :Num'w -> Num'w |
+	sub = { self, other :NumW -> NumW |
 	}
 	
-	mul = { self, other :Num'w -> Num'w |
+	mul = { self, other :NumW -> NumW |
 	}
-	div = { self, other :Num'w -> Num'w |
+	div = { self, other :NumW -> NumW |
 	}
-	pow = { self, other :Num'w -> Num'w |
+	pow = { self, other :NumW -> NumW |
 	}
 	
 	min = ;c3
@@ -97,10 +97,10 @@
 	is'equal = {}
 	
 	;; creates a range iterator
-	til = { self, arg2 :Num'w -> Iter[Num'w] |
+	til = { self, arg2 :NumW -> Iter[NumW] |
 	}
 	
-	to'int = { self -> Num'i |
+	to'int = { self -> NumI |
 		;c3 return (double)self
 	}
 

@@ -6,7 +6,7 @@
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 
 ;ns List[X]
-	get = { self&, index :Num'w -> &X? |
+	get = { self&, index :NumW -> &X? |
 		;; checks if index is less than the length
 	}
 	
@@ -16,16 +16,16 @@
 	extend = { self!, extention :List[X] |
 	}
 	
-	put = { self!, element :X, at :Num'w |
+	put = { self!, element :X, at :NumW |
 	}
 	
-	insert = { self!, element :X, index :Num'w |
+	insert = { self!, element :X, index :NumW |
 	}
 	
-	trim = { self!, index :Num'w |
+	trim = { self!, index :NumW |
 	}
 	
-	remove = { self!, index :Num'w |
+	remove = { self!, index :NumW |
 	}
 
 ;impl Iter

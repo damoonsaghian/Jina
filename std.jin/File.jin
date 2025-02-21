@@ -15,7 +15,7 @@
 	}
 	
 	;; max'size is in megabytes
-	read = { self, max'size :Num'w, cb $(buf: Array[Num8]->) |
+	read = { self, max'size :NumW, cb $(buf: Array[Num8]->) |
 		;; close the file descriptor
 	}
 	
