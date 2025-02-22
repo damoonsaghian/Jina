@@ -9,8 +9,8 @@ comments:
 
 identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 	abc'efg0123
-template identifiers ("x" and "y" will be used in the definition of the variable):
-	abc[x, y]
+template identifiers ("x" and "y" can be used in the definition of the variable, where ever types are expected):
+	abc[x,y]
 
 variable definition:
 	v :T = ...
@@ -216,9 +216,9 @@ defining the methods of a struct that implements some traits:
 		...
 
 generics:
-	S[X] := a: X, b: X
+	S[x] := a: x, b: x
 bounded generics:
-	S[X :I] := a: X, b: X
+	S[x:I] := a: x, b: x
 
 to directly enter C3 code:
 	;c3 ...
