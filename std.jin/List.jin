@@ -5,21 +5,21 @@
 ;; the initial list will be on stack, if it's small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 
-;ns List[X]
-	get = { self&, index :NumW -> &X? |
+;ns List[x]
+	get = { self&, index :NumW -> &x? |
 		;; checks if index is less than the length
 	}
 	
-	append = { self!, element :X |
+	append = { self!, element :x |
 	}
 	
-	extend = { self!, extention :List[X] |
+	extend = { self!, extention :List[x] |
 	}
 	
-	put = { self!, element :X, at :NumW |
+	put = { self!, element :x, at :NumW |
 	}
 	
-	insert = { self!, element :X, index :NumW |
+	insert = { self!, element :x, index :NumW |
 	}
 	
 	trim = { self!, index :NumW |

@@ -3,22 +3,22 @@
 ;c3 distinct ... = any;
 
 Actor[X]' :=
-	state: X,
-	messages: Array[(state :X ->)]
+	state: x,
+	messages: Array[(state: x ->)]
 
-;ns Actor[X]
-	new = { state :X -> Actor[X] |
+;ns Actor[x]
+	new = { state :x -> Actor[x] |
 		;; add a pointer in the global list of actors
 		;c3
 		state, messages: []
 	}
 	
-	do = { self!, message ${state!! :X} |
+	do = { self!, message $(state: x ->) |
 		;; notify that there is a new message
 		;c3
 		self.messages.append message
 	}
 	
-	repeat = { self!, message $(state :X ->), til :Bool |
+	repeat = { self!, message $(state: x ->), til :Bool |
 		;; repeatedly send message until "til" becomes 'true
 	}

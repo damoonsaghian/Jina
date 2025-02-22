@@ -25,7 +25,7 @@ Bool := 'true \ 'false
 		}
 	}
 	
-	then[T] = { self, then :(->T), else :(->T) -> T |
+	then[t] = { self, then :(->t), else :(->t) -> t |
 		self :'true {
 			then()
 		} :'false {
