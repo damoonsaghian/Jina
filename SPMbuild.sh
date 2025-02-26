@@ -3,6 +3,7 @@ spm_import $gnunet_namespace c3c
 spm_import $gnunet_namespace flint
 spm_import $gnunet_namespace glib
 spm_import $gnunet_namespace gstreamer
+spm_import $gnunet_namespace gnunet
 
 mkdir -p "$pkg_dir/.cache/spm"
 
