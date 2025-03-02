@@ -4,8 +4,3 @@
 ;; https://git.libcamera.org/libcamera/libcamera.git/tree/src/gstreamer
 
 ;; use gstreamer gio plugin to send/receive streams to/from gstreamer
-
-;; GNUnet
-;; audio conversation is already implemented in GNUnet
-;; figure out how to send/receive streams to/from GNUnet
-;; https://git.gnunet.org/gnunet.git/tree/src/contrib/service/conversation
