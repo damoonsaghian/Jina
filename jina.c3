@@ -48,9 +48,6 @@ fn void generate_c3_file(String jin_file_path) {
 	use mutexes to hold the list of actors and their message queues
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	https://docs.gtk.org/glib/struct.RWLock.html
-	
-	self'referential fields of structures are necessarily private, and use weak references
-	https://docs.gtk.org/glib/reference-counting.html
 	*/
 	io::File! jin_file = io::File::open(jin_file_path, "r");
 	if (catch excuse = jin_file?) {

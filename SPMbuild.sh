@@ -1,20 +1,24 @@
-spm_import $gnunet_namespace c3c
-# if target platform is not ELF freestanding (kernel, embeded)
-spm_import $gnunet_namespace flint
-spm_import $gnunet_namespace glib
-spm_import $gnunet_namespace gstreamer
-spm_import $gnunet_namespace gnunet
+spm_import c3c
+# if target platform is not ELF freestanding (kernel or embeded)
+spm_import flint
+spm_import glib
+spm_import gstreamer
 
 mkdir -p "$pkg_dir/.cache/spm"
 
-sh "$pkg_dir/jina.sh" "$pkg_dir"
-ln "$pkg_dir/.cache/jina/out/$ARCH/std/libstd.jin.so" "$pkg_dir/.cache/spm/$ARCH/"
+cat <<-EOF > "$pkg_dir/.cache/c3c/project.json"
+{
+	"sources": [ "../../jina.c3" ],
+	"output": "$build_dir/exec/jina",
+	"targets": {
+		"$TARGET": {
+			"type": "executable",
+		},
+	},
+}
+EOF
+c3c build $TARGET --path "$pkg_dir/.cache/c3c"
+spm_xport jina inst/cmd
 
-ln "$pkg_dir"/jina/jina.sh "$pkg_dir/.cache/spm/$ARCH/"
-
-echo '#!/usr/bin/env sh
-sh "$(dirname "$(realpath "$0")")/../jina.sh" "$@"
-' > "$pkg_dir/.cache/spm/$ARCH/exec/jina"
-chmod +x "$pkg_dir/.cache/spm/$ARCH/exec/jina"
-
-spm_xport inst/cmd jina
+"$build_dir/exec/jina" "$pkg_dir"
+ln "$pkg_dir/.cache/jina/std/build/$TARGET/libstd.jin.so" "$build_dir/"
