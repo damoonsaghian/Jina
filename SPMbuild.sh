@@ -4,8 +4,7 @@ spm_import flint
 spm_import glib
 spm_import gstreamer
 
-mkdir -p "$pkg_dir/.cache/spm"
-
+mkdir -p "$pkg_dir/.cache/c3c"
 cat <<-EOF > "$pkg_dir/.cache/c3c/project.json"
 {
 	"sources": [ "../../jina.c3" ],
@@ -18,7 +17,7 @@ cat <<-EOF > "$pkg_dir/.cache/c3c/project.json"
 }
 EOF
 c3c build $TARGET --path "$pkg_dir/.cache/c3c"
-spm_xport jina inst/cmd
+spm_xcript jina inst/cmd
 
 "$build_dir/exec/jina" "$pkg_dir"
-ln "$pkg_dir/.cache/jina/std/build/$TARGET/libstd.jin.so" "$build_dir/"
+ln "$pkg_dir/.cache/jina/std/build/$TARGET/libstd.jin.so" "$build_dir/exp/lib"
