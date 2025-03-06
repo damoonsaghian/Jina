@@ -1,7 +1,7 @@
 Bool := 'true \ 'false
 
 ;ns Bool
-	and = { self, arg2 :(->Bool) -> Bool |
+	and = { self, arg2 &(->Bool) -> Bool |
 		self :'true {
 			arg2()
 		} :'false {
@@ -9,7 +9,7 @@ Bool := 'true \ 'false
 		}
 	}
 	
-	or = { self, arg2 :(->Bool) -> Bool |
+	or = { self, arg2 &(->Bool) -> Bool |
 		self :'true {
 			'true
 		} :'false {
@@ -25,7 +25,7 @@ Bool := 'true \ 'false
 		}
 	}
 	
-	then[t] = { self, then :(->t), else :(->t) -> t |
+	then[t] = { self, then &(->t), else &(->t) -> t |
 		self :'true {
 			then()
 		} :'false {
