@@ -4,7 +4,7 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, using type tags (inspired by Rust):
+memory management is done in a sane way, using type tags:
 , plain type: T
 , mutable borrow type: !T
 , immutable borrow type: &T
@@ -20,8 +20,6 @@ borrow types allow access by reference, but since the value is not moved into th
 	they can be returned from a function only if the primary lender is captured or is a function argument
 shared types allow access by reference, and they do run'time reference counting
 	when the reference count reaches zero, their memory will be deallocated
-	in Jina, there is no internal mutability; so reference cycles are impossible
-	"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
 
 plain type values can be put into:
 , plain (copy stack, move/copy heap)
@@ -30,7 +28,7 @@ plain type values can be put into:
 , shared (copy stack, move/copy heap)
 and by "put into" i mean:
 , variable definition and assignment
-, field assignment
+, being a component of a type, eg a field of a record
 , captured in a closure
 mutable borrow can be put into:
 , mutable borrow (borrow)
@@ -41,6 +39,11 @@ shared own can be put into:
 , immutable borrow (copy stack, borrow heap)
 , shared (copy stack, borrow heap)
 	increments the reference counter
+
+reference counting combined with interior mutability can create reference cycles
+"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
+interior mutability in Jina is only possible through actors
+so to avoid reference cycles, just do not include "$Actor(T)" type in the state of an actor
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
