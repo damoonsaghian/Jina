@@ -4,46 +4,63 @@ Mahsa Jina Amini was a 22 years old girl, murdered by the evil Islamic regime in
 at her funeral, these words were written on a stone above her grave:
 	beloved Jina, you will not die, your name will become a code
 
-memory management is done in a sane way, using type tags:
-, plain type: T
-, mutable borrow type: !T
-, immutable borrow type: &T
-, shared type: $T
+sane memory management means no garbage collector
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
+this is done by introducing three kind of reference types:
+, mutable reference (to a value of type T): T!
+, immutable reference: T&
+, shared reference: T$
 
-plain type values will be copied, or moved if not used any more in the following code
+T put into (variable definition and assignment):
+, T (copy stack, copy/move heap)
+, T$ (copy stack, copy/move heap)
+, T& (copy stack, borrow heap)
+, T! (borrow)
+$T put into:
+, T (copy)
+, T$ (copy stack, ref count heap)
+, T& (copy stack, borrow heap)
+, T! (error)
+&T put into:
+, T (copy)
+, T$ (error)
+, T& (copy stack, borrow heap)
+, T! (error)
+T! put into:
+, T (copy)
+, T$ (error)
+, T& (copy stack, borrow heap)
+, T! (borrow)
+
+as a component of a compound type (eg a field of a record, or a variable captured by a closure)
+a :(T, T$)
+a.0 :T!
+a.1 :T$
+a :(T, T$)$
+a.0 :T$
+a.1 :T$
+a :(T, T&)&
+a.0 :T&
+a.1 :T&
+a :(T, T&, T!)!
+a.0 :T!
+a.1 :T&
+a.2 :T!
+
+the heap allocated part of plain type values will be copied (or moved if not used any more in the following code)
 	and at the end of the function, if they are not moved out, their memory will be deallocated
-type tags alter this behavior
-borrow types allow access by reference, but since the value is not moved into them,
-	they don't intervene in the deallocation at the end of the function
-	they can be returned from a function only if the primary lender is captured or is a function argument
-shared types allow access by reference, and they do run'time reference counting
-	when the reference count reaches zero, their memory will be deallocated
-
-plain type values can be put into:
-, plain (copy stack, move/copy heap)
-, mutable borrow (borrow)
-, immutable borrow (copy stack, borrow heap)
-, shared (copy stack, move/copy heap)
-and by "put into" i mean:
-, variable definition and assignment
-, being a component of a type, eg a field of a record
-, captured in a closure
-mutable borrow can be put into:
-, mutable borrow (borrow)
-, immutable borrow (copy stack, borrow heap)
-immutable borrow can be put into:
-, immutable borrow (copy stack, borrow heap)
-shared own can be put into:
-, immutable borrow (copy stack, borrow heap)
-, shared (copy stack, borrow heap)
-	increments the reference counter
+with references we can avoid copying
+also mutable references allows shared mutation
+	as opposed to the unique mutation of plain types, that can only be seen by one variable
+since non'shared references don't own the value, they don't intervene in memory management
+for shared refs, the reference count will be decreased at the end of the function
+	and when the reference count reaches zero, their memory will be deallocated
 
 reference counting combined with interior mutability can create reference cycles
 "https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
 interior mutability in Jina is only possible through actors
-so to avoid reference cycles, just do not include "$Actor(T)" type in the state of an actor
+so to avoid reference cycles, just do not include "Actor[T]$" type in the state of an actor
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
