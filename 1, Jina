@@ -7,22 +7,32 @@ at her funeral, these words were written on a stone above her grave:
 sane memory management means no garbage collector
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
-this is done by introducing three kind of reference types:
-, mutable reference (to a value of type T): T!
-, immutable reference: T&
+
+three kinds of reference types:
+, mutable borrow reference (to a value of type T): T!
+, immutable borrow reference: T&
 , shared reference: T$
 
-T put into (variable definition and assignment):
+at the end of functions:
+, values with normal (ie not reference) types: if they are not moved out, their memory will be deallocated
+, borrow references: they don't own the value, so they don't participate in memory management
+, shared references: reference count will be decreased, and when it reaches zero, their memory will be deallocated
+
+when a normal type is put into (variable definition and assignment) a borrow reference,
+	the borrow reference will be tagged by a label representing the current function block
+only untagged borrow references can be returned from functions
+
+T put into:
 , T (copy stack, copy/move heap)
 , T$ (copy stack, copy/move heap)
 , T& (copy stack, borrow heap)
 , T! (borrow)
-$T put into:
+T$ put into:
 , T (copy)
 , T$ (copy stack, ref count heap)
 , T& (copy stack, borrow heap)
 , T! (error)
-&T put into:
+T& put into:
 , T (copy)
 , T$ (error)
 , T& (copy stack, borrow heap)
@@ -33,29 +43,25 @@ T! put into:
 , T& (copy stack, borrow heap)
 , T! (borrow)
 
-as a component of a compound type (eg a field of a record, or a variable captured by a closure)
-a :(T, T$)
+as a component of a compound type (eg fields of a record, or variables captured by a closure)
+a :(T, T$) ;; T& and T! are not allowed
 a.0 :T!
 a.1 :T$
-a :(T, T$)$
+a :(T, T$)$ ;; T& and T! are not allowed
 a.0 :T$
 a.1 :T$
-a :(T, T&)&
+a :(T, T$, T&)& ;; T! is not allowed
 a.0 :T&
 a.1 :T&
-a :(T, T&, T!)!
+a.2 :T&
+a :(T, T$, T&, T!)!
 a.0 :T!
 a.1 :T&
-a.2 :T!
+a.2 :T&
+a.3 :T!
 
-the heap allocated part of plain type values will be copied (or moved if not used any more in the following code)
-	and at the end of the function, if they are not moved out, their memory will be deallocated
-with references we can avoid copying
-also mutable references allows shared mutation
-	as opposed to the unique mutation of plain types, that can only be seen by one variable
-since non'shared references don't own the value, they don't intervene in memory management
-for shared refs, the reference count will be decreased at the end of the function
-	and when the reference count reaches zero, their memory will be deallocated
+mutable borrow references allows shared mutation
+as opposed to the unique mutation of normal types, that can only be seen by one variable
 
 reference counting combined with interior mutability can create reference cycles
 "https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"

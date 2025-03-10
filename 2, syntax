@@ -12,16 +12,16 @@ identifiers (variable names) start with an alphabetic character, and can include
 template identifiers ("x" and "y" can be used in the definition of the variable, where ever types are expected):
 	abc[x,y]
 
-variable definition:
+defining a normal variable:
 	v :T = ...
 	v = ...
-mutable ref type variable definition:
+defining a mutable reference variable:
 	v :T! = ...
 	v! = ...
-immutable ref type variable definition:
+defining an immutable reference variable:
 	v :T& = ...
 	v& = ...
-shared reference variable definition:
+defining a shared reference variable:
 	v :T$ = ...
 	v$ = ...
 
@@ -47,10 +47,10 @@ lists:
 	l :List[Num] = [1, 2, 3]
 indexing:
 	l_1
+note that the type of the result of indexing above is: Num&
 mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
-initial value of lists will be kept on stack
 
 strings are UTF8 encoded, and implemented using lists:
 	s :String = "abc def"
@@ -89,9 +89,9 @@ mutating a record (if "r" is a mutable variable):
 small records will be kept on stack, big ones on the heap
 
 function:
-	f = { a :A, b &B -> C | ... }
+	f = { a :A, b :B& -> C | ... }
 note that the type of above function is:
-	(a: A, b: &B -> C)
+	(a: A, b: B& -> C)
 function call:
 	f x y
 which is equivalent to these forms:
@@ -126,7 +126,7 @@ any type that implements "Iter" interface, must define an "iter" method,
 
 actor:
 	a = Actor.new B.(x, y)
-	a.do { b !B | ... }
+	a.do { b :B! | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
@@ -196,7 +196,7 @@ enumerate on a union:
 
 traits:
 	;tr T
-		m1 :(self: !T, x: X -> Y)
+		m1 :(self: T!, x: X -> Y)
 		m2 = { self! |
 			;; default implementation
 		}
