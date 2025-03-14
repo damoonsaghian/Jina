@@ -37,6 +37,8 @@ fn void generate_c3_file(String jin_file_path) {
 	https://docs.gtk.org/glib/struct.ThreadPool.html
 	https://docs.gtk.org/glib/struct.MainContext.html
 	
+	a tuple of actor's ID and memory address is appended to a linked list
+	
 	the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
 	, a heavy computation that blocks its thread, can't make the UI lag
 	, the UI remains resposive, even when the number of non'UI actors is extremely large

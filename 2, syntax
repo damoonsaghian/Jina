@@ -53,7 +53,7 @@ mutating lists:
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
 
 strings are UTF8 encoded, and implemented using lists:
-	s :String = "abc def"
+	s :Str = "abc def"
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	"""
@@ -97,7 +97,7 @@ function call:
 which is equivalent to these forms:
 	f(x, y)
 	f b: y a: x
-	(x, y) @ f
+	x, y .. f
 
 default values for parameters:
 	f = { a = 1 , b = 2 | ... }
@@ -188,7 +188,7 @@ unions:
 type "?A" is a shortcut for "A\'null"
 enumerate on a union:
 	x :?A = 'null
-	x @ { x :A |
+	x .. { x :A |
 		...
 	x :'null |
 		...
