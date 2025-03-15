@@ -26,6 +26,12 @@ only external borrow references can be returned from functions
 mutable borrow references allows shared mutation
 as opposed to the unique mutation of normal types, that can only be seen by one variable
 
+reference counting combined with interior mutability can create reference cycles,
+	for self referencing or mutually referencing types
+"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
+self referencing and mutually referencing types are not allowed in Jina
+so there is no reference cycles in Jina
+
 behavior of references in variable definitions, and in case of mutable ones (ie T and T!), assignments
 when a variable of type "T" is put into:
 , a variable of type "T", copy stack, copy/move heap
@@ -82,14 +88,6 @@ Jina uses actors for async programming, and controls aliasing (sharing) and muta
 messages sent to actors are closures with normal (ie not reference) type
 and as described above, they can only capture variables with normal types or shared (immutable) reference types
 thus messages can safely be called asynchronously, since they can't change their captured environment
-
-reference counting combined with interior mutability can create reference cycles,
-	for self referencing or mutually referencing types
-"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
-interior mutability in Jina is only possible through actor references
-so in Jina self referencing types and mutually referencing types, if are placed inside an actor,
-	can't be a shared reference
-	in other words, use Actor[T]& instead of Actor[T]$
 
 types show us what we can do with the data, ie which operations are valid
 subtyping is problematic:
