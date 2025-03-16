@@ -8,16 +8,19 @@ sane memory management means no garbage collector
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
-there are three kinds of reference types in Jina:
+there are four kinds of reference types in Jina:
 , mutable borrow reference (to a value of type T): T!
 , immutable borrow reference: T&
 , shared reference: T$
+, actor reference: T@
 
 dealing with allocated memory, at the end of functions:
 , for values with normal (ie not reference) types, if not moved out, the memory will be deallocated
 , for borrow references, since they don't own the value, nothing happens
 , for shared references, the reference count will be decreased by one, and when it reaches zero,
 	the memory will be deallocated
+, actors are opaque references and are referred to by an ID (instead of memory address)
+	actors (and their messages) can only be destroyed explicitly
 
 borrow references in function arguments, or those captured by the function, will be tagged as external
 this tag will be inherited by further borrowers
@@ -26,50 +29,54 @@ only external borrow references can be returned from functions
 mutable borrow references allows shared mutation
 as opposed to the unique mutation of normal types, that can only be seen by one variable
 
-reference counting combined with interior mutability can create reference cycles,
-	for self referencing or mutually referencing types
+reference counting combined with interior mutability can create reference cycles
 "https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
-self referencing and mutually referencing types are not allowed in Jina
-so there is no reference cycles in Jina
+in Jina interior mutability is only possible in actors
+since actors are not reference counted, there is no reference cycles in Jina
 
 behavior of references in variable definitions, and in case of mutable ones (ie T and T!), assignments
 when a variable of type "T" is put into:
 , a variable of type "T", copy stack, copy/move heap
 , a variable of type "T$", copy stack, copy/move heap
+, a variable of type "T@", copy stack, copy/move heap
 , a variable of type "T&", copy stack, borrow heap
 , a variable of type "T!", borrow
 when a variable of type "T$" is put into:
 , a variable of type "T", copy
 , a variable of type "T$", copy stack, ref count heap
+, a variable of type "T@", it's compile time error
 , a variable of type "T&", copy stack, borrow heap
 , a variable of type "T!", it's compile time error
 when a variable of type "T&" is put into:
 , a variable of type "T", copy
 , a variable of type "T$", it's compile time error
+, a variable of type "T@", it's compile time error
 , a variable of type "T&", copy stack, borrow heap
 , a variable of type "T!", it's compile time error
 when a variable of type "T!" is put into:
 , a variable of type "T", copy
 , a variable of type "T$", it's compile time error
+, a variable of type "T@", it's compile time error
 , a variable of type "T&", copy stack, borrow heap
 , a variable of type "T!", borrow
+when a variable of type "T!" is put into:
+, a variable of type "T", it's compile time error
+, a variable of type "T$", it's compile time error
+, a variable of type "T@", copy ID
+, a variable of type "T&", it's compile time error
+, a variable of type "T!", it's compile time error
 
 behavior of references as components of a compound type (eg fields of a record, or variables captured by a closure):
 , if "a" is a variable with type "(T, T$)" (T& and T! are not allowed):
 	type of "a.0" is "T"
 	type of "a.1" is "T$"
-, if "a" is a variable with type "(T, T$)$" (T& and T! are not allowed):
-	type of "a.0" is "T$"
-	type of "a.1" is "T$"
-, if "a" is a variable with type "(T, T$, T&)&" (T! is not allowed):
+, "(T$)$" (T, T& and T! are not allowed)
+, "(T&)&" (T, T$ and T! are not allowed)
+, if "a" is a variable with type "(T&, T!)!" (T and T$ are not allowed):
 	type of "a.0" is "T&"
-	type of "a.1" is "T&"
-	type of "a.2" is "T&"
-, if "a" is a variable with type "(T, T$, T&, T!)!":
-	type of "a.0" is "T!"
-	type of "a.1" is "T&"
-	type of "a.2" is "T&"
-	type of "a.3" is "T!"
+	type of "a.1" is "T!"
+"T@" is an opaque reference, so its components are inaccessible
+"T@" can be a component of other types, and when accessed (using dot notation), the type is always "T@"
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -83,7 +90,7 @@ to deal with it, programming languages choose different approaches:
 	and when mutability is necessary, they use monads or algebraic effects to control shared mutability
 	avoiding mutability, and the need for aggressive garbage collection, is not good for performance
 
-Jina uses actors for async programming, and controls aliasing (sharing) and mutability, using reference types
+Jina controls aliasing (sharing) and mutability, using reference types
 	that is the same approach used to deal with memory management
 messages sent to actors are closures with normal (ie not reference) type
 and as described above, they can only capture variables with normal types or shared (immutable) reference types
