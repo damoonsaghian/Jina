@@ -14,8 +14,15 @@ there are four kinds of reference types in Jina:
 , shared reference: T$
 , actor reference: T@
 
+when a value with normal (ie not reference) type is aliased:
+, if it is static (ie a module definition), the alias is a pointer to the value
+	but when it's mutated, the alias will own a copy of the value
+, otherwise, if it's not used in the following code, the value will be moved to the alias
+, otherwise, the alias will own a copy of the value
+
 dealing with allocated memory, at the end of functions:
-, for values with normal (ie not reference) types, if not moved out, the memory will be deallocated
+, for dynamic (not static) values with normal types, if they are not moved out of the function,
+	the memory will be deallocated
 , for borrow references, since they don't own the value, nothing happens
 , for shared references, the reference count will be decreased by one, and when it reaches zero,
 	the memory will be deallocated
@@ -36,30 +43,30 @@ since actors are not reference counted, there is no reference cycles in Jina
 
 behavior of references in variable definitions, and in case of mutable ones (ie T and T!), assignments
 when a variable of type "T" is put into:
-, a variable of type "T", copy stack, copy/move heap
-, a variable of type "T$", copy stack, copy/move heap
-, a variable of type "T@", copy stack, copy/move heap
-, a variable of type "T&", copy stack, borrow heap
+, a variable of type "T", static ref/copy/move
+, a variable of type "T$", static ref/copy/move
+, a variable of type "T@", static ref/copy/move
+, a variable of type "T&", borrow
 , a variable of type "T!", borrow
 when a variable of type "T$" is put into:
 , a variable of type "T", copy
-, a variable of type "T$", copy stack, ref count heap
+, a variable of type "T$", ref count
 , a variable of type "T@", it's compile time error
-, a variable of type "T&", copy stack, borrow heap
+, a variable of type "T&", borrow
 , a variable of type "T!", it's compile time error
 when a variable of type "T&" is put into:
 , a variable of type "T", copy
 , a variable of type "T$", it's compile time error
 , a variable of type "T@", it's compile time error
-, a variable of type "T&", copy stack, borrow heap
+, a variable of type "T&", borrow
 , a variable of type "T!", it's compile time error
 when a variable of type "T!" is put into:
 , a variable of type "T", copy
 , a variable of type "T$", it's compile time error
 , a variable of type "T@", it's compile time error
-, a variable of type "T&", copy stack, borrow heap
+, a variable of type "T&", borrow
 , a variable of type "T!", borrow
-when a variable of type "T!" is put into:
+when a variable of type "T@" is put into:
 , a variable of type "T", it's compile time error
 , a variable of type "T$", it's compile time error
 , a variable of type "T@", copy ID
@@ -67,16 +74,19 @@ when a variable of type "T!" is put into:
 , a variable of type "T!", it's compile time error
 
 behavior of references as components of a compound type (eg fields of a record, or variables captured by a closure):
-, if "a" is a variable with type "(T, T$)" (T& and T! are not allowed):
-	type of "a.0" is "T"
-	type of "a.1" is "T$"
-, "(T$)$" (T, T& and T! are not allowed)
-, "(T&)&" (T, T$ and T! are not allowed)
-, if "a" is a variable with type "(T&, T!)!" (T and T$ are not allowed):
-	type of "a.0" is "T&"
-	type of "a.1" is "T!"
+, elements of a normal compound type, can be of normal type or be shared or actor references
+	(T, T$, T@)
+	T& and T! are not allowed
+, elements of a shared reference to a compound type, can be shared or actor references
+	(T$, T@)$
+	T, T& and T! are not allowed
+, elements of an immutable borrow reference to a compound type, can be immutable borrow or actor references
+	(T&, T@)&
+	T, T$ and T! are not allowed
+, elements of a mutable borrow reference to a compound type, can be mutable/immutable borrow or actor references
+	(T&, T!, T@)!
+	T and T$ are not allowed
 "T@" is an opaque reference, so its components are inaccessible
-"T@" can be a component of other types, and when accessed (using dot notation), the type is always "T@"
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -93,8 +103,9 @@ to deal with it, programming languages choose different approaches:
 Jina controls aliasing (sharing) and mutability, using reference types
 	that is the same approach used to deal with memory management
 messages sent to actors are closures with normal (ie not reference) type
-and as described above, they can only capture variables with normal types or shared (immutable) reference types
-thus messages can safely be called asynchronously, since they can't change their captured environment
+and as described above, they can only capture variables with normal types,
+	shared (immutable) reference types, or actor reference types
+thus messages can safely be called concurrently, since they can't change their captured environment
 
 types show us what we can do with the data, ie which operations are valid
 subtyping is problematic:

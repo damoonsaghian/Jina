@@ -9,39 +9,45 @@ comments:
 
 identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 	abc'efg0123
-template identifiers ("x" and "y" can be used in the definition of the variable, where ever types are expected):
+generic identifiers ("x" and "y" can be used in the definition of the identifier, where types are expected):
 	abc[x,y]
 
-defining a normal variable:
+defining a variable with normal type:
 	v :T = ...
 	v = ...
-defining a mutable reference variable:
+defining a variable with mutable borrow reference type:
 	v :T! = ...
 	v! = ...
-defining an immutable reference variable:
+defining a variable with immutable borrow reference type:
 	v :T& = ...
 	v& = ...
-defining a shared reference variable:
+defining a variable with shared reference type:
 	v :T$ = ...
 	v$ = ...
+defining a variable with actor reference type:
+	v :T@ = ...
+	v@ = ...
 
-assignment to mutable variables:
+assignment to mutable variables (ie with normal type or mutable borrow reference type):
 	v. = ...
 
 numeric types:
 , Num: floating point with mid-rad interval arithmetics (or C3 "double" if --no-flint)
 , NumI: multi'precision integer (or C3 "isz" if --no-flint)
 , NumW: word sized unsigned integers; compiled to "usz" type in C3
-, Num8: compiled to "char" type in C3
+, NumB: compiled to "char" type in C3
 literal numbers:
 	1.23e4 ;; Num
 	1.0 ;; Num
 	1'234'567'890 ;; NumI
 	0123 ;; NumW
 	0x1234'5678'9abc'def0 ;; NumW (on 32 bits systems, this number will be stored as 0x9abc'def0)
-	#a ;; Num8 (ASCII code for character "a")
-	#\n ;; Num8 (ASCII code for character with escape code "\n")
-	#x12 ;; Num8 (ASCII code for character with hex code 12)
+	#a ;; NumB (ASCII code for character "a")
+	#\n ;; NumB (ASCII code for character with escape code "\n")
+	#x12 ;; NumB (ASCII code for character with hex code 12)
+
+symbols are their own types:
+	s :'s = 's
 
 lists:
 	l :List[Num] = [1, 2, 3]
@@ -63,16 +69,10 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-symbols are their own types:
-	s :'s = 's
-
-dictionaries are indexed using strings (instead of integers as in lists):
+dictionaries are indexed using strings (instead of word'sized integers as in lists):
 	d :Dict[Num] = [a: 1, b: 2, c: 3]
 indexing:
 	d_"a"
-
-lists and dictionaries can initially be stored on the stack, if they are small
-then when they grow beyond its initial size, they will be reallocated on the heap
 
 records:
 	r :(a: Num, b: Num, c: Num) = a: 1, b: 2, c: 3
@@ -185,10 +185,11 @@ which is equivalent to:
 
 unions:
 	B := 'true \ 'false
-type "?A" is a shortcut for "A\'null"
+type "?A" is a shortcut for "'null/A"
 enumerate on a union:
 	x :?A = 'null
-	x >> { x :A |
+	x >> {
+	x :A |
 		...
 	x :'null |
 		...
@@ -201,7 +202,7 @@ traits:
 			;; default implementation
 		}
 trait inheritance:
-	;tr T : T1, T2
+	;tr T ::T1 ::T2
 		...
 defining the methods of a struct that implements some traits:
 	;ns S
@@ -216,7 +217,7 @@ defining the methods of a struct that implements some traits:
 generics:
 	S[x] := a: x, b: x
 bounded generics:
-	S[x:I] := a: x, b: x
+	S[x::I] := a: x, b: x
 
 to directly enter C3 code:
 	;c3 ...
