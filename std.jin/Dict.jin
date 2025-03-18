@@ -1,11 +1,4 @@
-;; declare required functions and types related to ghash from glib2
-;c3 extern fn ...;
-;c3 distinct ... = any;
-
-;; for now just use glib2 hashtables
-	https://docs.gtk.org/glib/struct.HashTable.html
-	https://docs.gtk.org/glib/struct.HashTableIter.html
-
+;; for now, use std::collections::map(<String,value>)
 ;; maybe in the future we can implement dicts using adaptive radix tree
 	https://en.wikipedia.org/wiki/Radix_tree
 	https://www.the-paper-trail.org/post/art-paper-notes/

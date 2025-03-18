@@ -2,26 +2,26 @@
 ;c3 extern fn
 
 ;ns Sys
-	print = { message &String |
+	print = { message :Str& |
 		;c3 std::io::printn
 	}
 	
-	print'err = { message &String |
+	print'err = { message :Str& |
 	}
 	
-	read = { cb $(answer &String ->) |
+	read = { cb $(answer :Str& ->) |
 		;; read from stdin (non'blocking io)
 	}
 	
-	exec = { program'name &String, args &String? = 'null -> stdin: File, stdout: File |
+	exec = { program'name :Str&, args :?Str& = 'null -> stdin: File, stdout: File |
 	}
 	
-	get'env = { -> String |
+	get'env = { -> Str |
 	}
 	
-	get'args = { -> String |
+	get'args = { -> Str |
 	}
 	
-	get'time = { format &String = "" -> String |
+	get'time = { format :Str& = "" -> Str |
 		;c3 std::time
 	}

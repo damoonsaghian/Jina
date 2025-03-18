@@ -2,7 +2,6 @@
 ;c3 extern fn ...;
 ;c3 distinct ... = any;
 ;; https://flintlib.org/
-;; https://flintlib.org/doc/fmpz.html
 
 ;; minus operator
 	unary: "-x" (no space after minus sign) is equivalent to "x.neg()"
@@ -72,12 +71,14 @@
 ;impl Ord
 	is'less = {}
 
-;impl String'rep
+;impl StrRep
 	to'string = {}
 
 ;; if --no-flint, use C3 "isz" to implement
+;; https://flintlib.org/doc/fmpz.html
 ;ns NumI
 
+;; use "usz" to implement
 ;ns NumW
 	add = { self, other :NumW -> NumW |
 	}
@@ -107,7 +108,7 @@
 ;impl Ord
 	is'less = {}
 
-;impl String'rep
+;impl StrRep
 	to'string = {}
 
-;ns Num8
+;ns NumB

@@ -1,12 +1,15 @@
-;; declare required functions and types for garray from glib2
-;c3 extern fn ...;
-;c3 distinct ... = any;
-
-;; the initial list will be on stack, if it's small
+;; std::collections::list(<t>)
+;; the initial list will be on stack, if number of elements and their size is small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 
+;; implement as a combination of list (fast read) and linked list (fast write)
+;; std::collections::linkedlist(<t>)
+;; originally stored as a list with a defined length and number of elements
+;; any mutation other than appending, splits the array and links them
+;; splat chunks except the last one, will be filled from the end
+
 ;ns List[x]
-	get = { self&, index :NumW -> &x? |
+	get = { self&, index :NumW -> ?x& |
 		;; checks if index is less than the length
 	}
 	

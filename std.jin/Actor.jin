@@ -2,9 +2,9 @@
 ;c3 extern fn ...;
 ;c3 distinct ... = any;
 
-Actor[X]' :=
+Actor[x]' :=
 	state: x,
-	messages: Array[$(state: x ->)]
+	messages: List[(state: x ->)]
 
 ;ns Actor[x]
 	new = { state :x -> Actor[x] |
@@ -13,12 +13,12 @@ Actor[X]' :=
 		state, messages: []
 	}
 	
-	do = { self!, message $(state: x ->) |
+	do = { self!, message :(state: x ->) |
 		;; notify that there is a new message
 		;c3
 		self.messages.append message
 	}
 	
-	repeat = { self!, message $(state: x ->), til :Bool |
+	repeat = { self!, message :(state: x ->), til :Bool |
 		;; repeatedly send message until "til" becomes 'true
 	}
