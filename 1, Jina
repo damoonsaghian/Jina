@@ -8,85 +8,68 @@ sane memory management means no garbage collector
 "https://www.toptal.com/software/eliminating-garbage-collector"
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
-there are four kinds of reference types in Jina:
-, mutable borrow reference (to a value of type T): T!
-, immutable borrow reference: T&
-, shared reference: T$
-, actor reference: T@
+there are four kinds of types in Jina:
+, immutable borrow: T
+, mutable borrow: T!
+, unique: T!!
+, shared: T$
 
-when a value with normal (ie not reference) type is aliased:
-, if it is static (ie a module definition), the alias is a pointer to the value
-	but when it's mutated, the alias will own a copy of the value
-, otherwise, if it's not used in the following code, the value will be moved to the alias
-, otherwise, the alias will own a copy of the value
+borrow types in function arguments, or those captured by the function, will be tagged as external
+this tag will be inherited by further borrowers
+only external borrow types can be returned from functions
+
+mutation of unique types, can only be seen by one variable
+mutable borrow types allow shared mutation
 
 dealing with allocated memory, at the end of functions:
-, for dynamic (not static) values with normal types, if they are not moved out of the function,
-	the memory will be deallocated
-, for borrow references, since they don't own the value, nothing happens
-, for shared references, the reference count will be decreased by one, and when it reaches zero,
-	the memory will be deallocated
-, actors are opaque references and are referred to by an ID (instead of memory address)
-	actors (and their messages) can only be destroyed explicitly
+, for borrow types, since they don't own the value, nothing happens
+, for unique types, if they are not moved out of the function, the memory will be deallocated
+, for shared types, the reference count will be decreased by one,
+	and when it reaches zero, the memory will be deallocated
 
-borrow references in function arguments, or those captured by the function, will be tagged as external
-this tag will be inherited by further borrowers
-only external borrow references can be returned from functions
-
-mutable borrow references allows shared mutation
-as opposed to the unique mutation of normal types, that can only be seen by one variable
-
-reference counting combined with interior mutability can create reference cycles
-"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
-in Jina interior mutability is only possible in actors
-since actors are not reference counted, there is no reference cycles in Jina
-
-behavior of references in variable definitions, and in case of mutable ones (ie T and T!), assignments
+behavior of types in variable definitions (and assignments, in case of mutable ones, ie T! and T!!)
 when a variable of type "T" is put into:
-, a variable of type "T", static ref/copy/move
-, a variable of type "T$", static ref/copy/move
-, a variable of type "T@", static ref/copy/move
-, a variable of type "T&", borrow
-, a variable of type "T!", borrow
-when a variable of type "T$" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", ref count
-, a variable of type "T@", it's compile time error
-, a variable of type "T&", borrow
-, a variable of type "T!", it's compile time error
-when a variable of type "T&" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", it's compile time error
-, a variable of type "T@", it's compile time error
-, a variable of type "T&", borrow
-, a variable of type "T!", it's compile time error
+, a variable of type "T", copy stack, borrow heap/static
+, a variable of type "T!", copy
+, a variable of type "T!!", copy
+, a variable of type "T$", copy
 when a variable of type "T!" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", it's compile time error
-, a variable of type "T@", it's compile time error
-, a variable of type "T&", borrow
+, a variable of type "T", copy stack, borrow heap
 , a variable of type "T!", borrow
-when a variable of type "T@" is put into:
-, a variable of type "T", it's compile time error
-, a variable of type "T$", it's compile time error
-, a variable of type "T@", copy ID
-, a variable of type "T&", it's compile time error
-, a variable of type "T!", it's compile time error
+, a variable of type "T!!", copy
+, a variable of type "T$", copy
+when a variable of type "T!!" is put into:
+, a variable of type "T", copy stack, borrow heap
+, a variable of type "T!", borrow
+, a variable of type "T!!", move
+, a variable of type "T$", move
+when a variable of type "T$" is put into:
+, a variable of type "T", copy stack, borrow heap
+, a variable of type "T!", it's compile'time error
+, a variable of type "T!!", it's compile'time error
+, a variable of type "T$", ref count
 
-behavior of references as components of a compound type (eg fields of a record, or variables captured by a closure):
-, elements of a normal compound type, can be of normal type or be shared or actor references
-	(T, T$, T@)
-	T& and T! are not allowed
-, elements of a shared reference to a compound type, can be shared or actor references
-	(T$, T@)$
-	T, T& and T! are not allowed
-, elements of an immutable borrow reference to a compound type, can be immutable borrow or actor references
-	(T&, T@)&
-	T, T$ and T! are not allowed
-, elements of a mutable borrow reference to a compound type, can be mutable/immutable borrow or actor references
-	(T&, T!, T@)!
-	T and T$ are not allowed
-"T@" is an opaque reference, so its components are inaccessible
+type kinds as components of a compound type (eg fields of a record, or variables captured in a closure):
+, v :(T, T!, T!!, T$)
+	v.0 :T
+	v.1 :T
+	v.2 :T
+	v.3 :T
+, v :(T, T!, T!!, T$)!
+	v.0 :T
+	v.1 :T!
+	v.2 :T!
+	v.3 :T
+, v :(T, T!, T!!, T$)!!
+	v.0 :T!!
+	v.1 :T!!
+	v.2 :T!!
+	v.3 :T$
+, v :(T, T!, T!!, T$)$
+	v.0 :T$
+	v.1 :T$
+	v.2 :T$
+	v.3 :T$
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -100,12 +83,19 @@ to deal with it, programming languages choose different approaches:
 	and when mutability is necessary, they use monads or algebraic effects to control shared mutability
 	avoiding mutability, and the need for aggressive garbage collection, is not good for performance
 
-Jina controls aliasing (sharing) and mutability, using reference types
-	that is the same approach used to deal with memory management
-messages sent to actors are closures with normal (ie not reference) type
-and as described above, they can only capture variables with normal types,
-	shared (immutable) reference types, or actor reference types
+Jina uses actors for asynchronous programming, and controls aliasing (sharing) and mutability,
+	using the same approach used to deal with memory management
+messages sent to actors are closures with unique type
+and as shown above, their captured variables have either unique or shared (immutable) type
 thus messages can safely be called concurrently, since they can't change their captured environment
+
+actors are opaque types, ie their internal components are not accessible,
+	and are referred to by an ID, instead of a memory address
+actors (and their messages) can only be destroyed explicitly
+reference counting combined with interior mutability can create reference cycles
+	"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
+	in Jina interior mutability is only possible using actors
+	since actors are not reference counted, there is no reference cycles in Jina
 
 types show us what we can do with the data, ie which operations are valid
 subtyping is problematic:
