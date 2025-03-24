@@ -12,15 +12,15 @@ identifiers (variable names) start with an alphabetic character, and can include
 generic identifiers ("x" and "y" can be used in the definition of the identifier, where types are expected):
 	abc[x,y]
 
-defining a variable with immutable borrow type:
+defining a variable with unique type:
 	v :T = ...
 	v = ...
 defining a variable with mutable borrow type:
 	v :T! = ...
 	v! = ...
-defining a variable with unique type:
-	v :T!! = ...
-	v!! = ...
+defining a variable with immutable borrow type:
+	v :T& = ...
+	v& = ...
 defining a variable with shared type:
 	v :T$ = ...
 	v$ = ...
@@ -50,18 +50,23 @@ lists:
 	l :List[Num] = [1, 2, 3]
 indexing:
 	l_1
+note that the type of the result of indexing above is: Num&
 mutating lists:
-	l! = [1, 2, 3]
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
 
 strings are UTF8 encoded, and implemented using lists:
 	s :Str = "abc def"
+multiline string equivalent to "first line\n\tsecond line":
+	s = "
+		first line
+			second line
+	"
 string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
-	"""
-	first line
-		second line
+	s = """
+		first line
+			second line
 	"""
 which is equivalent to:
 	["first line", "\tsecond line"]
@@ -82,14 +87,13 @@ multiple assignment using record expansion:
 tagged fields can be expanded too, if the name of variables match:
 	a, b = a: 1, b: 2
 mutating a record field:
-	r! = a: 1, b: 2, c: 3
 	r.a = 10
 small records will be kept on stack, big ones on the heap
 
 function:
-	f = { a :A, b :B! -> C | ... }
+	f = { a :A&, b :B! -> C | ... }
 note that the type of above function is:
-	(a: A, b: B! -> C)
+	(a: A&, b: B! -> C)
 function call:
 	f x y
 which is equivalent to these forms:

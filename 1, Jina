@@ -9,67 +9,69 @@ sane memory management means no garbage collector
 "http://blog.skylight.io/rust-means-never-having-to-close-a-socket/"
 
 there are four kinds of types in Jina:
-, immutable borrow: T
+, unique: T
 , mutable borrow: T!
-, unique: T!!
+, immutable borrow: T&
 , shared: T$
 
-borrow types in function arguments, or those captured by the function, will be tagged as external
+when a value with unique type is aliased:
+, if it is static (ie a module definition), the alias is a reference to the value
+	but when it's mutated, the alias will own a copy of the value (that is not be static anymore)
+, otherwise, if it's not used in the following block,
+	its stack part will be copied, and its heap part will be moved into the alias
+, otherwise, the alias will own a copy of the value
+
+borrow types are tagged with the ID of the function,
+	in which they are first borrowed from unique or shared types
 this tag will be inherited by further borrowers
-only external borrow types can be returned from functions
+borrow types in function arguments and returns, or struct definitions, have generic tags
 
 mutation of unique types, can only be seen by one variable
 mutable borrow types allow shared mutation
 
 dealing with allocated memory, at the end of functions:
+, for unique types, if they are not moved out of the function, their heap memory will be deallocated
+, for shared types, the reference count will be decreased by one, and when it reaches zero,
+	their heap memory will be deallocated
 , for borrow types, since they don't own the value, nothing happens
-, for unique types, if they are not moved out of the function, the memory will be deallocated
-, for shared types, the reference count will be decreased by one,
-	and when it reaches zero, the memory will be deallocated
 
-behavior of types in variable definitions (and assignments, in case of mutable ones, ie T! and T!!)
+behavior of types in variable definitions (and assignments, in case of mutable ones, ie T and T!)
 when a variable of type "T" is put into:
-, a variable of type "T", copy stack, borrow heap/static
-, a variable of type "T!", copy
-, a variable of type "T!!", copy
-, a variable of type "T$", copy
-when a variable of type "T!" is put into:
-, a variable of type "T", copy stack, borrow heap
+, a variable of type "T", static borrow/move/copy
+, a variable of type "T$", static borrow/move/copy
+, a variable of type "T&", borrow
 , a variable of type "T!", borrow
-, a variable of type "T!!", copy
-, a variable of type "T$", copy
-when a variable of type "T!!" is put into:
-, a variable of type "T", copy stack, borrow heap
-, a variable of type "T!", borrow
-, a variable of type "T!!", move
-, a variable of type "T$", move
 when a variable of type "T$" is put into:
-, a variable of type "T", copy stack, borrow heap
-, a variable of type "T!", it's compile'time error
-, a variable of type "T!!", it's compile'time error
+, a variable of type "T", it's compile time error
 , a variable of type "T$", ref count
+, a variable of type "T&", borrow
+, a variable of type "T!", it's compile time error
+when a variable of type "T&" is put into:
+, a variable of type "T", copy
+, a variable of type "T$", it's compile time error
+, a variable of type "T&", borrow
+, a variable of type "T!", it's compile time error
+when a variable of type "T!" is put into:
+, a variable of type "T", copy
+, a variable of type "T$", it's compile time error
+, a variable of type "T&", borrow
+, a variable of type "T!", borrow
 
 type kinds as components of a compound type (eg fields of a record, or variables captured in a closure):
-, v :(T, T!, T!!, T$)
-	v.0 :T
-	v.1 :T
-	v.2 :T
-	v.3 :T
-, v :(T, T!, T!!, T$)!
-	v.0 :T
-	v.1 :T!
-	v.2 :T!
-	v.3 :T
-, v :(T, T!, T!!, T$)!!
-	v.0 :T!!
-	v.1 :T!!
-	v.2 :T!!
-	v.3 :T$
-, v :(T, T!, T!!, T$)$
+, elements of a unique compound type, can be of unique or shared type (T& and T! are not allowed)
+	C := (T, T$)
+, elements of a mutable borrow compound type, can be of mutable or immutable borrow type
+	v :C!
+	v.0 :T!
+	v.1 :T&
+, elements of an immutable borrow compound type, can only be of immutable borrow type
+	v :C&
+	v.0 :T&
+	v.1 :T&
+, elements of a shared compound type, can only be of shared type
+	v :C$
 	v.0 :T$
 	v.1 :T$
-	v.2 :T$
-	v.3 :T$
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
