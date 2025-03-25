@@ -9,8 +9,6 @@ comments:
 
 identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 	abc'efg0123
-generic identifiers ("x" and "y" can be used in the definition of the identifier, where types are expected):
-	abc[x,y]
 
 defining a variable with unique type:
 	v :T = ...
