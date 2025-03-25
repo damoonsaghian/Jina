@@ -66,7 +66,8 @@ when a variable of type "T!" is put into:
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 
-type kinds as components of a compound type (eg fields of a record, or variables captured in a closure):
+type kinds as components of a compound type
+	eg fields of a record, or variables captured in a closure, or elements of a list:
 , elements of a unique compound type, can be of unique or shared type (T& and T! are not allowed)
 	C := (T, T$)
 , elements of a mutable borrow compound type, can be of mutable or immutable borrow type
