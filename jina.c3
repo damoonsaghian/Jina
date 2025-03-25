@@ -20,6 +20,7 @@ fn void generate_c3_file(String jin_file_path) {
 		so function parameters can't be multi'dimensional arrays
 	variable length arrays can't be used in a struct, except as the last item
 	
+	tuple and union generic type
 	named tuples
 	
 	stacks are designed for sync computation
@@ -95,6 +96,15 @@ fn void! main(String[] args) {
 	} else if (! project_dir.is_dir()) {
 		io::printfn("\"%s\" is not a directory", project_dir);
 	}
+	
+	/*
+	glib is used in lots of system apps
+	in the future we can rewrite them, plus those written in C++, in Jina
+	eventually we can implement std.jin, media.jin, and gui.jin completely in Jina and C3,
+		without using flint, glib, gstreamer, and gtk
+	*/
+	
+	// if build target is "ELF freestanding", link statically, and use --no-flint and --no-evloop
 	
 	foreach (pkg : io::Path.ls()) {
 		// if --no-evloop is not used
