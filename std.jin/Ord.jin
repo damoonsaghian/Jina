@@ -1,6 +1,6 @@
 ;tr Ord
-	is'equal :( self&, other: self& -> Bool )
-	is'less :( self&, other: self& -> Bool )
-	is'less'or'equal = { self&, other :self& -> Bool |
+	is'equal :( self, other: self -> Bool )
+	is'less :( self, other: self -> Bool )
+	is'less'or'equal = { self, other :self -> Bool |
 		self < other \\ self == other
 	}

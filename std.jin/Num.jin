@@ -8,7 +8,7 @@
 	binary: "x - y" is equivalent to "x.sub(y)"
 
 ;; if --no-flint, implement using c3 "double" to implement
-;ns Num
+;ns Num ::Ord ::StrRep
 	add = { self, other :Num\NumI\NumW -> Num |
 	}
 	sub = { self, other :Num\NumI\NumW -> Num |
@@ -68,18 +68,18 @@
 	e = ;; base of the natural logarithm
 	pi =
 
-;impl Ord
+	;; Ord
 	is'less = {}
 
-;impl StrRep
+	;; StrRep
 	to'string = {}
 
 ;; if --no-flint, use C3 "isz" to implement
 ;; https://flintlib.org/doc/fmpz.html
-;ns NumI
+;ns NumI ::Ord ::StrRep
 
 ;; use "usz" to implement
-;ns NumW
+;ns NumW ::Ord ::StrRep
 	add = { self, other :NumW -> NumW |
 	}
 	sub = { self, other :NumW -> NumW |
@@ -105,10 +105,10 @@
 		;c3 return (double)self
 	}
 
-;impl Ord
+	;; Ord
 	is'less = {}
 
-;impl StrRep
+	;; StrRep
 	to'string = {}
 
-;ns NumB
+;ns NumB ::Ord ::StrRep

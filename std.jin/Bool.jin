@@ -1,38 +1,30 @@
 Bool := 'true \ 'false
 
 ;ns Bool
-	and = { self, arg2 :(->Bool)& -> Bool |
+	and = { self, arg2 :(-> Bool) -> Bool |
 		self >> {
-		:'true |
-			arg2()
-		:'false |
-			'false
+			:'true | arg2()
+			:'false | 'false
 		}
 	}
 	
-	or = { self, arg2 :(->Bool)& -> Bool |
+	or = { self, arg2 :(-> Bool) -> Bool |
 		self >> {
-		:'true |
-			'true
-		:'false |
-			arg2()
+			:'true | 'true
+			:'false | arg2()
 		}
 	}
 	
 	neg = { self -> Bool |
 		self >> {
-		:'true |
-			'false
-		:'false |
-			'true
+			:'true | 'false
+			:'false | 'true
 		}
 	}
 	
-	then[t] = { self, then :(->t)&, else :(->t)& -> t |
+	then = { self, then :(-> a), else :(-> a) -> a |
 		self >> {
-		:'true |
-			then()
-		:'false |
-			else()
+			:'true | then()
+			:'false | else()
 		}
 	}

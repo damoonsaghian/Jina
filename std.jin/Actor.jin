@@ -2,14 +2,24 @@
 ;c3 extern fn ...;
 ;c3 distinct ... = any;
 
+;c3
+	GMainLoop GLOBAL_eventloop;
+	List{Actor}* GLOBAL_actors_list;
+	initialize_globals() @init
+	{
+		GLOBAL_eventloop = g_main_loop_new();
+		GLOBAL_actors_list = List.new_init();
+	}
+
 Actor[x]' :=
 	state: x,
 	messages: List[(state: x ->)]
 
 ;ns Actor[x]
 	new = { state :x -> Actor[x] |
-		;; add a pointer in the global list of actors
+		;; add a pointer in GLOBAL_actors_list
 		;c3
+		
 		state, messages: []
 	}
 	

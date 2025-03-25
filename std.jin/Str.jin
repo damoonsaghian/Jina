@@ -1,9 +1,9 @@
 Str := Array[NumB]
 
 ;ns Str
-	;; change array methods to respect UTF8 encoding
+	;; implement list methods such that they respect UTF8 encoding
 	
-	replace = { self!, substring :Str&, replacement :Str |
+	replace = { self!, substring :Str&, replacement :Str& |
 	}
 	
 	split =
@@ -31,7 +31,7 @@ Str := Array[NumB]
 	truncate = { self!, max'len :NumW |
 	}
 	
-	clear = { self! | Array.clear self }
+	clear = { self! | List.clear self }
 	
 	to'lower = { self! |
 	}
@@ -42,4 +42,4 @@ Str := Array[NumB]
 	}
 
 ;tr StrRep
-	to'string :( self& -> Str )
+	to'string :( self -> Str )

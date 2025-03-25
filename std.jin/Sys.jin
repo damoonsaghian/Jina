@@ -1,6 +1,3 @@
-;; declare required functions from glib
-;c3 extern fn
-
 ;ns Sys
 	print = { message :Str& |
 		;c3 std::io::printn
@@ -9,8 +6,8 @@
 	print'err = { message :Str& |
 	}
 	
-	read = { cb $(answer :Str& ->) |
-		;; read from stdin (non'blocking io)
+	read = { cb :(answer :Str& ->) |
+		;; read from stdin, in a separate thread
 	}
 	
 	exec = { program'name :Str&, args :?Str& = 'null -> stdin: File, stdout: File |

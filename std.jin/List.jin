@@ -8,7 +8,7 @@
 ;; any mutation other than appending, splits the array and links them
 ;; splat chunks except the last one, will be filled from the end
 
-;ns List[x]
+;ns List[x] ::Iter
 	get = { self&, index :NumW -> ?x& |
 		;; checks if index is less than the length
 	}
@@ -16,7 +16,7 @@
 	append = { self!, element :x |
 	}
 	
-	extend = { self!, extention :List[x] |
+	extend = { self!, extention :List[x]& |
 	}
 	
 	put = { self!, element :x, at :NumW |
@@ -31,5 +31,5 @@
 	remove = { self!, index :NumW |
 	}
 
-;impl Iter
+	;;impl Iter
 	iter = {}
