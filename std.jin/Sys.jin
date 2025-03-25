@@ -7,7 +7,13 @@
 	}
 	
 	read = { cb :(answer :Str& ->) |
-		;; read from stdin, in a separate thread
+		actor = Actor.new 'null
+		actor.repeat {
+			;; read non'blocking from stdin
+			;; use poll to see if it's ready
+			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
+			;c3
+		}
 	}
 	
 	exec = { program'name :Str&, args :?Str& = 'null -> stdin: File, stdout: File |
