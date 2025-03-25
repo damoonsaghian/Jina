@@ -21,10 +21,19 @@ when a value with unique type is aliased:
 	its stack part will be copied, and its heap part will be moved into the alias
 , otherwise, the alias will own a copy of the value
 
-borrow types are tagged with the ID of the function,
-	in which they are first borrowed from unique or shared types
+borrow types are tagged with a number
+function arguments with borrow type will be tagged from zero to "n"
+then the borrows created in the function will be tagged by "n+1"
+then the borrows created in contained closures will be tagged by "n+1+depth"
 this tag will be inherited by further borrowers
-borrow types in function arguments and returns, or struct definitions, have generic tags
+for functions with multiple borrow typed arguments, that also return a borrow type,
+	and the tag of returned type is inherited from any argument other than the first one (index 0),
+	the returned type must determine that its tag will be inherited from which argument
+	A&, B& -> C&1
+only borrows with matched tags can be assigned to each other
+this simple rule automatically guarantees correct lifetimes, cause it means:
+, we can't assign a borrow to a mutable borrow variable captured in a closure
+, we can't return a borrow from a function, unless it's originally borrowed from one of the function arguments
 
 mutation of unique types, can only be seen by one variable
 mutable borrow types allow shared mutation
