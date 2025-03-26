@@ -7,12 +7,16 @@
 	}
 	
 	read = { cb :(answer :Str& ->) |
-		actor = Actor.new 'null
-		actor.repeat {
+		actor = Actor.new ""
+		actor.do { answer! |
 			;; read non'blocking from stdin
-			;; use poll to see if it's ready
 			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
 			;c3
+			
+			;; append the read characters to answer
+			
+			;; if EOF, call cb(answer), and return false
+			;; otherwise return true
 		}
 	}
 	

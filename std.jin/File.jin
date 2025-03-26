@@ -14,8 +14,7 @@
 	copy = { source'path :Str&, destination'path :Str&, cb :(->) = {} |
 	}
 	
-	;; max'size is in megabytes
-	read = { self, max'size :NumW, cb :(buf: List[NumB] ->) |
+	read = { self, cb :(buf: List[NumB] ->) |
 		;; close the file descriptor
 	}
 	

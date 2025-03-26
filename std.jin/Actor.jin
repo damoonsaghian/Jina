@@ -2,24 +2,22 @@
 ;c3 extern fn ...;
 ;c3 distinct ... = any;
 
-Actor[x]' :=
-	state: x,
-	messages: List[(state: x ->)]
+Message := 
 
-;ns Actor[x]
-	new = { state :x -> Actor[x] |
+Actor[s]' :=
+	state: s,
+	messages: List[state: s! -> Bool]
+
+;ns Actor[s]
+	new = { state :s -> Actor[s] |
 		;; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
 		;c3
 		
 		state, messages: []
 	}
 	
-	do = { self!, message :(state: x ->) |
+	do = { self!, message :(state: s! -> Bool) |
 		;; notify that there is a new message
 		;c3
 		self.messages.append message
-	}
-	
-	repeat = { self!, message :(state: x ->), til :Bool |
-		;; repeatedly send message until "til" becomes 'true
 	}
