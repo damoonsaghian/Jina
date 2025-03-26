@@ -38,6 +38,9 @@ fn void generate_c3_file(String jin_file_path) {
 	https://docs.gtk.org/glib/struct.ThreadPool.html
 	https://docs.gtk.org/glib/struct.MainContext.html
 	
+	after running a message, if it returns false, remove the message from the list
+	messages will be reapted until they return false
+	
 	a linked list containing tuples of actor's ID and memory address
 	std::collections::LinkedList{Actor}* GLOBAL_actors_list;
 	
