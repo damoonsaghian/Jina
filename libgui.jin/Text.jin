@@ -1,0 +1,18 @@
+;; GtkSource
+
+;; https://gitlab.gnome.org/GNOME/gtk/-/blob/main/docs/text_widget_internals.txt
+;; https://gnome.pages.gitlab.gnome.org/gtksourceview/gtksourceview5/
+
+;; next and previous: word, line, paragraph
+
+;; "psi" followed by two succesive apostrophes will be replaced by "ψ"
+
+;; white space (space, tab, new line) + space -> tab
+
+;; elastic tabstops: "http://nickgravgaard.com/elastic-tabstops/"
+;; https://docs.gtk.org/gtk4/property.TextTag.tabs.html
+
+;; indentation guides:
+;; change the background color of leading tabs; interchange between 2 colors
+
+;; sticky scrolling
