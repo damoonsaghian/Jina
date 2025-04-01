@@ -1,22 +1,35 @@
-;; declare required functions and types from flint (skip if --no-flint)
+;; declare required functions and types from flint
 ;c3 extern fn ...;
-;c3 distinct ... = any;
-;; https://flintlib.org/
+;c3 typedef ... = any;
 
-;; minus operator
-	unary: "-x" (no space after minus sign) is equivalent to "x.neg()"
-	binary: "x - y" is equivalent to "x.sub(y)"
+;; https://flintlib.org/doc/
 
-;; if --no-flint, implement using c3 "double" to implement
-;ns Num ::Ord ::StrRep
-	add = { self, other :Num\NumI\NumW -> Num |
+;; https://flintlib.org/doc/fmpz.html
+;c3 typedef NumI = fmpz_t
+
+;ns NumI ::Ord ::CharRep
+
+NumInt := NumI \ Int \ IntU
+
+NumAny := Num \ NumInt \ Float \ Float2
+
+;; https://flintlib.org/doc/arb.html
+;c3 typedef Num = arb_t
+
+;ns Num ::OrdMaybe ::CharRep
+	plus = { self&, addend :NumAny -> Num |
 	}
-	sub = { self, other :Num\NumI\NumW -> Num |
+	minus = { self&, subtrahend :NumAny -> Num |
 	}
 	
-	neg = { self -> Num |
+	add = { self!, addend :NumAny -> Num! |
 	}
-	abs = { self -> Num |
+	sub = { self!, subtrahend :NumAny -> Num! |
+	}
+	
+	neg = { self& -> Num |
+	}
+	abs = { self& -> Num |
 	}
 	
 	mul = { self, other :Num -> Num |
@@ -67,48 +80,14 @@
 	
 	e = ;; base of the natural logarithm
 	pi =
-
-	;; Ord
-	is'less = {}
-
-	;; StrRep
-	to'string = {}
-
-;; if --no-flint, use C3 "isz" to implement
-;; https://flintlib.org/doc/fmpz.html
-;ns NumI ::Ord ::StrRep
-
-;; use "usz" to implement
-;ns NumW ::Ord ::StrRep
-	add = { self, other :NumW -> NumW |
-	}
-	sub = { self, other :NumW -> NumW |
+	
+	;; OrdMaybe
+	
+	is'equal = { self, other :Num -> ?Bool |
 	}
 	
-	mul = { self, other :NumW -> NumW |
-	}
-	div = { self, other :NumW -> NumW |
-	}
-	pow = { self, other :NumW -> NumW |
+	is'less = { self, other :Num -> ?Bool |
 	}
 	
-	min = ;c3
-	max = ;c3
-	
-	is'equal = {}
-	
-	;; creates a range iterator
-	til = { self, arg2 :NumW -> Iter[NumW] |
-	}
-	
-	to'int = { self -> NumI |
-		;c3 return (double)self
-	}
-
-	;; Ord
-	is'less = {}
-
-	;; StrRep
-	to'string = {}
-
-;ns NumB ::Ord ::StrRep
+	;; CharRep
+	to'chars = {}
