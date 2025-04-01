@@ -1,0 +1,56 @@
+;; word sized unsigned integer
+;c3 typedef IntU = usz
+
+;ns IntU ::Ord ::CharRep
+	add = { self, addend :IntU -> IntU |
+	}
+	add'mut = { self!, addend :IntU |
+	}
+	
+	sub = { self, subtrahend :IntU -> IntU |
+	}
+	sub'mut = { self!, subtrahend :IntU |
+	}
+	
+	mul = { self, multiplicand :IntU -> IntU |
+	}
+	mul'mut = { self!, multiplicand :IntU |
+	}
+	
+	div = { self, divisor :IntU -> IntU |
+	}
+	div'mut = { self!, divisor :IntU |
+	}
+	
+	exp = { self, exponent :IntU -> IntU |
+	}
+	exp'mut = { self!, exponent :IntU |
+	}
+	
+	min = ;c3
+	max = ;c3
+	
+	is'equal = { self, than :IntU -> Bool |
+	}
+	is'less = { self, than :IntU -> Bool |
+	}
+	
+	;; creates a range iterator
+	til = { self, end :IntU -> Iter[IntU] |
+	}
+	
+	to'int = { self -> Int |
+		;c3 return (isz)self
+	}
+	
+	;; CharRep
+	to'chars = {}
+
+;; 64 bits signed integer
+;c3 typedef Int = long
+
+;ns Int ::Ord ::CharRep
+	plus = { self, addend :Int -> Int |
+	}
+	minus = { self, subtrahend :Int -> Int |
+	}

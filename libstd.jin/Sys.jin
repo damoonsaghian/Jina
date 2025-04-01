@@ -1,0 +1,34 @@
+;ns Sys
+	print = { message :CharS& |
+		;c3 std::io::printn
+	}
+	
+	print'err = { message :CharS& |
+	}
+	
+	read = { cb :(answer :CharS& ->) |
+		actor = Actor.new ""
+		actor.do { answer! |
+			;; read non'blocking from stdin
+			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
+			;c3
+			
+			;; append the read characters to answer
+			
+			;; if EOF, call cb(answer), and return false
+			;; otherwise return true
+		}
+	}
+	
+	exec = { program'name :CharS&, args :?CharS& = #null -> stdin: File, stdout: File |
+	}
+	
+	get'env = { -> CharS |
+	}
+	
+	get'args = { -> CharS |
+	}
+	
+	get'time = { format :CharS& = "" -> CharS |
+		;c3 std::time
+	}

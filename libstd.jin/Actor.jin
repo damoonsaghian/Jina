@@ -1,6 +1,6 @@
 ;; declare required functions and types from glib2
 ;c3 extern fn ...;
-;c3 distinct ... = any;
+;c3 typedef ... = any;
 
 Message := 
 

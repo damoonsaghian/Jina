@@ -1,0 +1,50 @@
+;; byte sized unsigned integers
+;c3 typedef Char = char
+
+;ns Char ::Ord
+
+CharS := Array[Char]
+
+;ns CharS
+	;; implement list methods such that they respect UTF8 encoding
+	
+	replace = { self!, substring :CharS&, replacement :CharS& |
+	}
+	
+	split =
+	join =
+	
+	find = { self, substring :CharS& -> ?IntU |
+	}
+	contains = { self, substring :CharS& -> Bool |
+	}
+	
+	trim'prefix = { self!, prefix :CharS& |
+	}
+	trim'suffix = { self!, suffix :CharS& |
+	}
+	;; trim ASCII whitespace from the start of the string
+	trim'start = { self! |
+	}
+	;; trim ASCII whitespace from the end of the string
+	trim'end = { self! |
+	}
+	;; trim ASCII whitespace from the start and end of the string
+	trim = { self! |
+	}
+	
+	truncate = { self!, max'len :IntU |
+	}
+	
+	clear = { self! | List.clear self }
+	
+	to'lower = { self! |
+	}
+	to'upper = { self! |
+	}
+	
+	to'int = { self -> ?Int |
+	}
+
+;tr CharRep
+	to'chars :( self -> CharS )
