@@ -27,34 +27,41 @@ assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
 numeric types:
-, Num: floating point with mid-rad interval arithmetics (or C3 "double" if --no-flint)
-, NumI: multi'precision integer (or C3 "isz" if --no-flint)
-, NumW: word sized unsigned integers; compiled to "usz" type in C3
-, NumB: compiled to "char" type in C3
+, IntU: word sized unsigned integer (equivalent to "usz" in C3)
+, Int: 64 bits signed integer (equivalent to "long" in C3)
+, Float: 32 bits floating point (equivalent to "float" in C3)
+, Float2: 64 bits floating point (equivalent to "double" in C3)
 literal numbers:
-	1.23e4 ;; Num
-	1.0 ;; Num
-	1'234'567'890 ;; NumI
-	0123 ;; NumW
-	0x1234'5678'9abc'def0 ;; NumW (on 32 bits systems, this number will be stored as 0x9abc'def0)
-	#a ;; NumB (ASCII code for character "a")
-	#\n ;; NumB (ASCII code for character with escape code "\n")
-	#x12 ;; NumB (ASCII code for character with hex code 12)
+	1'234'567'890 ;; IntU
+	0x1234'5678'9ABC'DEF0
+	+123 ;; Int
+	1.0 ;; Float
+	1.23e4
+	0x1.0
+	0x1.23p4
+	1.0' ;; Float2
 
-symbols are their own types:
-	s :'s = 's
+characters are byte sized unsigned integer (equivalent to "char" in C3)
+	c :Char = 'a'  ;; ASCII code for character "a"
+	'\n' ;; ASCII code for character with escape code "\n"
+	'\x12' ;; ASCII code for character with hex code 12
+
+symbols are special values that are their own types:
+	s :#s = #s
 
 lists:
-	l :List[Num] = [1, 2, 3]
+	l :List[Int] = [1, 2, 3]
 indexing:
 	l_1
-note that the type of the result of indexing above is: Num&
+note that the type of the result of indexing above is: Int&
 mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
 
-strings are UTF8 encoded, and implemented using lists:
-	s :Str = "abc def"
+character strings are UTF8 encoded, and implemented a list of characters:
+	s :CharS = "abc def"
+alternative syntax that makes writing single word strings easier:
+	'abc
 multiline string equivalent to "first line\n\tsecond line":
 	s = "
 		first line
@@ -69,14 +76,13 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of NumW as in lists):
-	d :Dict[Num] = [a: 1, b: 2, c: 3]
+dictionaries are indexed using strings (instead of IntU as in lists):
+	d :Dict[Int] = [a: 1, b: 2, c: 3]
 indexing:
 	d_"a"
 
 records:
-	r :(a: NumI, b: NumI, c: NumI) = a: 1, b: 2, c: 3
-	r :(NumI, NumI, c: NumI) = 1, 2, c: 3
+	r :(Int, Int, c: Int) = 1, 2, c: 3
 to access elements:
 	r.a
 	r.0
@@ -185,14 +191,14 @@ which is equivalent to:
 	S.m s x
 
 unions:
-	B := 'true \ 'false
-type "?A" is a shortcut for "'null\A"
+	B := #true \ #false
+type "?A" is a shortcut for "#null\A"
 enumerate on a union:
-	x :?A = 'null
+	x :?A = #null
 	x >> {
 		x :A |
 		...
-		:'null |
+		:#null |
 		...
 	}
 

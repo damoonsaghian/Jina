@@ -1,8 +1,4 @@
 spm_import c3c
-# if target platform is not ELF freestanding (kernel or embeded)
-spm_import flint
-spm_import glib
-spm_import gstreamer
 
 mkdir -p "$pkg_dir/.cache/c3c"
 cat <<-EOF > "$pkg_dir/.cache/c3c/project.json"
@@ -16,8 +12,17 @@ cat <<-EOF > "$pkg_dir/.cache/c3c/project.json"
 	},
 }
 EOF
-c3c build $TARGET --path "$pkg_dir/.cache/c3c"
+c3c build release --path "$pkg_dir/.cache/c3c"
 spm_xcript jina inst/cmd
 
 "$build_dir/exec/jina" "$pkg_dir"
 ln "$pkg_dir/.cache/jina/std/build/$TARGET/libstd.jin.so" "$build_dir/exp/lib"
+
+spm_import flint
+# build math.jin
+
+spm_import gstreamer
+# build media.jin
+
+spm_import gtk
+# build gui.jin

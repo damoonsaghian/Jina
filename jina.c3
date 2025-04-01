@@ -16,6 +16,22 @@ fn String jina2c3(String jina_exp) {
 
 fn void generate_c3_file(String jin_file_path) {
 	/*
+	literals
+	numbers (words starting with a digit, or +/- sign prepended digit):
+	, remove apostrophes
+	, if there is no point or "e":
+		, if there is a sign at the begining, remove "+" if any, replace with "((Int)<literal-num>)"
+		, otherwise replace with "((IntU)<literal-num>)"
+	, otherwise, if there is no apostrophe at the end, replace with "((Float)<literal-number>)"
+	, otherwise, replace with "((Float2)<literal-number>)"
+	
+	characters: 'a '\n '\x12
+	
+	minus operator
+	unary: "-x" is equivalent to "x.neg()"
+		note that there is no space between minus and the (non'numerical) character
+	binary: "x - y" is equivalent to "x.sub(y)"
+	
 	multi'dimensional arrays in C cant have variable length
 		so function parameters can't be multi'dimensional arrays
 	variable length arrays can't be used in a struct, except as the last item
@@ -25,6 +41,10 @@ fn void generate_c3_file(String jin_file_path) {
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient
+	
+	function: { | }
+	replace with: fn () {}
+	if the function is only made of one expression, replace with: fn () @inline {}
 	
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
 		and then run the main loop
@@ -89,7 +109,7 @@ fn generate_jina_api_file() {
 	// distributed with compiled packages, for IDE hints
 }
 
-fn void! main(String[] args) {
+fn void? main(String[] args) {
 	if (args.len == 0) {
 		io::printn("interactive Jina is not yet implemented");
 		io::printn("usage: jina <project_path> [c3c_options]");
@@ -105,19 +125,18 @@ fn void! main(String[] args) {
 	}
 	
 	/*
-	glib is used in lots of system apps
-	in the future we can rewrite them, plus those written in C++, in Jina
+	using glib for eventloop is not such a bad idea
+	glib is already used in lots of system libraries and services
+	in the future we can rewrite them (even those written in C++) in Jina
 	eventually we can implement std.jin, media.jin, and gui.jin completely in Jina and C3,
 		without using flint, glib, gstreamer, and gtk
 	*/
 	
-	// if build target is "ELF freestanding", link statically, and use --no-flint and --no-evloop
+	// if build target is "ELF freestanding" (kernel or embeded), link statically, and use --no-evloop
 	
 	foreach (pkg : io::Path.ls()) {
 		// if --no-evloop is not used
 		"spm import $gnunet_namespace glib"
-		// if --no-flint is not used
-		"spm import $gnunet_namespace flint"
 		
 		// go through all files (recursively) and find ".p" files
 		foreach (p_file : $(find .p)) {
@@ -147,7 +166,7 @@ fn void! main(String[] args) {
 		/*
 		cat <<-EOF > "$project_dir/.cache/jina/c3/project.json"
 		{
-			"dependencies": [ "flint" ],
+			"dependencies": [ "glib" ],
 			"targets": {
 				"linux-$ARCH": {
 					"type": "executable",
@@ -161,4 +180,3 @@ fn void! main(String[] args) {
 		// c3c build $c3c_options "$project_dir/.cache/jina/c3"
 	}
 }
-

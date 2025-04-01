@@ -66,7 +66,7 @@ when a variable of type "T!" is put into:
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 
-type kinds as components of a compound type
+this is how the four type kinds behave as components of a compound type
 	eg fields of a record, or variables captured in a closure, or elements of a list:
 , elements of a unique compound type, can be of unique or shared type (T& and T! are not allowed)
 	C := (T, T$)
@@ -125,7 +125,9 @@ there is no trait objects in Jina
 Jina compiles to C3, and thus can easily use existing C libraries
 
 Jina is installed by default in SPM Linux
-in other Unix'like systems, install "gnunet", then:
-; gnunet-download -o spm/ gnunet://fs/sks/$gnunet_namespace/packages/spm
-; sh spm/install.sh
-; spm install $gnunet_namespace jina
+in other Unix'like systems, with "gnunet" installed, you just need "spm.sh" file:
+, install "gnunet" package
+, download "spm" directory from SPM Linux, and run:
+	sh spm/install.sh
+, install Jina:
+	spm install $gnunet_namespace jina
