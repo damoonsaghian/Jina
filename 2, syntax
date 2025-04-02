@@ -26,22 +26,17 @@ defining a variable with shared type:
 assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
-numeric types:
-, IntU: word sized unsigned integer (equivalent to "usz" in C3)
-, Int: 64 bits signed integer (equivalent to "long" in C3)
-, Float: 32 bits floating point (equivalent to "float" in C3)
-, Float2: 64 bits floating point (equivalent to "double" in C3)
-literal numbers:
-	1'234'567'890 ;; IntU
+64 bits integer (equivalent to "long" in C3):
+	i :Int = 1'234'567'890
 	0x1234'5678'9ABC'DEF0
-	+123 ;; Int
-	1.0 ;; Float
+
+64 bits floating point (equivalent to "double" in C3):
+	1.0
 	1.23e4
 	0x1.0
 	0x1.23p4
-	1.0' ;; Float2
 
-characters are byte sized unsigned integer (equivalent to "char" in C3)
+characters are 8 bits unsigned integer (equivalent to "char" in C3)
 	c :Char = 'a'  ;; ASCII code for character "a"
 	'\n' ;; ASCII code for character with escape code "\n"
 	'\x12' ;; ASCII code for character with hex code 12
@@ -53,6 +48,7 @@ lists:
 	l :List[Int] = [1, 2, 3]
 indexing:
 	l_1
+the sign of index is ignored: l_1 == l_-1
 note that the type of the result of indexing above is: Int&
 mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
@@ -76,7 +72,7 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of IntU as in lists):
+dictionaries are indexed using strings (instead of integers as in lists):
 	d :Dict[Int] = [a: 1, b: 2, c: 3]
 indexing:
 	d_"a"

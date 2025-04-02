@@ -17,20 +17,23 @@ fn String jina2c3(String jina_exp) {
 fn void generate_c3_file(String jin_file_path) {
 	/*
 	literals
-	numbers (words starting with a digit, or +/- sign prepended digit):
+	numbers (words starting with a digit):
 	, remove apostrophes
-	, if there is no point or "e":
-		, if there is a sign at the begining, remove "+" if any, replace with "((Int)<literal-num>)"
-		, otherwise replace with "((IntU)<literal-num>)"
-	, otherwise, if there is no apostrophe at the end, replace with "((Float)<literal-number>)"
-	, otherwise, replace with "((Float2)<literal-number>)"
+	, if there is no point or "e", prepend with "(Int)" cast
+	, otherwise, prepend with "(Float)" cast
 	
-	characters: 'a '\n '\x12
+	characters: 'a' '\n' '\x12'
 	
-	minus operator
-	unary: "-x" is equivalent to "x.neg()"
-		note that there is no space between minus and the (non'numerical) character
-	binary: "x - y" is equivalent to "x.sub(y)"
+	operators:
+	a + b		a .add b
+	a * b		a .mul b
+	a /	b		a .div b
+	a ^ b		a .exp b
+	- a			a.neg()
+	a == b		a .is'eq b
+	a -= b		a .not'eq b
+	a > b		a .is'more b
+	a >= b		a .is'more'eq b
 	
 	multi'dimensional arrays in C cant have variable length
 		so function parameters can't be multi'dimensional arrays
