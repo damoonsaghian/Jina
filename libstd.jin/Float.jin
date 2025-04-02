@@ -1,39 +1,36 @@
-;c3 typedef Float = float
+;c3 typedef Float = double;
 
 ;ns Float ::Ord ::CharRep
-	;; +
-	add = { self, addend :Float -> Float |
-	}
-	;; +=
-	add'mut = { self!, addend :Float |
+	add = { self, addend :Float\Int -> Float |
+		;c3 return self + addend;
 	}
 	
-	;; -
-	sub = { self, subtrahend :Float -> Float |
+	mul = { self, multiplicand :Float\Int -> Float |
+		;c3 return self * multiplicand;
 	}
 	
-	sub'mut = { self!, subtrahend :Float -> Float! |
+	div = { self, divisor :Float\Int -> Float |
+		;c3 return self / divisor;
+	}
+	
+	exp = { self, exponent :Float\Int -> Float |
+		;c3 return self ^ exponent;
 	}
 	
 	neg = { self -> Float |
-	}
-	abs = { self -> Float |
+		;c3 return -self;
 	}
 	
-	mul = { self, other :Float -> Float |
-	}
-	div = { self, other :Float -> Float |
-	}
-	pow = { self, other :Float -> Float |
+	abs = { self -> Float |
+		;c3 return abs(self);
 	}
 	
 	next'up = { self -> Float |
 	}
-	
 	next'down = { self -> Float |
 	}
 	
-	cos = { self | -> Float
+	cos = { self -> Float |
 	}
 	acos = { self -> Float |
 	}
@@ -63,25 +60,27 @@
 	log10 = { self -> Float |
 	}
 	
-	nan =
-	inf =
+	to'int = { self, direction :#up\#down -> Int |
+	}
 	
-	e = ;; base of the natural logarithm
-	pi =
+	nan = ;c3
+	inf = ;c3
+	
+	;; base of the natural logarithm
+	e = ;c3
+	
+	pi = ;c3
 	
 	;; Ord
 	
-	is'equal = {}
-	
-	is'less = {}
-	
-	;; StrRep
-	to'chars = {}
-
-;c3 typedef Float2 = double
-
-;ns Float2 ::Ord ::CharRep
-	plus = { self, addend :Float2\Float -> Float2 |
+	equal = { self, other :Float -> Bool |
+		;c3 self == other;
 	}
-	minus = { self, subtrahend :Float2\Float -> Float2 |
+	
+	after = { self, other :Float -> Bool |
+		;c3 self > other;
+	}
+	
+	;; CharRep
+	to'chars = { self -> CharS |
 	}

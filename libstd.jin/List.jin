@@ -8,8 +8,10 @@
 ;; any mutation other than appending, splits the array and links them
 ;; splat chunks except the last one, will be filled from the end
 
+;c3 typedef List = ;
+
 ;ns List[x] ::Iter
-	get = { self&, index :IntU -> ?x& |
+	get = { self&, index :Int -> ?x& |
 		;; checks if index is less than the length
 	}
 	
@@ -19,16 +21,16 @@
 	extend = { self!, ext :List[x]& |
 	}
 	
-	put = { self!, element :x, at :IntU |
+	put = { self!, element :x, at :Int |
 	}
 	
-	insert = { self!, element :x, at :IntU |
+	insert = { self!, element :x, at :Int |
 	}
 	
-	slice = { self!, from :IntU, to :?IntU = #null |
+	slice = { self!, from :Int, to :?Int = #null |
 	}
 	
-	remove = { self!, at :IntU |
+	remove = { self!, at :Int |
 	}
 
 	;;impl Iter

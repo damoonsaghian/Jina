@@ -1,13 +1,13 @@
 ;ns Sys
 	print = { message :CharS& |
-		;c3 std::io::printn
+		;c3 std::io::printn((char*)message);
 	}
 	
 	print'err = { message :CharS& |
 	}
 	
 	read = { cb :(answer :CharS& ->) |
-		actor = Actor.new ""
+		actor = Actor.new '
 		actor.do { answer! |
 			;; read non'blocking from stdin
 			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
@@ -30,5 +30,5 @@
 	}
 	
 	get'time = { format :CharS& = "" -> CharS |
-		;c3 std::time
+		;c3 return (CharS) std::time::;
 	}

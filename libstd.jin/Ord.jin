@@ -1,16 +1,20 @@
 ;tr Ord
-	is'equal :(self, other: self -> Bool)
-	is'less :(self, other: self -> Bool)
-	is'less'or'equal = { self, other :self -> Bool |
-		self < other \\ self == other
+	equal :(self, other: self -> Bool)
+	
+	after :(self, other: self -> Bool)
+	
+	after'equal = { self, other :self -> Bool |
+		self > other \\ self == other
 	}
 
 tr OrdMaybe
-	is'equal :(self, other: self -> ?Bool)
-	is'less :(self, other: self -> ?Bool)
-	is'less'or'equal = { self, other :self -> ?Bool |
-		self < other >> {
-			:#null | 'null
+	equal :(self, other: self -> ?Bool)
+	
+	after :(self, other: self -> ?Bool)
+	
+	after'equal = { self, other :self -> ?Bool |
+		self > other >> {
+			:#null | #null
 			is'less :Bool |
 				self == other >> {
 					:#null | #null

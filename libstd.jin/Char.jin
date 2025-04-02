@@ -1,9 +1,9 @@
 ;; byte sized unsigned integers
-;c3 typedef Char = char
+;c3 typedef Char = char;
 
 ;ns Char ::Ord
 
-CharS := Array[Char]
+CharS := List[Char]
 
 ;ns CharS
 	;; implement list methods such that they respect UTF8 encoding
@@ -14,7 +14,7 @@ CharS := Array[Char]
 	split =
 	join =
 	
-	find = { self, substring :CharS& -> ?IntU |
+	find = { self, substring :CharS& -> ?Int |
 	}
 	contains = { self, substring :CharS& -> Bool |
 	}
@@ -33,7 +33,7 @@ CharS := Array[Char]
 	trim = { self! |
 	}
 	
-	truncate = { self!, max'len :IntU |
+	truncate = { self!, max'len :Int |
 	}
 	
 	clear = { self! | List.clear self }

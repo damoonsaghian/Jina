@@ -1,56 +1,47 @@
-;; word sized unsigned integer
-;c3 typedef IntU = usz
+;c3 typedef Int = long;
 
-;ns IntU ::Ord ::CharRep
-	add = { self, addend :IntU -> IntU |
+;ns Int ::Ord ::CharRep
+	add = { self, addend :Int -> Int |
+		;c3 return self + addend;
 	}
-	add'mut = { self!, addend :IntU |
-	}
-	
-	sub = { self, subtrahend :IntU -> IntU |
-	}
-	sub'mut = { self!, subtrahend :IntU |
+		
+	mul = { self, multiplicand :Int -> Int |
+		;c3 return self * multiplicand;
 	}
 	
-	mul = { self, multiplicand :IntU -> IntU |
-	}
-	mul'mut = { self!, multiplicand :IntU |
-	}
-	
-	div = { self, divisor :IntU -> IntU |
-	}
-	div'mut = { self!, divisor :IntU |
+	div = { self, divisor :Int -> Int |
+		;c3 return self / divisor;
 	}
 	
-	exp = { self, exponent :IntU -> IntU |
+	exp = { self, exponent :Int -> Int |
+		;c3 return self ^ exponent;
 	}
-	exp'mut = { self!, exponent :IntU |
+	
+	neg = { self ->  Int |
+		;c3 return -self;
+	}
+	
+	abs = { self -> Int |
+		;c3 abs(self);
 	}
 	
 	min = ;c3
 	max = ;c3
 	
-	is'equal = { self, than :IntU -> Bool |
-	}
-	is'less = { self, than :IntU -> Bool |
-	}
-	
-	;; creates a range iterator
-	til = { self, end :IntU -> Iter[IntU] |
+	;; create a range iterator
+	til = { self, end :Int -> Iter[Int] |
 	}
 	
-	to'int = { self -> Int |
-		;c3 return (isz)self
+	;; Ord
+	
+	equal = { self, other :Int -> Bool |
+		;c3 self == other;
+	}
+	
+	after = { self, other :Int -> Bool |
+		;c3 self > other;
 	}
 	
 	;; CharRep
-	to'chars = {}
-
-;; 64 bits signed integer
-;c3 typedef Int = long
-
-;ns Int ::Ord ::CharRep
-	plus = { self, addend :Int -> Int |
-	}
-	minus = { self, subtrahend :Int -> Int |
+	to'chars = { self -> CharS |
 	}

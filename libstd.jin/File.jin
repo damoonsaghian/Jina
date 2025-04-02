@@ -4,6 +4,8 @@
 ;; https://docs.gtk.org/gio/
 ;; https://docs.gtk.org/gio/class.VolumeMonitor.html
 
+;c3 typedef File = ;
+
 ;ns File
 	delete = { path :CharS&, cb :(->) = {} |
 	}
