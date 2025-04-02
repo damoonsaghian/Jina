@@ -5,89 +5,78 @@
 ;; https://flintlib.org/doc/
 
 ;; https://flintlib.org/doc/fmpz.html
-;c3 typedef NumI = fmpz_t
+;c3 typedef NumI = fmpz_t;
 
 ;ns NumI ::Ord ::CharRep
 
-NumInt := NumI \ Int \ IntU
-
-NumAny := Num \ NumInt \ Float \ Float2
+NumAny := Num \ NumI \ Int \ Float
 
 ;; https://flintlib.org/doc/arb.html
-;c3 typedef Num = arb_t
+;c3 typedef Num = arb_t;
 
 ;ns Num ::OrdMaybe ::CharRep
-	plus = { self&, addend :NumAny -> Num |
-	}
-	minus = { self&, subtrahend :NumAny -> Num |
+	add = { self$, addend :NumAny& -> Num$ |
 	}
 	
-	add = { self!, addend :NumAny -> Num! |
-	}
-	sub = { self!, subtrahend :NumAny -> Num! |
+	mul = { self&, multiplicand :NumAny& -> Num |
 	}
 	
-	neg = { self& -> Num |
-	}
-	abs = { self& -> Num |
+	div = { self&, divisor :NumAny& -> Num |
 	}
 	
-	mul = { self, other :Num -> Num |
-	}
-	div = { self, other :Num -> Num |
-	}
-	pow = { self, other :Num -> Num |
+	exp = { self&, exponent :NumAny& -> Num |
 	}
 	
-	next'up = { self -> Num |
+	neg = { self$ -> Num$ |
 	}
 	
-	next'down = { self -> Num |
+	abs = { self$ -> Num$ |
 	}
 	
-	cos = { self | -> Num
+	cos = { self& -> Num |
 	}
-	acos = { self -> Num |
+	acos = { self& -> Num |
 	}
-	cosh = { self -> Num |
+	cosh = { self& -> Num |
 	}
-	atanh = { self -> Num |
+	atanh = { self& -> Num |
 	}
-	sin = { self -> Num |
+	sin = { self& -> Num |
 	}
-	asin = { self -> Num |
+	asin = { self& -> Num |
 	}
-	sinh = { self -> Num |
+	sinh = { self& -> Num |
 	}
-	tan = { self -> Num |
+	tan = { self& -> Num |
 	}
-	atan = { self -> Num |
+	atan = { self& -> Num |
 	}
-	atan2 = { self -> Num |
+	atan2 = { self& -> Num |
 	}
-	tanh = { self -> Num |
-	}
-	
-	log = { self -> Num |
-	}
-	log2 = { self -> Num |
-	}
-	log10 = { self -> Num |
+	tanh = { self& -> Num |
 	}
 	
-	nan =
+	log = { self& -> Num |
+	}
+	log2 = { self& -> Num |
+	}
+	log10 = { self& -> Num |
+	}
+	
 	inf =
 	
-	e = ;; base of the natural logarithm
+	;; base of the natural logarithm
+	e =
 	pi =
 	
 	;; OrdMaybe
 	
-	is'equal = { self, other :Num -> ?Bool |
+	equal = { self&, other :Num& -> ?Bool |
 	}
 	
-	is'less = { self, other :Num -> ?Bool |
+	after = { self&, other :Num& -> ?Bool |
 	}
 	
 	;; CharRep
-	to'chars = {}
+	to'chars = { self& -> CharS |
+	}
