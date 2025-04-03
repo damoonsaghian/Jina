@@ -1,0 +1,5 @@
+;; reading is slow, writing is fast
+
+;c3
+	module LinkedList{t}
+	typedef LinkedList = std::collections::linkedlist{t};

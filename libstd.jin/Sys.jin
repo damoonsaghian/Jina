@@ -1,6 +1,6 @@
 ;ns Sys
 	print = { message :CharS& |
-		;c3 std::io::printn((char*)message);
+		;c3 std::io::printn(message.array_view());
 	}
 	
 	print'err = { message :CharS& |
