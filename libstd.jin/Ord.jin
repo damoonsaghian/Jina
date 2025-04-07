@@ -15,10 +15,10 @@ tr OrdMaybe
 	after'equal = { self, other :self -> ?Bool |
 		self > other >> {
 			:#null | #null
-			is'less :Bool |
+			is'greater :Bool |
 				self == other >> {
 					:#null | #null
-					is'equal :Bool | is'less \\ is'equal
+					is'equal :Bool | is'greater \\ is'equal
 				}
 		}	
 	}

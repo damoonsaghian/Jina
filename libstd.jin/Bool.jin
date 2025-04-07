@@ -1,14 +1,14 @@
 Bool := #true \ #false
 
 ;ns Bool
-	and = { self, arg2 :(-> Bool) -> Bool |
+	and = { self, arg2 :(-> Bool)! -> Bool |
 		self >> {
 			:#true | arg2()
 			:#false | #false
 		}
 	}
 	
-	or = { self, arg2 :(-> Bool) -> Bool |
+	or = { self, arg2 :(-> Bool)! -> Bool |
 		self >> {
 			:#true | #true
 			:#false | arg2()
@@ -22,7 +22,7 @@ Bool := #true \ #false
 		}
 	}
 	
-	then = { self, then :(-> a), else :(-> a) -> a |
+	then = { self, then :(-> a)!, else :(-> a)! -> a |
 		self >> {
 			:#true | then()
 			:#false | else()
