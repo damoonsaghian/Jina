@@ -169,10 +169,10 @@ to use the definitions of a package:
 definitions in "std" package, are directly accessible
 	so there is no need for a "std.p" file, and prefixing with "std."
 
-structs:
-	S := a: A, b: B
+type definition:
+	T := a: A, b: B
 defining methods (using a namespace):
-	;ns S
+	;ns T
 		new = { a :A -> S |
 			b = ...
 			a, b
@@ -183,21 +183,20 @@ defining methods (using a namespace):
 		m2 = { self |
 			...
 		}
-to create an instance of a struct:
-	s :S = a: x, b: y
-	s = S. a: x, b: y
-	s = S.new a: x
+to create an instance of the type:
+	i :T = a: x, b: y
+	i = T. a: x, b: y
+	i = T.new a: x
 accessing a member:
-	s.a
+	i.a
 calling a method (note that there is no record field named "m", otherwise this will not work):
-	s.m x
+	i.m x
 which is equivalent to:
-	S.m s x
+	T.m i x
 
 unions:
-	B := #true \ #false
+	Bool := #true \ #false
 type "?A" is a shortcut for "#null\A"
-enumerate on a union:
 	x :?A = #null
 	x >> {
 		x :A |
@@ -215,8 +214,8 @@ traits:
 trait inheritance:
 	;tr T ::T1 ::T2
 		...
-defining the methods of a struct that implements some traits:
-	;ns S ::T1 ::T2
+defining the methods of a type that implements some traits:
+	;ns T ::T1 ::T2
 		m1 = ...
 		m2 = ...
 		;; T1
@@ -226,9 +225,9 @@ defining the methods of a struct that implements some traits:
 		...
 
 generics:
-	S[x] := a: x, b: x
+	T[x] := a: x, b: x
 bounded generics:
-	S[x::I] := a: x, b: x
+	T[x::ATrait] := a: x, b: x
 
 to directly enter C3 code:
 	;c3 ...
