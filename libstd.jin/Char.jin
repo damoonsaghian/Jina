@@ -5,7 +5,7 @@
 
 CharS := List[Char]
 
-;ns CharS
+;ns CharS ::CharRep
 	;; implement list methods such that they respect UTF8 encoding
 	
 	replace = { self!, substring :CharS&, replacement :CharS& |
@@ -45,6 +45,9 @@ CharS := List[Char]
 	
 	to'int = { self -> ?Int |
 	}
+	
+	;; CharRep
+	to'chars = { self | self }
 
 ;tr CharRep
 	to'chars :( self -> CharS )
