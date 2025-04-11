@@ -65,18 +65,24 @@ when a variable of type "T!" is put into:
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 
-note that, borrow tags can't be used to create compound types, since their scope tags are undefined
-component of a tagged compound type (eg fields of a record, captures in a closure, or elements of a list):
-	C := (T, T$)
-	v :C!
-		v.0 :T!
-		v.1 :T&
-	v :C&
-		v.0 :T&
-		v.1 :T&
-	v :C$
+in Jina generic types do not accept borrow types (or compound types containing borrow type),
+	unless it's explicitly indicated by putting a borrow tag after the generic type
+this is necessary for scope tags to be statically verifiable
+in other words, borrows can't be wrapped, they leak
+this is also true for struct definitions:
+	S& := T, T$, T&, T!
+so plane structs can only contain unique and shared types:
+	S := T, $T
+and when it's assigned to variables of a tagged version of that type:
+	v :S$
 		v.0 :T$
 		v.1 :T$
+	v :S&
+		v.0 :T&
+		v.1 :T&
+	v :S!
+		v.0 :T!
+		v.1 :T&
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -92,10 +98,10 @@ to deal with it, programming languages choose different approaches:
 
 Jina uses actors for asynchronous programming, and controls aliasing (sharing) and mutability using type tags,
 	ie the same approach used to deal with memory management
-messages sent to actors are unique closures
-so according to what mentioned above, about compound types, they can't capture borrows,
+messages sent to actors are closures that the (generic) type of their capture is untagged
+and according to what mentioned above, messages can't capture borrows,
 	their captured variables have either unique or shared (immutable) type
-thus messages can safely be called concurrently, since they can't change their captured environment
+so messages can safely be called concurrently, since they can't change their captured environment
 
 actors are opaque types, ie their internal components are not accessible,
 	and are referred to by an ID, instead of a memory address

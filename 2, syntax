@@ -31,7 +31,7 @@ assignment to mutable variables (ie those with unique or mutable'borrow type):
 	0x1234'5678'9ABC'DEF0
 
 64 bits floating point (equivalent to "double" in C3):
-	1.0
+	f :Float = 1.0
 	1.23e4
 	0x1.0
 	0x1.23p4
@@ -39,7 +39,7 @@ assignment to mutable variables (ie those with unique or mutable'borrow type):
 characters are 8 bits unsigned integer (equivalent to "char" in C3)
 	c :Char = 'a'  ;; ASCII code for character "a"
 	'\n' ;; ASCII code for character with escape code "\n"
-	'\x12' ;; ASCII code for character with hex code 12
+	'\x12' ;; a byte with hexadecimal value 0x12
 
 symbols are special values that are their own types:
 	s :#s = #s
@@ -47,15 +47,17 @@ symbols are special values that are their own types:
 lists:
 	l :List[Int] = [1, 2, 3]
 indexing:
-	l_1
+	e :#null\Int = l_1
 the sign of index is ignored: l_1 == l_-1
-note that the type of the result of indexing above is: Int&
+note that the type of the result of indexing above is "#null\Int&",
+	which is copied into the variable with type "#null\Int"
 mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
 
 character strings are UTF8 encoded, and implemented a list of characters:
 	s :CharS = "abc def"
+string interpolation: "abc{x}"
 alternative syntax that makes writing single word strings easier:
 	'abc
 multiline string equivalent to "first line\n\tsecond line":
@@ -63,7 +65,6 @@ multiline string equivalent to "first line\n\tsecond line":
 		first line
 			second line
 	"
-string interpolation: "abc{x}"
 it's better to split long strings into a list of single'line strings:
 	s = """
 		first line
@@ -75,7 +76,7 @@ which is equivalent to:
 dictionaries are indexed using strings (instead of integers as in lists):
 	d :Dict[Int] = [a: 1, b: 2, c: 3]
 indexing:
-	d_"a"
+	d_'a
 
 records:
 	r :(Int, Int, c: Int) = 1, 2, c: 3
@@ -100,6 +101,13 @@ which is equivalent to these forms:
 	f(x, y)
 	f b: y a: x
 	x, y >> f
+
+functions are closures, ie they can capture their environment
+so function types have an implicit generic parameter for the captured variables
+function type mentioned above is when this generic parameter is non'borrow
+	these functions are called own closures
+when the generic parameter is borrow tagged, the function is called a borrow closure, and the type is:
+	A --> B
 
 default values for parameters:
 	f = { a = 1 , b = 2 | ... }
