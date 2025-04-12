@@ -5,6 +5,10 @@
 		;c3 return self + addend;
 	}
 	
+	sub = { self, subtrahend :Float\Int -> Float |
+		;c3 return self - subtrahend;
+	}
+	
 	mul = { self, multiplicand :Float\Int -> Float |
 		;c3 return self * multiplicand;
 	}

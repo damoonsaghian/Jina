@@ -4,6 +4,10 @@
 	add = { self, addend :Int -> Int |
 		;c3 return self + addend;
 	}
+	
+	sub = { self, subtrahend :Int -> Int |
+		;c3 return self - subtrahend;
+	}
 		
 	mul = { self, multiplicand :Int -> Int |
 		;c3 return self * multiplicand;
@@ -11,6 +15,10 @@
 	
 	div = { self, divisor :Int -> Int |
 		;c3 return self / divisor;
+	}
+	
+	mod = { self, devisor :Int -> Int |
+		;c3 return self % divisor;
 	}
 	
 	exp = { self, exponent :Int -> Int |
