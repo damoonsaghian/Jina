@@ -15,7 +15,10 @@ NumAny := Num \ NumI \ Int \ Float
 ;c3 typedef Num = arb_t;
 
 ;ns Num ::OrdMaybe ::CharRep
-	add = { self$, addend :NumAny& -> Num$ |
+	add = { self&, addend :NumAny& -> Num |
+	}
+	
+	sub = { self, subtrahend :NumAny& -> Num |
 	}
 	
 	mul = { self&, multiplicand :NumAny& -> Num |
