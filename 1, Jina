@@ -12,15 +12,16 @@ to achieve that, Jina introduces three special markers for types:
 , immutable borrow type: T&
 , mutable borrow type: T!
 
-when a variable with unique type is aliased by another variable of unique type:
-, if it is static (ie a module definition), the alias is a reference to the original
+when a variable with unique type is aliased by another variable of the same unique type:
+, if it's a static variable (ie a module definition), the alias is a reference to the original
 	but when either variable is mutated, it will own a copy of the value (which will not be static anymore)
 , otherwise, if the original variable is not used in the following block,
 	its stack part will be copied, and its heap part will be moved into the alias
 , otherwise, the alias will own a copy of the original
 
-borrow types have an scope tag, following their "&/!" marker, which will be inherited by further borrowers
+borrow types have a scope tag, which can be written after "&/!" marker
 scope tags are inferred in most cases, and only required to be explicitly given, in certain situation
+scope tags will be inherited by further borrowers
 function arguments with borrow type have generic scope tags: a0, a1, a2 ...
 for functions with multiple borrow arguments, that also return a borrow type,
 	and the scope tag of returned type is inherited from any argument other than the first one (index 0),
@@ -42,7 +43,7 @@ dealing with allocated memory, at the end of functions:
 	their heap memory will be deallocated
 , for borrow types, since they don't own the value, nothing happens
 
-behavior of types in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
+aliasing rules in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
 when a variable of type "T" is put into:
 , a variable of type "T", static'borrow/move/copy
 , a variable of type "T$", static'borrow/move/copy
@@ -67,12 +68,12 @@ when a variable of type "T!" is put into:
 in Jina generic types do not accept borrow types (or compound types containing borrow type),
 	unless the generic type also have a borrow marker
 this is necessary for their scope tags to be statically determined
-in other words, borrows can't be wrapped, they always leak out
 this is also true for type definitions:
 	T& := A, B$, C&, D!
+in other words, borrows can't be wrapped, they always leak out
 so plain types (without borrow markers) can only contain unique and shared types:
 	T := A, $B
-and when it's assigned to variables of that type but with markers:
+of course, it can be aliased by variables with types that have markers:
 	v :T$
 		v.0 :A$
 		v.1 :B$
@@ -82,6 +83,14 @@ and when it's assigned to variables of that type but with markers:
 	v :T!
 		v.0 :A!
 		v.1 :B&
+
+in Jina, functions are closures, ie they can capture their environment
+function types have an implicit generic parameter for the captured variables
+so in fact we have two kinds of functions in Jina:
+, own closures: when the generic parameter does not have a borrow marker
+	A -> B
+, borrow closures: when the generic parameter has borrow marker
+	A => B
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -97,8 +106,7 @@ to deal with it, programming languages choose different approaches:
 
 Jina uses actors for asynchronous programming, and controls aliasing (sharing) and mutability using type markers,
 	ie the same approach used to deal with memory management
-messages sent to actors are closures that the generic type of their capture does not have borrow marker
-so according to what mentioned above, messages can't capture borrows,
+messages sent to actors are own closures, and can't capture borrows
 	their captured variables have either unique or shared (immutable) type
 thus messages can safely be called concurrently, since they can't change their captured environment
 
@@ -126,7 +134,7 @@ there is no trait objects in Jina
 Jina compiles to C3, and thus can easily use existing C libraries
 
 Jina is installed by default in SPM Linux
-in other Unix'like systems, with "gnunet" installed, you just need "spm.sh" file:
+in other Unix'like systems, with "gnunet" installed:
 , install "gnunet" package
 , download "spm" directory from SPM Linux, and run:
 	sh spm/install.sh

@@ -102,13 +102,6 @@ which is equivalent to these forms:
 	f b: y a: x
 	x, y >> f
 
-functions are closures, ie they can capture their environment
-so function types have an implicit generic parameter for the captured variables
-function type mentioned above is when this generic parameter is non'borrow
-	these functions are called own closures
-when the generic parameter is borrow tagged, the function is called a borrow closure, and the type is:
-	A --> B
-
 default values for parameters:
 	f = { a = 1 , b = 2 | ... }
 	f b: 22
