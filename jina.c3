@@ -51,19 +51,15 @@ fn void generate_c3_file(String jin_file_path) {
 	x=x/y -> x/=y
 	x=x%y -> x%=y
 	
-	multi'dimensional arrays in C cant have variable length
-		so function parameters can't be multi'dimensional arrays
-	variable length arrays can't be used in a struct, except as the last item
-	
 	tuple and union generic type
 	named tuples
-	
-	stacks are designed for sync computation
-	using a lot of them as async cores (stackful green threads) is inefficient
 	
 	function: { | }
 	replace with: fn () {}
 	if the function is only made of one expression, replace with: fn () @inline {}
+	
+	stacks are designed for sync computation
+	using a lot of them as async cores (stackful green threads) is inefficient
 	
 	after calling the init function, create a fixed number of threads (as many as CPU cores),
 		and then run the main loop
