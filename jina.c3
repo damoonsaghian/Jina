@@ -16,6 +16,12 @@ fn String jina2c3(String jina_exp) {
 
 fn void generate_c3_file(String jin_file_path) {
 	/*
+	https://c3-lang.org/getting-started
+	https://github.com/c3lang/c3c
+	https://github.com/c3lang/c3c/blob/master/c3c.1
+	https://github.com/c3lang/c3c/tree/master/resources/examples
+	https://www.learn-c3.org/
+	
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
