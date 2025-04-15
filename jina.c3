@@ -22,6 +22,8 @@ fn void generate_c3_file(String jin_file_path) {
 	https://github.com/c3lang/c3c/tree/master/resources/examples
 	https://www.learn-c3.org/
 	
+	type markers and tags can be implemented using @tag(name,value)
+	
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
@@ -86,7 +88,10 @@ fn void generate_c3_file(String jin_file_path) {
 	std::collections::LinkedList{Actor}* GLOBAL_actors_list;
 	
 	// if --no-evloop is not used
-	GMainLoop eventloop = g_main_loop_new(); 
+	GMainLoop eventloop = g_main_loop_new();
+	
+	actors list is partitioned: file handle 1, file handle 2, socket 1, socket 2, user interface
+	each partition can wake up the eventloop to processe the partition's messages
 	
 	the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
 	, a heavy computation that blocks its thread, can't make the UI lag
