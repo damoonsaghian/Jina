@@ -13,12 +13,14 @@
 		;c3 return self * multiplicand;
 	}
 	
-	div = { self, divisor :Int -> Int |
-		;c3 return self / divisor;
+	div = { self, divisor :Int -> ?Int |
+		;c3 if (x != 0) return self / divisor;
+		#null
 	}
 	
-	mod = { self, devisor :Int -> Int |
-		;c3 return self % divisor;
+	mod = { self, devisor :Int -> ?Int |
+		;c3 if (x != 0) return self % divisor;
+		#null
 	}
 	
 	exp = { self, exponent :Int -> Int |
