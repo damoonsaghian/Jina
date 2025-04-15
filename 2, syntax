@@ -129,7 +129,7 @@ any type that implements "Iter" interface, must define an "iter" method,
 	whose returned value stores the mutable state
 
 actor:
-	a :Actor[B] = Actor.new B.(x, y)
+	a :Actor[B] = Actor.new B(x, y)
 	a.do { b :B! | ... }
 
 modules are files containing definitions
@@ -177,8 +177,7 @@ defining methods (using a namespace):
 			...
 		}
 to create an instance of the type:
-	i :T = a: x, b: y
-	i = T. a: x, b: y
+	i = T a: x, b: y
 	i = T.new a: x
 accessing a member:
 	i.a
