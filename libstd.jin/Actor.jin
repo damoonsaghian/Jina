@@ -13,7 +13,7 @@ Actor[s]' :=
 		;; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
 		;c3
 		
-		state, messages: []
+		Actor[s] state messages: []
 	}
 	
 	do = { self!, message :(state: s! -> Bool) |
