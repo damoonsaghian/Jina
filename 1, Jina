@@ -134,9 +134,5 @@ there is no trait objects in Jina
 Jina compiles to C3, and thus can easily use existing C libraries
 
 Jina is installed by default in SPM Linux
-in other Unix'like systems, with "gnunet" installed:
-, install "gnunet" package
-, download "spm" directory from SPM Linux, and run:
-	sh spm/install.sh
-, install Jina:
-	spm install $gnunet_namespace jina
+in other Unix'like systems, follow the instructions mentioned in SPM Linux project, to install SPM then:
+; spm install $gnunet_namespace jina
