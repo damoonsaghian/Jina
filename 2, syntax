@@ -26,31 +26,38 @@ defining a variable with shared type:
 assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
-64 bits integer (equivalent to "long" in C3):
-	i :Int = 1'234'567'890
+integer types:
+, Int: word sized (equivalent to "isz" in C3)
+, Int64: 64 bits (equivalent to "long" in C3)
+, Int32: 32 bits (equivalent to "int" in C3)
+, Int16: 16 bits (equivalent to "short" in C3)
+, Int8: 8 bits (equivalent to "ichar" in C3)
+integer literals:
+	1'234'567'890
 	0x1234'5678'9ABC'DEF0
+	i :Int64 = 123:64
 
-64 bits floating point (equivalent to "double" in C3):
-	f :Float = 1.0
+floating point types:
+, Float: 64 bits (equivalent to "double" in C3)
+, Float32: 32 bits (equivalent to "float" in C3)
+floating point literals:
 	1.23e4
 	0x1.0
 	0x1.23p4
+	f :Float32 = 1.0:32
 
 characters are 8 bits unsigned integer (equivalent to "char" in C3)
 	c :Char = 'a'  ;; ASCII code for character "a"
 	'\n' ;; ASCII code for character with escape code "\n"
 	'\x12' ;; a byte with hexadecimal value 0x12
 
-symbols are special values that are their own types:
-	s :#s = #s
-
 lists:
 	l :List[Int] = [1, 2, 3]
 indexing:
-	e :#null\Int = l_1
+	e :Maybe[Int] = l_1
+note that the type of the result of indexing above is "Maybe[Int&]&",
+	which is copied into the variable with type "Maybe[Int]"
 the sign of index is ignored: l_1 == l_-1
-note that the type of the result of indexing above is "#null\Int&",
-	which is copied into the variable with type "#null\Int"
 mutating lists:
 	l.put 0 at: 0 ;; [0, 2, 3]
 	l.put 4 at: 3 ;; [0, 2, 3, 4]
@@ -129,8 +136,8 @@ any type that implements "Iter" interface, must define an "iter" method,
 	whose returned value stores the mutable state
 
 actor:
-	a :Actor[B] = Actor.new B(x, y)
-	a.do { b :B! | ... }
+	a :Actor[S] = Actor.new S.new()
+	a.do { b :S! | ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
@@ -186,15 +193,16 @@ calling a method (note that there is no record field named "m", otherwise this w
 which is equivalent to:
 	T.m i x
 
-unions:
-	Bool := #true \ #false
-type "?A" is a shortcut for "#null\A"
+enums:
+	Bool := #true #false
+	x :Bool = #true
+	x = Bool#true
+type "?A" is a shortcut for "Maybe[A]"
+	Maybe[t] := #result t #null
 	x :?A = #null
 	x >> {
-		x :A |
-		...
-		:#null |
-		...
+		#result x | ...
+		#null | ...
 	}
 
 traits:

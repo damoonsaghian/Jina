@@ -1,8 +1,8 @@
 import std::io;
 
-fn String! read_jina_exp(File jina_file) {
+fn String? read_jina_exp(File jina_file) {
 	do {
-		String! line = io::readline(&jin_file);
+		String? line = io::readline(&jin_file);
 		if (catch excuse = line) {
 			jin_file.close();
 			break;
@@ -27,8 +27,12 @@ fn void generate_c3_file(String jin_file_path) {
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
-	, if there is no point or "e", prepend with "(Int)" cast
-	, otherwise, prepend with "(Float)" cast
+	, if there is no point or "e":
+		if there is no colon, prepend with "(Int)" cast
+		if there is a colon followed by a number eg 64, prepend with "(Int64)" cast
+	, otherwise:
+		if there is no colon, prepend with "(Float)" cast
+		if there is no colon followed by 32, prepend with "(Float32)" cast
 	
 	characters: 'a' '\n' '\x12'
 	
@@ -59,12 +63,17 @@ fn void generate_c3_file(String jin_file_path) {
 	x=x/y -> x/=y
 	x=x%y -> x%=y
 	
-	tuple and union generic type
+	enums are implemented using c3 enums and unions
+	https://en.wikipedia.org/wiki/Tagged_union
+	
 	named tuples
 	
 	function: { | }
 	replace with: fn () {}
 	if the function is only made of one expression, replace with: fn () @inline {}
+	if there are multiple "|"
+	, if it's an enum match, compile the body of the function to C3 switch
+	, if a type match, use macros, $switch, and $typeof to implement overloaded functions
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient
