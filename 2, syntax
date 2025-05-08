@@ -27,37 +27,34 @@ assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
 integer types:
-, Int: multi'precision integer (variable size)
-, IntS: equivalent to "isz" in C3 (word size)
-, IntU: equivalent to "usz" in C3
-, Int64: equivalent to "long" in C3 (64 bits)
-, Int32: equivalent to "int" in C3
-, IntU32: equivalent to "uint" in C3
-, Int16: equivalent to "short" in C3
-, IntU16: equivalent to "ushort" in C3
-, Int8: equivalent to "ichar" in C3
-, IntU8: equivalent to "char" in C3
-integer literals by default have type "IntS":
+, Int: word size (C3 "isz")
+, IntU: word size unsigned (C3 "usz")
+, Int64: 64 bits (C3 "long")
+, Int32: 32 bits (C3 "int")
+, Int16: 16 bits (C3 "short")
+, Int8: 8 bits (C3 "ichar")
+, IntC: 8 bits unsigned (C3 "char")
+, IntA: arbitrary size
+integer literals by default have type "Int":
 	1'234'567'890
 	0x1234'5678'9ABC'DEF0
-integers (and more generally, all numbers) are convertible types
+character literals:
+	c :IntC = 'a'  ;; ASCII code for character "a"
+	'\n' ;; ASCII code for character with escape code "\n"
+	'\x12' ;; a byte with hexadecimal value 0x12
+integers (and in fact, all numbers) can automatically be converted to bigger types
 	i :Int64 = 123
 	i = 123.to'Int64
 
-floating point types:
-, Float: multi'precision floating point with ball arithmetic
-, Float32: equivalent to "float" in C3
-, Float64: equivalent to "double" in C3
-floating point literals by default have "Float64" type:
+floating'point number types:
+, Num: single precision (C3 "float")
+, Num2: double precision (C3 "double")
+, NumA: arbitrary precision with ball arithmetic
+floating point literals by default have "Num2" type:
 	1.0
 	1.23e4
 	0x1:0
 	0x1:23p4
-
-characters are encoded in ASCII and stored in a byte (C3 "char")
-	c :Char = 'a'  ;; ASCII code for character "a"
-	'\n' ;; ASCII code for character with escape code "\n"
-	'\x12' ;; a byte with hexadecimal value 0x12
 
 lists:
 	l :List[Char] = ['a', 'b', 'c']
@@ -139,7 +136,7 @@ not: -a
 there is no loop construct directly available in Jina
 instead we have iterators with "each" method, that is internally implemented using C3 loop
 	iter.each { x | ... }
-any type that implements "Iter" interface, must define an "iter" method,
+any type that implements "Iter" trait, must define an "iter" method,
 	whose returned value stores the mutable state
 
 actor:
