@@ -24,6 +24,8 @@ fn void generate_c3_file(String jin_file_path) {
 	
 	type markers and tags can be implemented using @tag(name,value)
 	
+	append "__" to identifiers that are C3 keywords
+	
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
@@ -37,31 +39,26 @@ fn void generate_c3_file(String jin_file_path) {
 	characters: 'a' '\n' '\x12'
 	
 	operators:
-	a + b		a .add b
-	a - b		a .sub b
-	a * b		a .mul b
-	a / b		a .div b
-	a ^ b		a .exp b
-	-a			a.neg()
+	a + b		a .add'op b
+	a - b		a .sub'op b
+	a * b		a .mul'op b
+	a / b		a .div'op b
+	a ^ b		a .exp'op b
+	-a			a.neg'op()
 	a && b		a .and {b}
 	a \\ b		a .or {b}
-	a == b		a .is'eq b
-	a -= b		a .not'eq b
-	a > b		a .is'more b
-	a >= b		a .is'more'eq b
+	a == b		a .is'equal b
+	a >< b		a .is'not'equal b
+	a > b		a .is'after b
+	a >= b		a .is'after'or'equal b
+	a < b		a .is'before b
+	a <= b		a .is'before'or'equal b
 	
 	note that:
 	a-b		;; a.sub(b)
 	a - b	;; a.sub(b)
 	a -b	;; a(b.neg())
 	a -1	;; a(-1)
-	
-	optimizations on generated C3:
-	x=x+y -> x+=y
-	x=x-y -> x-=y
-	x=x*y -> x*=y
-	x=x/y -> x/=y
-	x=x%y -> x%=y
 	
 	enums are implemented using c3 enums and unions
 	https://en.wikipedia.org/wiki/Tagged_union
@@ -163,8 +160,7 @@ fn void? main(String[] args) {
 	using glib for eventloop is not such a bad idea
 	glib is already used in lots of system libraries and services
 	in the future we can rewrite them (even those written in C++) in Jina
-	eventually we can implement std.jin, media.jin, and gui.jin completely in Jina and C3,
-		without using flint, glib, gstreamer, and gtk
+	eventually we can implement std.jin completely in Jina and C3 (without using glib, gmp, and mpfr)
 	*/
 	
 	// if build target is "ELF freestanding" (kernel or embeded), link statically, and use --no-evloop

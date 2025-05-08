@@ -27,40 +27,47 @@ assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
 integer types:
-, Int: word sized (equivalent to "isz" in C3)
-, Int64: 64 bits (equivalent to "long" in C3)
-, Int32: 32 bits (equivalent to "int" in C3)
-, Int16: 16 bits (equivalent to "short" in C3)
-, Int8: 8 bits (equivalent to "ichar" in C3)
-integer literals:
+, Int: multi'precision integer (variable size)
+, IntS: equivalent to "isz" in C3 (word size)
+, IntU: equivalent to "usz" in C3
+, Int64: equivalent to "long" in C3 (64 bits)
+, Int32: equivalent to "int" in C3
+, IntU32: equivalent to "uint" in C3
+, Int16: equivalent to "short" in C3
+, IntU16: equivalent to "ushort" in C3
+, Int8: equivalent to "ichar" in C3
+, IntU8: equivalent to "char" in C3
+integer literals by default have type "IntS":
 	1'234'567'890
 	0x1234'5678'9ABC'DEF0
-	i :Int64 = 123:64
+integers (and more generally, all numbers) are convertible types
+	i :Int64 = 123
+	i = 123.to'Int64
 
 floating point types:
-, Float: 64 bits (equivalent to "double" in C3)
-, Float32: 32 bits (equivalent to "float" in C3)
-floating point literals:
+, Float: multi'precision floating point with ball arithmetic
+, Float32: equivalent to "float" in C3
+, Float64: equivalent to "double" in C3
+floating point literals by default have "Float64" type:
+	1.0
 	1.23e4
-	0x1.0
-	0x1.23p4
-	f :Float32 = 1.0:32
+	0x1:0
+	0x1:23p4
 
-characters are 8 bits unsigned integer (equivalent to "char" in C3)
+characters are encoded in ASCII and stored in a byte (C3 "char")
 	c :Char = 'a'  ;; ASCII code for character "a"
 	'\n' ;; ASCII code for character with escape code "\n"
 	'\x12' ;; a byte with hexadecimal value 0x12
 
 lists:
-	l :List[Int] = [1, 2, 3]
+	l :List[Char] = ['a', 'b', 'c']
 indexing:
-	e :Maybe[Int] = l_1
-note that the type of the result of indexing above is "Maybe[Int&]&",
-	which is copied into the variable with type "Maybe[Int]"
-the sign of index is ignored: l_1 == l_-1
+	e :Maybe[Char] = l_1
+note that the type of the result of indexing above is actually "Maybe[Char&]&",
+	which is copied into the variable with type "Maybe[Char]"
 mutating lists:
-	l.put 0 at: 0 ;; [0, 2, 3]
-	l.put 4 at: 3 ;; [0, 2, 3, 4]
+	l.put 'd' at: 3 ;; ['a', 'b', 'c', 'd']
+	l.put 'e' at: 0 ;; ['e', 'b', 'c', 'd']
 
 character strings are UTF8 encoded, and implemented a list of characters:
 	s :CharS = "abc def"
@@ -80,7 +87,7 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of integers as in lists):
+dictionaries are indexed using strings (instead of "IntU" as in lists):
 	d :Dict[Int] = [a: 1, b: 2, c: 3]
 indexing:
 	d_'a
@@ -125,8 +132,8 @@ and or:
 	a && b
 	a \\ b
 which are equivalent to:
-	a.and {b}
-	a.or {b}
+	a .and {b}
+	a .or {b}
 not: -a
 
 there is no loop construct directly available in Jina
@@ -192,6 +199,7 @@ calling a method (note that there is no record field named "m", otherwise this w
 	i.m x
 which is equivalent to:
 	T.m i x
+if a method has no are (other than self), it can be called like this: i.m
 
 enums:
 	Bool := #true #false
@@ -236,4 +244,7 @@ or:
 	;c3
 	...
 	;
+declaring functions and types from a C lib
+	;c3 extern fn ...;
+	;c3 typedef ... = any;
 beware! with great power comes great responsibility

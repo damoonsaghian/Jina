@@ -15,14 +15,9 @@ EOF
 c3c build release --path "$pkg_dir/.cache/c3c"
 spm_xcript jina inst/cmd
 
+spm_import gmp
+spm_import mpfr
+spm_import glib
+
 "$build_dir/exec/jina" "$pkg_dir"
 ln "$pkg_dir/.cache/jina/std/build/$TARGET/libstd.jin.so" "$build_dir/exp/lib"
-
-spm_import flint
-# build math.jin
-
-spm_import gstreamer
-# build media.jin
-
-spm_import gtk
-# build gui.jin

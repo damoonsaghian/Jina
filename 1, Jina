@@ -50,18 +50,18 @@ when a variable of type "T" is put into:
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 when a variable of type "T$" is put into:
-, a variable of type "T", it's compile time error
+, a variable of type "T", copy
 , a variable of type "T$", increase reference count
 , a variable of type "T&", borrow
 , a variable of type "T!", it's compile time error
 when a variable of type "T&" is put into:
 , a variable of type "T", copy
-, a variable of type "T$", it's compile time error
+, a variable of type "T$", copy
 , a variable of type "T&", borrow
 , a variable of type "T!", it's compile time error
 when a variable of type "T!" is put into:
 , a variable of type "T", copy
-, a variable of type "T$", it's compile time error
+, a variable of type "T$", copy
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 
@@ -129,7 +129,16 @@ to avoid this problem, some languages (eg Rust) have two kinds of types:
 Rust has trait objects (dynamic interfaces) with the same problem regarding variance
 	https://users.rust-lang.org/t/vector-covariant-in-its-element-type/80582
 	https://stackoverflow.com/questions/55200843/what-does-it-mean-that-box-is-covariant-if-boxdyn-b-is-not-a-subtype-of-boxdy
-there is no trait objects in Jina
+in Jina we have traits, but there is no trait objects
+
+in addition, in Jina we have convertible types
+it's like in mathematics where we can easily do operations across integers, rationals, reals, and complex numbers
+when a type is convertible to another type, it defines a specially named method,
+	that converts its value to the target type
+then when an expression is used in a place that its type does not match,
+	the corresponding type'converting method is automatically added in the code
+	and if the method actually exists, the code compiles successfully
+the idea is to only do this for types that can be converted with negligible run'time overhead
 
 Jina compiles to C3, and thus can easily use existing C libraries
 
