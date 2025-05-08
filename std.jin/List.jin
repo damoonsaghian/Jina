@@ -5,6 +5,9 @@
 List[t] := ;c3 std::collections::list{t}
 
 ;ns List[x] ::Iter
+	to'LList[x] = { self -> LList[x] |
+	}
+	
 	get = { self&, index :Int -> ?x& |
 		;; checks if index is less than the length
 	}

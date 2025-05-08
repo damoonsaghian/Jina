@@ -1,0 +1,53 @@
+Str := List[IntC]
+
+;ns Str ::StrRep
+	;; implement list methods such that they respect UTF8 encoding
+	
+	replace = { self!, substring :Str&, replacement :Str& |
+	}
+	
+	split =
+	join =
+	
+	find = { self, substring :Str& -> ?Int |
+	}
+	contains = { self, substring :Str& -> Bool |
+	}
+	
+	trim'prefix = { self!, prefix :Str& |
+	}
+	trim'suffix = { self!, suffix :Str& |
+	}
+	;; trim ASCII whitespace from the start of the string
+	trim'start = { self! |
+	}
+	;; trim ASCII whitespace from the end of the string
+	trim'end = { self! |
+	}
+	;; trim ASCII whitespace from the start and end of the string
+	trim = { self! |
+	}
+	
+	truncate = { self!, max'len :Int |
+	}
+	
+	clear = { self! | List.clear self }
+	
+	to'lower = { self! |
+	}
+	to'upper = { self! |
+	}
+	
+	to'int = { self -> ?Int |
+	}
+	
+	;; StrRep
+	to'str = { self |
+		rep = "\""
+		rep.append self
+		rep.append "\""
+		rep
+	}
+
+;tr StrRep
+	to'str :( self -> Str )

@@ -1,5 +1,9 @@
-;; generic Complex container for types that implement the Algebra and OrdP trait (integers, floats, Real)
-;; Complex[a::Algebra]
+;; generic Complex container for types that implement the Num trait
 
-;; quaternions: ComplexQ[a::Algebra]
-;; octonions: ComplexO[a::Algebra]
+Complex[n::Num] := r: n, i: n
+
+;; quaternions
+ComplexQ[n::Num] := r: n, i: n, j: n, k: n
+
+;; octonions
+ComplexO[n::Num] :=
