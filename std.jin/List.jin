@@ -1,0 +1,31 @@
+;; reading is fast, writing (except appending) is slow
+;; the initial list will be on stack, if number of elements and their size is small
+	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
+
+List[t] := ;c3 std::collections::list{t}
+
+;ns List[x] ::Iter
+	get = { self&, index :Int -> ?x& |
+		;; checks if index is less than the length
+	}
+	
+	append = { self!, element :x |
+	}
+	
+	extend = { self!, ext :List[x]& |
+	}
+	
+	put = { self!, element :x, at :Int |
+	}
+	
+	insert = { self!, element :x, at :Int |
+	}
+	
+	slice = { self!, from :Int, to :?Int = #null |
+	}
+	
+	remove = { self!, at :Int |
+	}
+
+	;;impl Iter
+	iter = {}

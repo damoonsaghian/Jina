@@ -1,0 +1,1 @@
+Maybe[t] := #result t #null

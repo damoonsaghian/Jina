@@ -1,0 +1,12 @@
+;; generic Tensor container for types that implement the Algebra trait (integers, floats, Real, or Complex of them)
+
+;; if the type parameter is Int or Float, or Complex of them use Flint matrices
+;; https://arxiv.org/abs/1901.04289
+
+;; if the type parameter is other integers and floats, or complex of them,
+	create tensors with accelerated computations
+;; https://github.com/arrayfire/arrayfire
+;; https://arrayfire.org/docs/gettingstarted.htm#gettingstarted_api_usage
+;; https://github.com/ggml-org/ggml
+
+;; otherwise use lists to implement the generic tensor

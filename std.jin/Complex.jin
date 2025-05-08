@@ -1,0 +1,5 @@
+;; generic Complex container for types that implement the Algebra and OrdP trait (integers, floats, Real)
+;; Complex[a::Algebra]
+
+;; quaternions: ComplexQ[a::Algebra]
+;; octonions: ComplexO[a::Algebra]
