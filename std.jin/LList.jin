@@ -1,6 +1,0 @@
-;; linked list: reading is slow, writing is fast
-
-;c3
-module LList{t};
-typedef LList = std::collections::linkedlist{t};
-;
