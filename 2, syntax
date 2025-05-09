@@ -56,6 +56,12 @@ floating point literals by default have "Num2" type:
 	0x1:0
 	0x1:23p4
 
+complex numbers can be made of any type implementing the "Num" trait
+all numerical types mentioned above do implement the "Num" trait
+	c :Complex[Int] = 1 + 1i
+	c = 1 + 0i
+	c = Complex[Int] 1 0
+
 lists:
 	l :List[Char] = ['a', 'b', 'c']
 indexing:
