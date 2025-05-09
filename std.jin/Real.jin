@@ -1,7 +1,0 @@
-;; real numbers can't generally be exactly represented in digits
-;; so we use symbolic expressions to represent exact Real numbers
-;; these symbolic expressions can be evaluated for integers or floats
-;; https://flintlib.org/doc/
-;; https://github.com/symengine/symengine
-;; https://en.wikipedia.org/wiki/Maxima_(software)
-;; https://en.wikipedia.org/wiki/FriCAS
