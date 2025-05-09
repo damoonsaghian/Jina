@@ -4,11 +4,200 @@
 
 ;c3 typedef Num = float;
 
-;ns Num ::Num ::OrdP ::CharRep
-	to'Float2 = { self -> Float2 |
-		;c3 return (double) self
+;ns Num ::Num ::Ord ::StrRep
+	to'Num2 = { self -> Num2 |
+		;c3 return (Num2) (double) self;
 	}
-	to'Complex[t] = { self -> Complex[t] |
+	to'NumA = { self -> NumA |
+		;c3 return ;
+	}
+	to'Complex[n::Num] = { self -> Complex[n] |
+		Complex[n] self 0
+	}
+	to'Tensor[t::Num] = { self -> Tensor[t] |
+		Tensor[t] [self]
+	}
+	
+	add'op = {
+		self, addend :Num -> Num |
+			;c3 return self + addend;
+		self, addend :Num2 -> Num2 |
+			;c3 return self + addend;
+		self, addend :NumA -> NumA |
+			;c3 return self + addend;
+		self, addend :Complex[t::Num] -> Complex[t] |
+			addend + self
+		self, addend :Tensor[t::Num] -> Tensor[t] |
+			addend + self
+	}
+	
+	add = { self!, addend :Num |
+		;c3 self += addend;
+	}
+	
+	sub'op = {
+		self, subtrahend :Float -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Float32 -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Int -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Int64 -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Int32 -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Int16 -> Float |
+			;c3 return self - subtrahend;
+		self, subtrahend :Int8 -> Float |
+			;c3 return self - subtrahend;
+	}
+	
+	sub = { self!, subtrahend :Num |
+		;c3 self -= subtrahend;
+	}
+	
+	mul'op = {
+		self, multiplicand :Float -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Float32 -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Int -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Int64 -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Int32 -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Int16 -> Float |
+			;c3 return self * multiplicand;
+		self, multiplicand :Int8 -> Float |
+			;c3 return self * multiplicand;
+	}
+	
+	mul = { self!, multiplicand :Num |
+		;c3 self *= multiplicand;
+	}
+	
+	div'op = {
+		self, divisor :Float -> Float |
+			;c3 return self / divisor;
+		self, divisor :Float32 -> Float |
+			;c3 return self / divisor;
+		self, divisor :Int -> Float |
+			;c3 return self / divisor;
+		self, divisor :Int64 -> Float |
+			;c3 return self / divisor;
+		self, divisor :Int32 -> Float |
+			;c3 return self / divisor;
+		self, divisor :Int16 -> Float |
+			;c3 return self / divisor;
+		self, divisor :Int8 -> Float |
+			;c3 return self / divisor;
+	}
+	
+	div = { self!, divisor :Float |
+		;c3 self /= divisor;
+	}
+	
+	exp = {
+		self, exponent :Float -> Float |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Float32 -> Float32 |
+			;c3 return float.pow(self, exponent);
+		self, exponent :Int -> Float |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Int64 -> Float |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Int32 -> Float |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Int16 -> Float |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Int8 -> Float |
+			;c3 return double.pow(self, exponent);
+	}
+	
+	neg'op = { self -> Float |
+		;c3 return -self;
+	}
+	
+	neg = { self! |
+		;c3 self *= -1;
+	}
+	
+	abs = { self -> Num |
+		;c3 return math.abs(self);
+	}
+	
+	next'up = { self -> Float |
+	}
+	next'down = { self -> Float |
+	}
+	
+	cos = { self -> Float |
+	}
+	acos = { self -> Float |
+	}
+	cosh = { self -> Float |
+	}
+	atanh = { self -> Float |
+	}
+	sin = { self -> Float |
+	}
+	asin = { self -> Float |
+	}
+	sinh = { self -> Float |
+	}
+	tan = { self -> Float |
+	}
+	atan = { self -> Float |
+	}
+	atan2 = { self -> Float |
+	}
+	tanh = { self -> Float |
+	}
+	
+	log = { self -> Float |
+	}
+	log2 = { self -> Float |
+	}
+	log10 = { self -> Float |
+	}
+	
+	to'int = { self, direction :(#up #down) = #down -> Int |
+		;c3 return (Int) (isz) (float) self;
+	}
+	
+	nan = ;c3
+	inf = ;c3
+	
+	;; base of the natural logarithm
+	e = ;c3
+	
+	pi = ;c3
+	
+	;;math.StructOrd
+	
+	equal = { self, other :Float -> Bool |
+		;c3 self == other;
+	}
+	
+	after = { self, other :Float -> Bool |
+		;c3 self > other;
+	}
+	
+	;;CharRep
+	to'str = { self -> Str |
+	}
+
+;c3 typedef Num2 = double;
+;ns Num2 ::Num ::Ord ::StrRep
+
+;; https://flintlib.org/doc/arb.html
+;; stored as decimal
+;ns NumA ::Num ::OrdP ::StrRep
+	to'Complex[t::Num] = { self -> Complex[t] |
+		Complex[t] self 0
+	}
+	to'Tensor[t::Num] = { self -> Complex[t] |
 		Complex[t] self 0
 	}
 	
@@ -82,13 +271,7 @@
 	
 	sub = {
 		self!, subtrahend :Num& |
-		self!, subtrahend :NumI& |
-		self!, subtrahend :Int |
-		self!, subtrahend :Int64 |
-		self!, subtrahend :Int32 |
-		self!, subtrahend :Int16 |
-		self!, subtrahend :Int8 |
-		self!, subtrahend :Float |
+		self!, subtrahend :Num2 |
 		self!, subtrahend :Float32 |
 	}
 	
@@ -205,285 +388,6 @@
 	after = { self&, other :Num& -> ?Bool |
 	}
 	
-	;; CharRep
-	to'chars = { self& -> CharS |
+	;; StrRep
+	to'str = { self& -> Str |
 	}
-
-;c3 typedef Float32 = float;
-
-;ns Float32 ::math.StructRing ::math.StructOrd ::CharRep
-	to'Float2 = { self -> Float2 |
-		;c3 return (Float2) (double) self;
-	}
-	to'math'Num = { self -> math.Num |
-		;c3 return ;
-	}
-	to'math'Complex[Float] = { self -> math.Complex[Float] |
-		math.Complex[Float] self 0
-	}
-	to'math'Complex[Float2] = { self -> math.Complex[Float2] |
-		math.Complex[Float2] self 0
-	}
-	to'math'Complex[Num] = { self -> math.Complex[Num] |
-		math.Complex[Num] self 0
-	}
-	to'math'ComplexQ[Float] = { self -> math.ComplexQ[Float] |
-		math.ComplexQ[Float] self 0
-	}
-	to'math'ComplexQ[Float2] = { self -> math.ComplexQ[Float2] |
-		math.ComplexQ[Float2] self 0
-	}
-	to'math'ComplexQ[Num] = { self -> math.ComplexQ[Num] |
-		math.ComplexQ[Num] self 0
-	}
-	to'math'ComplexO[Float] = { self -> math.ComplexO[Float] |
-		math.ComplexO[Float] self 0
-	}
-	to'math'ComplexO[Float2] = { self -> math.ComplexO[Float2] |
-		math.ComplexO[Float2] self 0
-	}
-	to'math'ComplexO[Num] = { self -> math.ComplexO[Num] |
-		math.ComplexO[Num] self 0
-	}
-	to'math'Tensor[Float] = { self -> math.Tensor[Float] |
-		math.Tensor[Float] self 0
-	}
-	to'math'Tensor[Float2] = { self -> math.Tensor[Float2] |
-		math.Tensor[Float2] self 0
-	}
-	to'math'Tensor[Num] = { self -> math.Tensor[Num] |
-		math.Tensor[Num] self 0
-	}
-	
-	add'op = {
-		self, addend :Float -> Float |
-			;c3 return self + addend;
-		self, addend :Float32 -> Float |
-			;c3 return self + addend;
-		self, addend :Int -> Float |
-			;c3 return self + addend;
-		self, addend :Int64 -> Float |
-			;c3 return self + addend;
-		self, addend :Int32 -> Float |
-			;c3 return self + addend;
-		self, addend :Int16 -> Float |
-			;c3 return self + addend;
-		self, addend :Int8 -> Float |
-			;c3 return self + addend;
-	}
-	
-	add = {
-		self!, addend :Float |
-			;c3 self += addend;
-		self!, addend :Float32 |
-			;c3 self += addend;
-		self!, addend :Int |
-			;c3 self += addend;
-		self!, addend :Int64 |
-			;c3 self += addend;
-		self!, addend :Int32 |
-			;c3 self += addend
-		self!, addend :Int16 |
-			;c3 self += addend;
-		self!, addend :Int8 |
-			;c3 self += addend;
-	}
-	
-	sub'op = {
-		self, subtrahend :Float -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Float32 -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int64 -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int32 -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int16 -> Float |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int8 -> Float |
-			;c3 return self - subtrahend;
-	}
-	
-	sub = {
-		self!, subtrahend :Float |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Float32 |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int64 |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int32 |
-			;c3 self -= subtrahend
-		self!, subtrahend :Int16 |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int8 |
-			;c3 self -= subtrahend;
-	}
-	
-	mul'op = {
-		self, multiplicand :Float -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Float32 -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int64 -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int32 -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int16 -> Float |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int8 -> Float |
-			;c3 return self * multiplicand;
-	}
-	
-	mul = {
-		self!, multiplicand :Float |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Float32 |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int64 |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int32 |
-			;c3 self *= multiplicand
-		self!, multiplicand :Int16 |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int8 |
-			;c3 self *= multiplicand;
-	}
-	
-	div'op = {
-		self, divisor :Float -> Float |
-			;c3 return self / divisor;
-		self, divisor :Float32 -> Float |
-			;c3 return self / divisor;
-		self, divisor :Int -> Float |
-			;c3 return self / divisor;
-		self, divisor :Int64 -> Float |
-			;c3 return self / divisor;
-		self, divisor :Int32 -> Float |
-			;c3 return self / divisor;
-		self, divisor :Int16 -> Float |
-			;c3 return self / divisor;
-		self, divisor :Int8 -> Float |
-			;c3 return self / divisor;
-	}
-	
-	div = {
-		self!, divisor :Float |
-			;c3 self /= divisor;
-		self!, divisor :Float32 |
-			;c3 self /= divisor;
-		self!, divisor :Int |
-			;c3 self /= divisor;
-		self!, divisor :Int64 |
-			;c3 self /= divisor;
-		self!, divisor :Int32 |
-			;c3 self /= divisor;
-		self!, divisor :Int16 |
-			;c3 self /= divisor;
-		self!, divisor :Int8 |
-			;c3 self /= divisor;
-	}
-	
-	exp = {
-		self, exponent :Float -> Float |
-			;c3 return double.pow(self, exponent);
-		self, exponent :Float32 -> Float32 |
-			;c3 return float.pow(self, exponent);
-		self, exponent :Int -> Float |
-			;c3 return double.pow(self, exponent);
-		self, exponent :Int64 -> Float |
-			;c3 return double.pow(self, exponent);
-		self, exponent :Int32 -> Float |
-			;c3 return double.pow(self, exponent);
-		self, exponent :Int16 -> Float |
-			;c3 return double.pow(self, exponent);
-		self, exponent :Int8 -> Float |
-			;c3 return double.pow(self, exponent);
-	}
-	
-	neg'op = { self -> Float |
-		;c3 return -self;
-	}
-	
-	neg = { self! |
-		;c3 self *= -1;
-	}
-	
-	abs = { self -> Float |
-		;c3 return math.abs(self);
-	}
-	
-	next'up = { self -> Float |
-	}
-	next'down = { self -> Float |
-	}
-	
-	cos = { self -> Float |
-	}
-	acos = { self -> Float |
-	}
-	cosh = { self -> Float |
-	}
-	atanh = { self -> Float |
-	}
-	sin = { self -> Float |
-	}
-	asin = { self -> Float |
-	}
-	sinh = { self -> Float |
-	}
-	tan = { self -> Float |
-	}
-	atan = { self -> Float |
-	}
-	atan2 = { self -> Float |
-	}
-	tanh = { self -> Float |
-	}
-	
-	log = { self -> Float |
-	}
-	log2 = { self -> Float |
-	}
-	log10 = { self -> Float |
-	}
-	
-	to'int = { self, direction :(#up #down) = #down -> Int |
-		;c3 return (Int) (isz) (float) self;
-	}
-	
-	nan = ;c3
-	inf = ;c3
-	
-	;; base of the natural logarithm
-	e = ;c3
-	
-	pi = ;c3
-	
-	;;math.StructOrd
-	
-	equal = { self, other :Float -> Bool |
-		;c3 self == other;
-	}
-	
-	after = { self, other :Float -> Bool |
-		;c3 self > other;
-	}
-	
-	;;CharRep
-	to'chars = { self -> CharS |
-	}
-
-;c3 typedef Float2 = double;
-;ns Float2 ::Num ::Ord ::CharRep
-
-;; https://flintlib.org/doc/arb.html
-;; stored as decimal
-NumA :=

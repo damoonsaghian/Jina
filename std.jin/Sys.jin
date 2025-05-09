@@ -1,12 +1,12 @@
 ;ns Sys
-	print = { message :CharS& |
+	print = { message :Str& |
 		;c3 std::io::printn(message.array_view());
 	}
 	
-	print'err = { message :CharS& |
+	print'err = { message :Str& |
 	}
 	
-	read = { cb :(answer :CharS& ->) |
+	read = { cb :(answer :Str& ->) |
 		actor = Actor.new '
 		actor.do { answer! |
 			;; read non'blocking from stdin
@@ -21,15 +21,15 @@
 		}
 	}
 	
-	exec = { program'name :CharS&, args :?CharS& = #null -> stdin: File, stdout: File |
+	exec = { program'name :Str&, args :?Str& = #null -> stdin: File, stdout: File |
 	}
 	
-	get'env = { -> CharS |
+	get'env = { -> Str |
 	}
 	
-	get'args = { -> CharS |
+	get'args = { -> Str |
 	}
 	
-	get'time = { format :CharS& = "" -> CharS |
-		;c3 return (CharS) std::time::;
+	get'time = { format :Str& = "" -> Str |
+		;c3 return (Str) std::time::;
 	}

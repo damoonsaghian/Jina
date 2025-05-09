@@ -1,32 +1,22 @@
 ;c3 import std::math
 
-;; https://flintlib.org/doc/fmpz.html
-Int :=
-;ns Int ::Ring ::Ord ::CharRep
+;c3 typedef Int = isz;
 
-;c3 typedef IntS = isz;
-
-;ns IntS ::math.StructRing ::math.StructOrd ::CharRep
+;ns Int ::Num ::Ord ::StrRep
 	to'Int64 = { self -> Int64 |
 		;c3 return (Int64) (long) (isz) self;
 	}
-	to'Int = { self -> Int |
+	to'IntA = { self -> IntA |
 		;c3 return ;
 	}
-	to'Float = { self -> Float |
+	to'NumA = { self -> NumA |
 		;c3 return ;
 	}
-	to'Complex[IntS] = { self -> Complex[IntS] |
-		math.Complex[IntS] self 0
+	to'Complex[t::Num] = { self -> Complex[t] |
+		Complex[t] self 0
 	}
-	to'math'Complex[Int64] = { self -> math.Complex[Int64] |
-		math.Complex[Int64] self 0
-	}
-	to'math'Complex[Int] = { self -> math.Complex[Int] |
-		math.Complex[Int] self 0
-	}
-	to'math'Complex[Float] = { self -> math.Complex[Float] |
-		math.Complex[Float] self 0
+	to'Tensor[t::Num] = { self -> Tensor[t] |
+		Tensor[t] [self]
 	}
 	
 	add'op = {
@@ -34,153 +24,97 @@ Int :=
 			;c3 return self + addend;
 		self, addend :Int64 -> Int64 |
 			;c3 return self + addend;
-		self, addend :Float -> Float |
+		self, addend :IntA -> IntA |
 			;c3 return self + addend;
-		self, addend :Float32 -> Float32 |
+		self, addend :NumA -> NumA |
 			;c3 return self + addend;
-		self, addend :math.Num -> math.Num |
+		self, addend :Complex[t::Num] -> Complex[t] |
 			addend + self
-		self, addend :math.NumI -> math.NumI |
+		self, addend :Tensor[t::Num] -> Tensor[t] |
 			addend + self
 	}
 	
-	add = {
-		self!, addend :Int |
-			;c3 self += addend;
-		self!, addend :Int32 |
-			;c3 self += addend;
-		self!, addend :Int16 |
-			;c3 self += addend;
-		self!, addend :Int8 |
-			;c3 self += addend;
+	add = { self!, addend :Int |
+		;c3 self += addend;
 	}
 	
 	sub'op = {
 		self, subtrahend :Int -> Int |
 			;c3 return self - subtrahend;
-		self, subtrahend :Int32 -> Int |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int16 -> Int |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int8 -> Int |
-			;c3 return self - subtrahend;
 		self, subtrahend :Int64 -> Int64 |
 			;c3 return self - subtrahend;
-		self, subtrahend :Float -> Float |
+		self, subtrahend :IntA -> IntA |
 			;c3 return self - subtrahend;
-		self, subtrahend :Float32 -> Float32 |
+		self, subtrahend :NumA -> NumA |
 			;c3 return self - subtrahend;
+		self, subtrahend :Complex[t::Num] -> Complex[t] |
+			-subtrahend + self
+		self, subtrahend :Tensor[t::Num] -> Tensor[t] |
+			-subtrahend + self
 	}
 	
-	sub = {
-		self!, subtrahend :Int |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int32 |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int16 |
-			;c3 self -= subtrahend;
-		self!, subtrahend :Int8 |
-			;c3 self -= subtrahend;
+	sub = { self!, subtrahend :Int |
+		;c3 self -= subtrahend;
 	}
 	
 	mul'op = {
 		self, multiplicand :Int -> Int |
 			;c3 return self * multiplicand;
-		self, multiplicand :Int32 -> Int |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int16 -> Int |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int8 -> Int |
-			;c3 return self * multiplicand;
 		self, multiplicand :Int64 -> Int64 |
 			;c3 return self * multiplicand;
-		self, multiplicand :Float -> Float |
+		self, multiplicand :IntA -> IntA |
 			;c3 return self * multiplicand;
-		self, multiplicand :Float32 -> Float32 |
+		self, multiplicand :NumA -> NumA |
 			;c3 return self * multiplicand;
+		self, multiplicand :Complex[t::Num] -> Complex[t] |
+			multiplicand * self
+		self, multiplicand :Tensor[t::Num] -> Tensor[t] |
+			multiplicand * self
 	}
 	
-	mul = {
-		self!, multiplicand :Int |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int32 |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int16 |
-			;c3 self *= multiplicand;
-		self!, multiplicand :Int8 |
-			;c3 self *= multiplicand;
+	mul = { self!, multiplicand :Int |
+		;c3 self *= multiplicand;
 	}
 	
 	div'op = {
 		self, divisor :Int -> ?Int |
 			;c3 if (x != 0) return self / divisor;
 			#null
-		self, divisor :Int32 -> ?Int |
-			;c3 if (x != 0) return self / divisor;
-			#null
-		self, divisor :Int16 -> ?Int |
-			;c3 if (x != 0) return self / divisor;
-			#null
-		self, divisor :Int8 -> ?Int |
-			;c3 if (x != 0) return self / divisor;
-			#null
 		self, divisor :Int64 -> ?Int64 |
 			;c3 if (x != 0) return self / divisor;
 			#null
-		self, divisor :Float -> ?Float |
+		self, divisor :IntA -> ?IntA |
 			;c3 if (x != 0) return self / divisor;
 			#null
-		self, divisor :Float32 -> ?Float32 |
+		self, divisor :NumA -> ?NumA |
 			;c3 if (x != 0) return self / divisor;
 			#null
+		self, divisor :Complex[t] -> ?Complex[t] |
+			divisor == 0 .then { #null } else: { (1+0i) * self / divisor }
+		self, divisor :Tensor[t] -> ?Tensor[t] |
+			divisor == 0 .then { #null } else: { Tensor[t] [1] * self / divisor }
 	}
 	
-	div = {
-		self!, divisor :Int -> Bool |
-			;c3 if (x != 0) { self /= divisor; return true; }
-			#false
-		self!, divisor :Int32 -> Bool |
-			;c3 if (x != 0) { self /= divisor; return true; }
-			#false
-		self!, divisor :Int16t -> Bool|
-			;c3 if (x != 0) { self /= divisor; return true; }
-			#false
-		self!, divisor :Int8 -> Bool |
-			;c3 if (x != 0) { self /= divisor; return true; }
-			#false
+	div = { self!, divisor :Int -> Bool |
+		;c3 if (x != 0) { self /= divisor; return true; }
+		#false
 	}
 	
 	mod'op = {
-		self, devisor :Int -> ?Int |
+		self, modulus :Int -> ?Int |
 			;c3 if (x != 0) return self % divisor;
 			#null
-		self, devisor :Int32 -> ?Int |
+		self, modulus :Int64 -> ?Int64 |
 			;c3 if (x != 0) return self % divisor;
 			#null
-		self, devisor :Int16 -> ?Int |
-			;c3 if (x != 0) return self % divisor;
-			#null
-		self, devisor :Int8 -> ?Int |
-			;c3 if (x != 0) return self % divisor;
-			#null
-		self, devisor :Int64 -> ?Int64 |
+		self, modulus :IntA -> ?IntA |
 			;c3 if (x != 0) return self % divisor;
 			#null
 	}
 	
-	mod = {
-		self, devisor :Int -> Bool |
-			;c3 if (x != 0) { self %= divisor; return true; }
-			#false
-		self, devisor :Int32 -> Bool |
-			;c3 if (x != 0) { self %= divisor; return true; };
-			#false
-		self, devisor :Int16 -> Bool |
-			;c3 if (x != 0) { self %= divisor; return true; };
-			#false
-		self, devisor :Int8 -> Bool |
-			;c3 if (x != 0) { self %= divisor; return true; };
-			#false
+	mod = { self, devisor :Int -> Bool |
+		;c3 if (x != 0) { self %= divisor; return true; }
+		#false
 	}
 	
 	neg'op = { self -> Int |
@@ -200,6 +134,8 @@ Int :=
 	}
 	to'int32 = { self -> Int32 |
 		;c3 return (Int32) (int) (isz) self;
+	}
+	to'float = { self -> Float2 |
 	}
 	
 	min = ;c3
@@ -246,3 +182,8 @@ Int :=
 
 ;c3 typedef IntU8 = char;
 ;ns IntU8 ::math.StructRing ::math.StructOrd ::CharRep
+
+;; https://gmplib.org/manual/
+;; https://flintlib.org/doc/fmpz.html
+IntA :=
+;ns IntA ::Num ::Ord ::StrRep

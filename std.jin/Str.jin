@@ -9,7 +9,7 @@ Str := List[IntC]
 	split =
 	join =
 	
-	find = { self, substring :Str& -> ?Int |
+	find = { self, substring :Str& -> ?IntU |
 	}
 	contains = { self, substring :Str& -> Bool |
 	}
@@ -28,7 +28,7 @@ Str := List[IntC]
 	trim = { self! |
 	}
 	
-	truncate = { self!, max'len :Int |
+	truncate = { self!, max'len :IntU |
 	}
 	
 	clear = { self! | List.clear self }
@@ -50,4 +50,4 @@ Str := List[IntC]
 	}
 
 ;tr StrRep
-	to'str :( self -> Str )
+	to'str :(self -> Str)

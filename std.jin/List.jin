@@ -1,34 +1,38 @@
 ;; reading is fast, writing (except appending) is slow
 ;; the initial list will be on stack, if number of elements and their size is small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
-
 List[t] := ;c3 std::collections::list{t}
 
-;ns List[x] ::Iter
-	to'LList[x] = { self -> LList[x] |
-	}
-	
-	get = { self&, index :Int -> ?x& |
+;ns List[t] ::Iter ::StrRep
+	get = { self&, index :IntU -> ?t& |
 		;; checks if index is less than the length
 	}
 	
-	append = { self!, element :x |
+	append = { self!, element :t |
 	}
 	
-	extend = { self!, ext :List[x]& |
+	extend = { self!, ext :List[t]& |
 	}
 	
-	put = { self!, element :x, at :Int |
+	put = { self!, element :t, at :IntU |
 	}
 	
-	insert = { self!, element :x, at :Int |
+	insert = { self!, element :t, at :IntU |
 	}
 	
-	slice = { self!, from :Int, to :?Int = #null |
+	slice = { self!, from :IntU, to :?IntU = #null |
 	}
 	
-	remove = { self!, at :Int |
+	remove = { self!, at :IntU |
 	}
 
-	;;impl Iter
+	;;Iter
 	iter = {}
+	
+	;;StrRep
+	to'str = {}
+
+;; linked list: reading is slow, writing is fast
+ListL[t] := ;c3 std::collections::linkedlist{t};
+
+;ns ListL[t] ::Iter ::StrRep

@@ -1,9 +1,9 @@
-;; generic Complex container for types that implement the Num trait
+Complex[n::Num] := n, n
 
-Complex[n::Num] := r: n, i: n
+;ns Complex[n::Num] ::Num ::StrRep
 
 ;; quaternions
-ComplexQ[n::Num] := r: n, i: n, j: n, k: n
+Complex4[n::Num] := n, n, n, n
 
 ;; octonions
-ComplexO[n::Num] :=
+Complex8[n::Num] := n, n, n, n, n, n, n, n
