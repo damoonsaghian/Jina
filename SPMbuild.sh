@@ -17,6 +17,7 @@ spm_xcript jina inst/cmd
 
 spm_import gmp
 spm_import mpfr
+spm_import lapacke
 spm_import glib
 
 "$build_dir/exec/jina" "$pkg_dir"
