@@ -132,7 +132,7 @@ Rust has trait objects (dynamic interfaces) with the same problem regarding vari
 in Jina we have traits, but there is no trait objects
 
 instead, in Jina we have convertible types
-it's like in mathematics where we can easily do arithmetic across integers, rationals, reals, and complex numbers
+it's like in mathematics where we can easily do arithmetic across integer, rational, real and complex numbers
 when a type is convertible to another type, it defines a specially named method,
 	that converts its value to the target type
 then when an expression is used in a place that its type does not match,

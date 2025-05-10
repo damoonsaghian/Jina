@@ -29,12 +29,8 @@ fn void generate_c3_file(String jin_file_path) {
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
-	, if there is no point or "e":
-		if there is no colon, prepend with "(Int)" cast
-		if there is a colon followed by a number eg 64, prepend with "(Int64)" cast
-	, otherwise:
-		if there is no colon, prepend with "(Float)" cast
-		if there is no colon followed by 32, prepend with "(Float32)" cast
+	, if there is no point or "e", prepend with "(NumI4)" cast
+	, otherwise prepend with "(Num8)" cast
 	
 	characters: 'a' '\n' '\x12'
 	

@@ -26,41 +26,38 @@ defining a variable with shared type:
 assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
-integer types:
-, Int: word size (C3 "isz")
-, IntU: word size unsigned (C3 "usz")
-, Int64: 64 bits (C3 "long")
-, Int32: 32 bits (C3 "int")
-, Int16: 16 bits (C3 "short")
-, Int8: 8 bits (C3 "ichar")
-, IntC: 8 bits unsigned (C3 "char")
-, IntA: arbitrary size
-integer literals by default have type "Int":
-	1'234'567'890
-	0x1234'5678'9ABC'DEF0
-character literals:
-	c :IntC = 'a'  ;; ASCII code for character "a"
-	'\n' ;; ASCII code for character with escape code "\n"
-	'\x12' ;; a byte with hexadecimal value 0x12
-integers (and in fact, all numbers) can automatically be converted to bigger types
-	i :Int64 = 123
-	i = 123.to'Int64
-
-floating'point number types:
-, Num: single precision (C3 "float")
-, Num2: double precision (C3 "double")
-, NumA: arbitrary precision with ball arithmetic
-floating point literals by default have "Num2" type:
-	1.0
+numeric types types:
+, Num: floating'point numbers with arbitrary precision and ball arithmetic
+, Num8: 8 bytes floating'point numbers with double precision ("double" in C3)
+, Num4: 4 bytes floating'point numbers with single precision ("float" in C3)
+, NumI: integer (arbitrary size)
+, NumI8: 8 bytes integer ("long" in C3)
+, NumI4: 4 bytes integer ("int" in C3)
+, NumI2: 2 bytes integer ("short" in C3)
+, NumI1: 1 byte integer ("ichar" in C3)
+, NumU: word'sized unsigned integer ("usz" in C3)
+, NumU4: 4 bytes unsigned integer ("uint" in C3)
+, NumU2: 2 bytes unsigned integer ("ushort" in C3)
+, NumU1: 1 byte unsigned integer ("char" in C3)
+numeric literals:
+	1.0 ;; Num8
 	1.23e4
 	0x1:0
 	0x1:23p4
+	1'234'567'890 ;; NumI4
+	0x1234'5678'9ABC'DEF0
+	'a' ;; NumU1, ASCII code for character "a"
+	'\n' ;; ASCII code for character with escape code "\n"
+	'\x12' ;; a byte with hexadecimal value 0x12
+numbers are automatically converted to bigger types (ie when there is no data loss):
+	i :NumI8 = 123
+manual conversion:
+	i = 123.to'NumI8
 
 complex numbers can be made of any type implementing the "Num" trait
-all numerical types mentioned above do implement the "Num" trait
-	c :Complex[Int] = 1 + 1i
+	c :Complex[NumI4] = 1 + 1i
 	c = 1 + 0i
-	c = Complex[Int] 1 0
+	c = Complex[NumI4] 1 0
 
 lists:
 	l :List[Char] = ['a', 'b', 'c']
@@ -90,13 +87,13 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of "IntU" as in lists):
-	d :Dict[Int] = [a: 1, b: 2, c: 3]
+dictionaries are indexed using strings (instead of "NumU" as in lists):
+	d :Dict[NumI4] = [a: 1, b: 2, c: 3]
 indexing:
 	d_'a
 
 records:
-	r :(Int, Int, c: Int) = 1, 2, c: 3
+	r :(NumI4, NumI4, c: NumI4) = 1, 2, c: 3
 to access elements:
 	r.a
 	r.0
