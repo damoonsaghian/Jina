@@ -38,7 +38,19 @@ Str := List[IntC]
 	to'upper = { self! |
 	}
 	
+	to'float = { self -> ?Float |
+	}
+	to'float2 = { self -> ?Float2 |
+	}
 	to'int = { self -> ?Int |
+	}
+	to'int8 = { self -> ?Int8 |
+	}
+	to'int4 = { self -> ?Int4 |
+	}
+	to'int2 = { self -> ?Int2 |
+	}
+	to'int1 = { self -> ?Int1 |
 	}
 	
 	;; StrRep

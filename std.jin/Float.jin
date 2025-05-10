@@ -1,0 +1,261 @@
+;c3 import std::math
+
+;; https://flintlib.org/doc/arb.html
+;; decimal
+;ns Float ::Num ::OrdP ::StrRep
+	to'Complex[Float] = { self& -> Complex[Float&] |
+		Complex self 0
+	}
+	to'Tensor[Float] = { self& -> Tensor[Float&] |
+		Tensor [self]
+	}
+	
+	add'op = {
+		self&, addend :Float& -> Float |
+		self&, addend :Complex[Float&] -> Complex[Float] |
+		self&, addend :Tensor[Float&] -> Tensor[Float] |
+	}
+	
+	add = { self!, addend :Float& |
+	}
+	
+	sub'op = {
+		self&, subtrahend :Float& -> Float |
+		self&, subtrahend :Complex[Float&] -> Complex[Float] |
+		self&, subtrahend :Tensor[Float&] -> Tensor[Float] |
+	}
+	
+	sub = { self!, subtrahend :Float& |
+	}
+	
+	mul'op = {
+		self&, multiplicand :Float& -> Float |
+		self&, multiplicand :Complex[Float&] -> Complex[Float] |
+		self&, multiplicand :Tensor[Float&] -> Tensor[t] |
+	}
+	
+	mul = { self!, multiplicand :Float& |
+	}
+	
+	div'op = {
+		self&, divisor :Float& -> Float |
+		self&, divisor :Complex[Float&] -> Complex[Float] |
+		self&, divisor :Tensor[Float&] -> Tensor[Float] |
+	}
+	
+	div = { self!, divisor :Float& |
+	}
+	
+	exp = {
+		self&, exponent :Float& -> Float |
+		self&, exponent :Complex[Float&] -> Complex[Float] |
+	}
+	
+	neg'op = { self$ -> Float$ |
+	}
+	
+	neg = { self! |
+	}
+	
+	abs = { self$ -> Float$ |
+	}
+	
+	cos = { self& -> Float |
+	}
+	acos = { self& -> Float |
+	}
+	cosh = { self& -> Float |
+	}
+	atanh = { self& -> Float |
+	}
+	sin = { self& -> Float |
+	}
+	asin = { self& -> Float |
+	}
+	sinh = { self& -> Float |
+	}
+	tan = { self& -> Float |
+	}
+	atan = { self& -> Float |
+	}
+	atan2 = { self& -> Float |
+	}
+	tanh = { self& -> Float |
+	}
+	
+	log = { self& -> Float |
+	}
+	log2 = { self& -> Float |
+	}
+	log10 = { self& -> Float |
+	}
+	
+	inf =
+	
+	e = ;; base of the natural logarithm
+	pi =
+	
+	;; OrdP
+	
+	equal = { self&, other :Float& -> ?Bool |
+	}
+	
+	after = { self&, other :Float& -> ?Bool |
+	}
+	
+	;; StrRep
+	to'str = { self& -> Str |
+	}
+
+;c3 typedef float2 = double;
+
+;ns Float2 ::Num ::Ord ::StrRep
+	to'Float = { self -> Float |
+		;c3 return ;
+	}
+	to'Complex[n::Num] = { self -> Complex[n] |
+		Complex[n] self 0
+	}
+	to'Tensor[n::Num] = { self -> Tensor[n] |
+		Tensor[n] [self]
+	}
+	
+	add'op = {
+		self, addend :Float2 -> Float2 |
+			;c3 return self + addend;
+		self, addend :Float& -> Float |
+			self.to'Float + addend
+		self, addend :Complex[n::Num] -> Complex[n] |
+			self.to'Complex[n] + addend
+		self, addend :Tensor[n::Num] -> Tensor[n] |
+			self.to'Complex[n] + addend
+	}
+	
+	add = { self!, addend :Float2 |
+		;c3 self += addend;
+	}
+	
+	sub'op = {
+		self, subtrahend :Float2 -> Float2 |
+			;c3 return self - subtrahend;
+		self, subtrahend :Float& -> Float |
+			self.to'Float - subtrahend
+		self, subtrahend :Complex[n::Num] -> Complex[n] |
+			self.to'Complex[n] - subtrahend
+		self, subtrahend :Tensor[n::Num] -> Tensor[n] |
+			self.to'Complex[n] - subtrahend
+	}
+	
+	sub = { self!, subtrahend :Float2 |
+		;c3 self -= subtrahend;
+	}
+	
+	mul'op = {
+		self, multiplicand :Float2 -> Float2 |
+			;c3 return self * multiplicand;
+		self, multiplicand :Float& -> Float |
+			self.to'Float * multiplicand
+		self, multiplicand :Complex[n::Num] -> Complex[n] |
+			self.to'Complex[n] * multiplicand
+		self, multiplicand :Tensor[n::Num] -> Tensor[n] |
+			self.to'Complex[n] * multiplicand
+	}
+	
+	mul = { self!, multiplicand :Float2 |
+		;c3 self *= multiplicand;
+	}
+	
+	div'op = {
+		self, divisor :Float2 -> Float2 |
+			;c3 return self / divisor;
+		self, divisor :Float& -> Float |
+			self.to'Float / divisor
+		self, divisor :Complex[n::Num] -> Complex[n] |
+			self.to'Complex[n] / divisor
+		self, divisor :Tensor[n::Num] -> Tensor[n] |
+			self.to'Complex[n] / divisor
+	}
+	
+	div = { self!, divisor :Float2 |
+		;c3 self /= divisor;
+	}
+	
+	exp = {
+		self, exponent :Float2 -> Float2 |
+			;c3 return double.pow(self, exponent);
+		self, exponent :Float& -> Float |
+			self.to'Float ^ exponent
+		self, exponent :Complex[n::Num] -> Complex[n] |
+			self.to'Complex[n] ^ exponent
+	}
+	
+	neg'op = { self -> Float2 |
+		;c3 return -self;
+	}
+	
+	neg = { self! |
+		;c3 self *= -1;
+	}
+	
+	abs = { self -> Float2 |
+		;c3 return math.abs(self);
+	}
+	
+	next'up = { self -> Float2 |
+	}
+	next'down = { self -> Float2 |
+	}
+	
+	cos = { self -> Float2 |
+	}
+	acos = { self -> Float2 |
+	}
+	cosh = { self -> Float2 |
+	}
+	atanh = { self -> Float2 |
+	}
+	sin = { self -> Float2 |
+	}
+	asin = { self -> Float2 |
+	}
+	sinh = { self -> Float2 |
+	}
+	tan = { self -> Float2 |
+	}
+	atan = { self -> Float2 |
+	}
+	atan2 = { self -> Float2 |
+	}
+	tanh = { self -> Float2 |
+	}
+	
+	log = { self -> Float2 |
+	}
+	log2 = { self -> Float2 |
+	}
+	log10 = { self -> Float2 |
+	}
+	
+	nan = ;c3
+	inf = ;c3
+	
+	
+	e = ;c3 ;; base of the natural logarithm
+	pi = ;c3
+	
+	;;Ord
+	
+	equal = { self, other :Float2 -> Bool |
+		;c3 self == other;
+	}
+	
+	after = { self, other :Float2 -> Bool |
+		;c3 self > other;
+	}
+	
+	;;StrRep
+	to'str = { self -> Str |
+	}
+
+;c3 typedef Float1 = float;
+;ns Float1 ::Num ::Ord ::StrRep

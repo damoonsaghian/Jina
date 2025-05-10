@@ -1,5 +1,5 @@
 ;; reading is fast, writing (except appending) is slow
-;; the initial list will be on stack, if number of elements and their size is small
+;; to avoid unnecessary allocation, the initial list will be on stack, if number of elements and their size is small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 List[t] := ;c3 std::collections::list{t}
 

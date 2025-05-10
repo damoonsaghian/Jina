@@ -2,6 +2,8 @@ Complex[n::Num] := n, n
 
 ;ns Complex[n::Num] ::Num ::StrRep
 
+;; https://mathworld.wolfram.com/ComplexExponentiation.html
+
 ;; quaternions
 Complex4[n::Num] := n, n, n, n
 
