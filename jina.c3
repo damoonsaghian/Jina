@@ -29,8 +29,9 @@ fn void generate_c3_file(String jin_file_path) {
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
 	, remove apostrophes
-	, if there is no point or "e", prepend with "(NumI4)" cast
-	, otherwise prepend with "(Num8)" cast
+	, if there is no point or "e", prepend with "(Int4)" cast
+		otherwise prepend with "(Float2)" cast
+	, if there is an "i" at the end: Complex[<type>] 0 <num-without-i>
 	
 	characters: 'a' '\n' '\x12'
 	
@@ -67,6 +68,9 @@ fn void generate_c3_file(String jin_file_path) {
 	if there are multiple "|"
 	, if it's an enum match, compile the body of the function to C3 switch
 	, if a type match, use macros, $switch, and $typeof to implement overloaded functions
+	
+	generic parameters can be declared in namespaces, definitions, matches and multiple dispatches
+	generic substitutions will be done in types and in generic identifiers
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient

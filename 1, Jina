@@ -65,11 +65,9 @@ when a variable of type "T!" is put into:
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 
-in Jina generic types do not accept borrow types (or compound types containing borrow type),
-	unless the generic type also have a borrow marker
-this is necessary for their scope tags to be statically determined
-this is also true for type definitions:
+in Jina, type definitions containing borrow types, must have a borrow marker itself:
 	T& := A, B$, C&, D!
+this is necessary for their scope tags to be statically determined
 in other words, borrows can't be wrapped, they always leak out
 so plain types (without borrow markers) can only contain unique and shared types:
 	T := A, $B
