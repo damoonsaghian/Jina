@@ -59,17 +59,17 @@ complex numbers can be made of any type implementing the "Num" trait
 	c = Complex[Int4] 1 0
 
 lists:
-	l :List[Char] = ['a', 'b', 'c']
+	l :List[IntC] = ['a', 'b', 'c']
 indexing:
-	e :Maybe[Char] = l_1
-note that the type of the result of indexing above is actually "Maybe[Char&]&",
-	which is copied into the variable with type "Maybe[Char]"
+	e :Maybe[IntC] = l_1
+note that the type of the result of indexing above is actually "Maybe[IntC&]",
+	which is copied into the variable with type "Maybe[IntC]"
 mutating lists:
 	l.put 'd' at: 3 ;; ['a', 'b', 'c', 'd']
 	l.put 'e' at: 0 ;; ['e', 'b', 'c', 'd']
 
 character strings are UTF8 encoded, and implemented a list of characters:
-	s :CharS = "abc def"
+	s :Str = "abc def"
 string interpolation: "abc{x}"
 alternative syntax that makes writing single word strings easier:
 	'abc
