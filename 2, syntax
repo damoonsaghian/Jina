@@ -107,7 +107,7 @@ small records will be kept on stack, big ones on the heap
 function:
 	f = { a :A&, b :B! -> C | ... }
 note that the type of above function is:
-	(a: A&, b: B! -> C)
+	(a: A&, b: B! -> C)&
 function call:
 	f x y
 which is equivalent to these forms:
@@ -121,11 +121,9 @@ default values for parameters:
 	f 11
 	f()
 
-{f x y} can be written as: || f x y
-
 conditional expression:
-	condition.then {} else: {}
-	condition1.then {} || condition2.then {} || condition3.then {} else: {}
+	condition .then {} .else {}
+	condition1 .then {} .elif {condition2} {} .elif {condition3} {} .else {}
 
 and or:
 	a && b
@@ -143,7 +141,7 @@ any type that implements "Iter" trait, must define an "iter" method,
 
 actor:
 	a :Actor[S] = Actor.new S.new()
-	a.do { b :S! | ... }
+	a.do { b :S! || ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
@@ -179,7 +177,7 @@ type definition:
 	T := a: A, b: B
 defining methods (using a namespace):
 	;ns T
-		new = { a :A -> S |
+		new = { a :A -> T |
 			b = ...
 			a, b
 		}
@@ -190,6 +188,7 @@ defining methods (using a namespace):
 			...
 		}
 to create an instance of the type:
+	i :T = a: x, b: y
 	i = T a: x, b: y
 	i = T.new a: x
 accessing a member:
@@ -198,7 +197,7 @@ calling a method (note that there is no record field named "m", otherwise this w
 	i.m x
 which is equivalent to:
 	T.m i x
-if a method has no are (other than self), it can be called like this: i.m
+if a method has no argument (other than self), it can be called like this: i.m
 
 enums:
 	Bool := #true #false
@@ -212,29 +211,29 @@ type "?A" is a shortcut for "Maybe[A]"
 		#null | ...
 	}
 
-traits:
-	;tr T
-		m1 :(self: T!, x: X -> Y)
+intefaces:
+	;i I
+		m1 ::(self!, x: X -> Y)&
 		m2 = { self! |
 			;; default implementation
 		}
-trait inheritance:
-	;tr T ::T1 ::T2
+interface inheritance:
+	;i I ::I1 ::I2
 		...
-defining the methods of a type that implements some traits:
-	;ns T ::T1 ::T2
+defining the methods of a type that implements some interfaces:
+	;ns T ::I1 ::I2
 		m1 = ...
 		m2 = ...
-		;; T1
+		;; I1
 		m3 = ...
 		m4 = ...
-		;; T2
+		;; I2
 		...
 
 generics:
-	T[x] := a: x, b: x
+	T[g] := a: g, b: g
 bounded generics:
-	T[x::ATrait] := a: x, b: x
+	T[x::I] := a: x, b: x
 
 to directly enter C3 code:
 	;c3 ...
@@ -243,7 +242,7 @@ or:
 	;c3
 	...
 	;
-declaring functions and types from a C lib
+declaring functions and types from a C3 lib
 	;c3 extern fn ...;
 	;c3 typedef ... = any;
 beware! with great power comes great responsibility

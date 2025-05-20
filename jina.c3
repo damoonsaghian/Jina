@@ -22,7 +22,33 @@ fn void generate_c3_file(String jin_file_path) {
 	https://github.com/c3lang/c3c/tree/master/resources/examples
 	https://www.learn-c3.org/
 	
-	type markers and tags can be implemented using @tag(name,value)
+	type markers:
+		module type_marker {T, L};
+		struct Borrow @tag("borrow", 1) { inline T* }
+		struct BorrowMut @tag("borrow_mut", 1) { inline Borrow{T, L} }
+		struct Shared @tag("shared", 1) { inline Borrow{T, L} }
+	the tags are used to:
+	, call appropriate (defered) destroyers
+	, check if mutation is allowed
+	
+	to indicate that a type has a heap part: @tag("heap", 1)
+	
+	converters:
+	wrap all function calls (including assignments) in "call" macro
+	for each arg it finds its type using $typeof
+	functions have tags like this: @tag("param_name", "Type")
+		so the macro can find the type of the corresponding function parameter too
+	if they don't match (considering subtype relation), it adds the converter method
+	
+	generic types can be implemented using c3 generic modules
+	for generic methods, use macros
+	in generic methods, in certain situations, we can use this syntax sugar:
+		m = { x ::I | ... }
+	which is equivalent to:
+		m[g::I] = { x :g | ... }
+	if there is an interface constrain, use contract to implement it
+	type inference from constructor args; is it implemented in C3?
+		if not, implement them as a macro instead
 	
 	append "__" to identifiers that are C3 keywords
 	
@@ -36,12 +62,12 @@ fn void generate_c3_file(String jin_file_path) {
 	characters: 'a' '\n' '\x12'
 	
 	operators:
-	a + b		a .add'op b
-	a - b		a .sub'op b
-	a * b		a .mul'op b
-	a / b		a .div'op b
-	a ^ b		a .exp'op b
-	-a			a.neg'op()
+	a + b		a .plus b
+	a - b		a .minus b
+	a * b		a .times b
+	a / b		a .over b
+	a ^ b		a .exp b
+	-a			a.neg
 	a && b		a .and {b}
 	a \\ b		a .or {b}
 	a == b		a .is'equal b
@@ -52,9 +78,9 @@ fn void generate_c3_file(String jin_file_path) {
 	a <= b		a .is'before'or'equal b
 	
 	note that:
-	a-b		;; a.sub(b)
-	a - b	;; a.sub(b)
-	a -b	;; a(b.neg())
+	a-b		;; a .sub'op b
+	a - b	;; a sub'op b
+	a -b	;; a b.neg'op
 	a -1	;; a(-1)
 	
 	enums are implemented using c3 enums and unions
@@ -65,12 +91,11 @@ fn void generate_c3_file(String jin_file_path) {
 	function: { | }
 	replace with: fn () {}
 	if the function is only made of one expression, replace with: fn () @inline {}
-	if there are multiple "|"
-	, if it's an enum match, compile the body of the function to C3 switch
-	, if a type match, use macros, $switch, and $typeof to implement overloaded functions
+	if there are multiple "|", compile the body of the function to C3 switch
 	
-	generic parameters can be declared in namespaces, definitions, matches and multiple dispatches
-	generic substitutions will be done in types and in generic identifiers
+	overloaded methods:
+	each method definition is soorounded by a "overload" macro
+	use $switch, and $typeof to implement "overload" macro
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient
@@ -167,7 +192,7 @@ fn void? main(String[] args) {
 	
 	foreach (pkg : io::Path.ls()) {
 		// if --no-evloop is not used
-		"spm import $gnunet_namespace glib"
+		// spm import $gnunet_namespace glib
 		
 		// go through all files (recursively) and find ".p" files
 		foreach (p_file : $(find .p)) {
@@ -176,7 +201,7 @@ fn void? main(String[] args) {
 			// spm import <gnunet-namespace> <package-name>
 		}
 		
-		mkdir -p "$project_dir/.cache/jina/c3"
+		// mkdir -p "$project_dir/.cache/jina/c3"
 		
 		/*
 		find all .jina files (recursively), and if it's newer that the last generated .c3 file,

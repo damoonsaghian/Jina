@@ -13,9 +13,7 @@ to achieve that, Jina introduces three special markers for types:
 , mutable borrow type: T!
 
 when a variable with unique type is aliased by another variable of the same unique type:
-, if it's a static variable (ie a module definition), the alias is a reference to the original
-	but when either variable is mutated, it will own a copy of the value (which will not be static anymore)
-, otherwise, if the original variable is not used in the following block,
+, if the original variable is not used in the following block,
 	its stack part will be copied, and its heap part will be moved into the alias
 , otherwise, the alias will own a copy of the original
 
@@ -24,9 +22,9 @@ scope tags are inferred in most cases, and only required to be explicitly given,
 scope tags will be inherited by further borrowers
 function arguments with borrow type have generic scope tags: a0, a1, a2 ...
 for functions with multiple borrow arguments, that also return a borrow type,
-	and the scope tag of returned type is inherited from any argument other than the first one (index 0),
-	in the return type, it must be indicated that which argument will the tag be inherited from
-	A&, B& -> C&1
+	and the scope tag of returned type is inherited from any borrow argument other than the first one (index 0),
+	in the return type, it must be indicated that which borrow argument will the tag be inherited from
+	A, B&, C& -> C&2
 the borrows created inside a function have scope tag "n+1", where "n" is the scope tag of the parent function
 the scope tag in static functions (that have no parents) is zero
 only borrows with matched scope tags can be assigned to each other (checked at compile'time)
@@ -45,8 +43,8 @@ dealing with allocated memory, at the end of functions:
 
 aliasing rules in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
 when a variable of type "T" is put into:
-, a variable of type "T", static'borrow/move/copy
-, a variable of type "T$", static'borrow/move/copy
+, a variable of type "T", move/copy
+, a variable of type "T$", move/copy
 , a variable of type "T&", borrow
 , a variable of type "T!", borrow
 when a variable of type "T$" is put into:
@@ -70,7 +68,7 @@ in Jina, type definitions containing borrow types, must have a borrow marker its
 this is necessary for their scope tags to be statically determined
 in other words, borrows can't be wrapped, they always leak out
 so plain types (without borrow markers) can only contain unique and shared types:
-	T := A, $B
+	T := A, B$
 of course, it can be aliased by variables with types that have markers:
 	v :T$
 		v.0 :A$
@@ -83,12 +81,11 @@ of course, it can be aliased by variables with types that have markers:
 		v.1 :B&
 
 in Jina, functions are closures, ie they can capture their environment
-function types have an implicit generic parameter for the captured variables
-so in fact we have two kinds of functions in Jina:
-, own closures: when the generic parameter does not have a borrow marker
-	A -> B
-, borrow closures: when the generic parameter has borrow marker
-	A => B
+each function has its own distinct type that includes the type of the captured variables
+but we usually do not work with function types directly
+what we care about is the interface that a particular function implements
+	:f::(A,B->C)
+borrow closures (f&) can have borrowed captured variables; own closures (f) can't
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -131,14 +128,14 @@ in Jina we have traits, but there is no trait objects
 
 instead, in Jina we have convertible types
 it's like in mathematics where we can easily do arithmetic across integer, rational, real and complex numbers
-when a type is convertible to another type, it defines a specially named method,
-	that converts its value to the target type
-then when an expression is used in a place that its type does not match,
-	the corresponding type'converting method is automatically added in the code
-	and if the method actually exists, the code compiles successfully
+when type "A" is convertible to type "B", it implements a special method named "into'B"
+then when an expression of type "A" is used in a place that wants type "B",
+	the compiler automatically inserts ".to'B"
 the idea is to only do this for types that can be converted with negligible run'time overhead
 
 Jina compiles to C3, and thus can easily use existing C libraries
+C3 (unlike Rust) allows us to have packages that are compiled independently as dynamic libs,
+	then imported and used in other packages
 
 Jina is installed by default in SPM Linux
 in other Unix'like systems:
