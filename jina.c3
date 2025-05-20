@@ -67,7 +67,7 @@ fn void generate_c3_file(String jin_file_path) {
 	a * b		a .times b
 	a / b		a .over b
 	a ^ b		a .exp b
-	-a			a.neg
+	-a			a .neg
 	a && b		a .and {b}
 	a \\ b		a .or {b}
 	a == b		a .is'equal b
@@ -78,9 +78,9 @@ fn void generate_c3_file(String jin_file_path) {
 	a <= b		a .is'before'or'equal b
 	
 	note that:
-	a-b		;; a .sub'op b
-	a - b	;; a sub'op b
-	a -b	;; a b.neg'op
+	a-b		;; a .minus b
+	a - b	;; a .minus b
+	a -b	;; a b.neg
 	a -1	;; a(-1)
 	
 	enums are implemented using c3 enums and unions
