@@ -1,7 +1,12 @@
-;c3 import std::math;; https://gmplib.org/manual/
+;c3 import std::math
+
+;; https://gmplib.org/manual/
 ;; https://flintlib.org/doc/fmpz.html
 Int :=
 ;ns Int ::Num ::Ord ::StrRep
+	to'Float = {}
+	to'Complex[n::Num] = {}
+	to'Tensor[n::Num] = {}
 
 ;c3 typedef Int8 = long;
 
@@ -19,111 +24,119 @@ Int :=
 		Tensor[n] [self]
 	}
 	
-	add'op = {
-		self, addend :Int8 -> Int8 |
-			;c3 return self + addend;
-		self, addend :Int& -> Int |
-			self.to'Int + addend
-		self, addend :Float& -> Float |
-			self.to'Float + addend
-		self, addend :Complex[n::Num] -> Complex[n] |
-			self.to'Complex[n] + addend
-		self, addend :Tensor[n::Num] -> Tensor[n] |
-			self.to'Tensor[n] + addend
+	plus = { self, addend :Int8 -> Int8 |
+		;c3 return self + addend;
+	}
+	plus = { self, addend :Int& -> Int |
+		self.to'Int + addend
+	}
+	plus = { self, addend :Float& -> Float |
+		self.to'Float + addend
+	}
+	plus[n::Num] = { self, addend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] + addend
+	}
+	plus[n::Num] = { self, addend :Tensor[n] -> Tensor[n] |
+		self.to'Tensor[n] + addend
 	}
 	
 	add = { self!, addend :Int8 |
 		;c3 self += addend;
 	}
 	
-	sub'op = {
-		self, subtrahend :Int8 -> Int8 |
-			;c3 return self - subtrahend;
-		self, subtrahend :Int -> Int |
-			self.to'Int - subtrahend
-		self, subtrahend :Float& -> Float |
-			self.to'Float - subtrahend
-		self, subtrahend :Complex[n::Num] -> Complex[n] |
-			self.to'Complex[n] - subtrahend
-		self, subtrahend :Tensor[n::Num] -> Tensor[n] |
-			self.to'Tensor[n] - subtrahend
+	minus = { self, subtrahend :Int8 -> Int8 |
+		;c3 return self - subtrahend;
+	}
+	minus = { self, subtrahend :Int& -> Int |
+		self.to'Int - subtrahend
+	}
+	minus = { self, subtrahend :Float& -> Float |
+		self.to'Float - subtrahend
+	}
+	minus[n::Num] = { self, subtrahend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] - subtrahend
+	}
+	minus[n::Num] = { self, subtrahend :Tensor[n] -> Tensor[n] |
+		self.to'Tensor[n] - subtrahend
 	}
 	
-	sub = { self!, subtrahend :Int8 |
+	sub = { self!, subtrahend :Int8 -> Int8 |
 		;c3 self -= subtrahend;
 	}
 	
-	mul'op = {
-		self, multiplicand :Int8 -> Int8 |
-			;c3 return self * multiplicand;
-		self, multiplicand :Int -> Int |
-			self.to'Int * multiplicand
-		self, multiplicand :Float& -> Float |
-			self.to'Float * multiplicand
-		self, multiplicand :Complex[n::Num] -> Complex[n] |
-			self.to'Complex[n] * multiplicand
-		self, multiplicand :Tensor[n::Num] -> Tensor[n] |
-			self.to'Tensor[n] * multiplicand
+	times = { self, multiplicand :Int8 -> Int8 |
+		;c3 return self * multiplicand;
+	}
+	times = { self, multiplicand :Int& -> Int |
+		self.to'Int * multiplicand
+	}
+	times = { self, multiplicand :Float& -> Float |
+		self.to'Float * multiplicand
+	}
+	times[n::Num] = { self, multiplicand :Complex[n] -> Complex[n] |
+		self.to'Complex[n] * multiplicand
+	}
+	times[n::Num] = { self, multiplicand :Tensor[n] -> Tensor[n] |
+		self.to'Tensor[n] * multiplicand
 	}
 	
 	mul = { self!, multiplicand :Int8 |
 		;c3 self *= multiplicand;
 	}
 	
-	div'op = {
-		self, divisor :Int8 -> ?Int8 |
-			;c3 if (divisor != 0) return self / divisor;
-			#null
-		self, divisor :Int -> ?Int |
-			divisor == 0 .then { #null } else: { self.to'Int / divisor }
-		self, divisor :Num -> ?Num |
-			divisor == 0 .then { #null } else: { self.to'Num / divisor }
-		self, divisor :Complex[t] -> ?Complex[t] |
-			divisor.0 == 0 .then { #null } else: { self.to'Complex[t] / divisor }
-		self, divisor :Tensor[t] -> ?Tensor[t] |
-			divisor_0 == 0 .then { #null } else: { self.to'Tensor[t] / divisor }
+	over = { self, divisor :Int8 -> ?Int8 |
+		;c3 if (divisor != 0) return self / divisor;
+		#null
+	}
+	over = { self, divisor :Int -> ?Int |
+		divisor == 0 .then { #null } .else { self.to'Int / divisor }
+	}
+	over = { self, divisor :Float -> ?Float |
+		divisor == 0 .then { #null } .else { self.to'Num / divisor }
+	}
+	over[n::Num] = { self, divisor :Complex[t] -> ?Complex[n] |
+		divisor.0 == 0 .then { #null } .else { self.to'Complex[n] / divisor }
+	}
+	over[n::Num] = { self, divisor :Tensor[t] -> ?Tensor[n] |
+		divisor_0 == 0 .then { #null } .else { self.to'Tensor[n] / divisor }
 	}
 	
 	div = { self!, divisor :Int8 -> Bool |
-		divisor == 0 .then { #false } else: {
+		divisor == 0 .then { #false } .else {
 			;c3 self /= divisor
 			#true
 		}
 	}
 	
-	mod'op = {
-		self, modulus :Int8 -> ?Int8 |
-			;c3 if (x != 0) return self % divisor;
-			#null
-		self, modulus :Int -> ?Int |
-			;c3 if (x != 0) return ;
-			#null
+	mod'op = { self, modulus :Int8 -> ?Int8 |
+		;c3 if (x != 0) return self % modulus;
+		#null
+	}
+	mod'op = { self, modulus :Int -> ?Int |
+		modulus == 0 .then { #null } .else { self.to'Int % modulus }
 	}
 	
-	mod = { self, devisor :Int8 -> Bool |
-		divisor == 0 .then { #false } else: {
+	mod = { self, modulus :Int8 -> Bool |
+		modulus == 0 .then { #false } .else {
 			;c3 self %= divisor
 			#true
 		}
 	}
 	
-	neg'op = { self -> Int8 |
+	exp = {}
+	
+	log = {}
+	
+	neg = { self -> Int8 |
 		;c3 return -self;
 	}
 	
-	neg = { self! |
+	negate = { self! |
 		;c3 self *= -1;
 	}
 	
 	abs = { self -> Int8 |
 		;c3 return math.abs(self);
-	}
-	
-	to'num8 = { self -> Num8 |
-		;c3 return (Num8) (double) (long) self;
-	}
-	to'num4 = { self -> Num4 |
-		;c3 return (Num4) (float) (long) self;
 	}
 	
 	min = ;c3

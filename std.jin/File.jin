@@ -7,19 +7,19 @@
 ;c3 typedef File = ;
 
 ;ns File
-	delete = { path :Str&, cb :(->) = {} |
+	delete = { path :Str&, cb ::(->) = {} |
 	}
 	
-	move = { source'path :Str&, destination'path :Str&, cb :(->) = {} |
+	move = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
 	}
 	
-	copy = { source'path :Str&, destination'path :Str&, cb :(->) = {} |
+	copy = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
 	}
 	
-	read = { self, then :(buf: List[IntC] ->) |
+	read = { self, then ::(List[IntC]->) |
 		;; close the file descriptor
 	}
 	
-	write = { self, data :List[IntC], mode :(#append #overwrite) = #append, then :(->) = {} |
+	write = { self, data :List[IntC], mode :(#append #overwrite) = #append, then ::(->) = {} |
 		;; close the file descriptor
 	}

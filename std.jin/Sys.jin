@@ -6,7 +6,7 @@
 	print'err = { message :Str& |
 	}
 	
-	read = { cb :(answer :Str& ->) |
+	read = { cb ::(Str&->) |
 		actor = Actor.new '
 		actor.do { answer! |
 			;; read non'blocking from stdin

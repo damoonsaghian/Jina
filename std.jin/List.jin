@@ -1,6 +1,7 @@
 ;; reading is fast, writing (except appending) is slow
 ;; to avoid unnecessary allocation, the initial list will be on stack, if number of elements and their size is small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
+
 List[t] := ;c3 std::collections::list{t}
 
 ;ns List[t] ::Iter ::StrRep
@@ -33,6 +34,6 @@ List[t] := ;c3 std::collections::list{t}
 	to'str = {}
 
 ;; linked list: reading is slow, writing is fast
-ListL[t] := ;c3 std::collections::linkedlist{t};
+ListL[t] := ;c3 std::collections::linkedlist{T_};
 
 ;ns ListL[t] ::Iter ::StrRep

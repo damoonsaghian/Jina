@@ -1,4 +1,4 @@
-;tr Ord
+;i Ord
 	is'equal :(self, other: self -> Bool)
 	
 	is'after :(self, other: self -> Bool)
@@ -19,7 +19,7 @@
 		self == other .neg
 	}
 
-;tr OrdP
+;i OrdP
 	is'equal :(self, other: self -> ?Bool)
 	
 	is'after :(self, other: self -> ?Bool)
@@ -41,7 +41,7 @@
 			#result is'after |
 				self == other >> {
 					#null | #null
-					#result is'equal | -is'equal && -is'equal
+					#result is'equal | -is'equal && -is'after
 				}
 		}
 	}

@@ -54,12 +54,12 @@ Str := List[IntC]
 	}
 	
 	;; StrRep
-	to'str = { self |
+	to'str = { self -> Str |
 		rep = "\""
 		rep.append self
 		rep.append "\""
 		rep
 	}
 
-;tr StrRep
-	to'str :(self -> Str)
+;i StrRep
+	to'str ::(self -> Str)&

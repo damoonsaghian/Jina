@@ -10,45 +10,56 @@
 		Tensor [self]
 	}
 	
-	add'op = {
-		self&, addend :Float& -> Float |
-		self&, addend :Complex[Float&] -> Complex[Float] |
-		self&, addend :Tensor[Float&] -> Tensor[Float] |
+	plus = { self&, addend :Float& -> Float |
+	}
+	plus = { self&, addend :Complex[Float&] -> Complex[Float] |
+	}
+	plus = { self&, addend :Tensor[Float&] -> Tensor[Float] |
 	}
 	
 	add = { self!, addend :Float& |
 	}
 	
-	sub'op = {
-		self&, subtrahend :Float& -> Float |
-		self&, subtrahend :Complex[Float&] -> Complex[Float] |
-		self&, subtrahend :Tensor[Float&] -> Tensor[Float] |
+	minus = { self&, subtrahend :Float& -> Float |
+	}
+	minus = { self&, subtrahend :Complex[Float&] -> Complex[Float] |
+	}
+	minus = { self&, subtrahend :Tensor[Float&] -> Tensor[Float] |
 	}
 	
 	sub = { self!, subtrahend :Float& |
 	}
 	
-	mul'op = {
-		self&, multiplicand :Float& -> Float |
-		self&, multiplicand :Complex[Float&] -> Complex[Float] |
-		self&, multiplicand :Tensor[Float&] -> Tensor[t] |
+	times = { self&, multiplicand :Float& -> Float |
+	}
+	times = { self&, multiplicand :Complex[Float&] -> Complex[Float] |
+	}
+	times = { self&, multiplicand :Tensor[Float&] -> Tensor[t] |
 	}
 	
 	mul = { self!, multiplicand :Float& |
 	}
 	
-	div'op = {
-		self&, divisor :Float& -> Float |
-		self&, divisor :Complex[Float&] -> Complex[Float] |
-		self&, divisor :Tensor[Float&] -> Tensor[Float] |
+	over = { self&, divisor :Float& -> Float |
+	}
+	over = { self&, divisor :Complex[Float&] -> Complex[Float] |
+	}
+	over = { self&, divisor :Tensor[Float&] -> Tensor[Float] |
 	}
 	
 	div = { self!, divisor :Float& |
 	}
 	
-	exp = {
-		self&, exponent :Float& -> Float |
-		self&, exponent :Complex[Float&] -> Complex[Float] |
+	exp = { self&, exponent :Float& -> Float |
+	}
+	exp = { self&, exponent :Complex[Float&] -> Complex[Float] |
+	}
+	
+	log = { self& -> Float |
+	}
+	log2 = { self& -> Float |
+	}
+	log10 = { self& -> Float |
 	}
 	
 	neg'op = { self$ -> Float$ |
@@ -81,13 +92,6 @@
 	atan2 = { self& -> Float |
 	}
 	tanh = { self& -> Float |
-	}
-	
-	log = { self& -> Float |
-	}
-	log2 = { self& -> Float |
-	}
-	log10 = { self& -> Float |
 	}
 	
 	inf =
