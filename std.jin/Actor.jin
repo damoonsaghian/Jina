@@ -4,7 +4,7 @@
 
 Message := 
 
-Actor'[s,m::(s!->Bool)] :=
+Actor'[s, m::(s!->Bool)] :=
 	state: s,
 	messages: List[m]
 

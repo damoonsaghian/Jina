@@ -3,3 +3,5 @@
 	https://arrayfire.org/docs/gettingstarted.htm#gettingstarted_api_usage
 	https://github.com/ggml-org/ggml
 ;; otherwise use lapacke
+
+;ns Tensor[n::Num]
