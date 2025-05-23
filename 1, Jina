@@ -13,21 +13,19 @@ to achieve that, Jina introduces three special markers for types:
 , mutable borrow type: T!
 
 when a variable with unique type is aliased by another variable of the same unique type:
-, if the original variable is not used in the following block,
-	its stack part will be copied, and its heap part will be moved into the alias
-, otherwise, the alias will own a copy of the original
+, if the original variable is not used in the following block (directly or through its borrowers),
+	it's a shallow copy (heap part will not be copied)
+, otherwise, it's a deep copy
 
-borrow types have a scope tag, which can be written after "&/!" marker
-scope tags are inferred in most cases, and only required to be explicitly given, in certain situation
-scope tags will be inherited by further borrowers
-function arguments with borrow type have generic scope tags: a0, a1, a2 ...
+variables with borrow types will be tagged by their owner
+borrow tags will be inherited by further borrowers
+function arguments with borrow type are tagged with integers, starting from zero
 for functions with multiple borrow arguments, that also return a borrow type,
 	and the scope tag of returned type is inherited from any borrow argument other than the first one (index 0),
 	in the return type, it must be indicated that which borrow argument will the tag be inherited from
 	A, B&, C& -> C&2
-the borrows created inside a function have scope tag "n+1", where "n" is the scope tag of the parent function
-the scope tag in static functions (that have no parents) is zero
-only borrows with matched scope tags can be assigned to each other (checked at compile'time)
+the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
+only borrows with matched tags can be assigned to each other (checked at compile'time)
 this simple rule automatically guarantees correct lifetimes, cause it means:
 , we can't assign a locally created (or moved) value, to a mutable borrow variable captured in a closure
 , we can't return a borrow from a function, unless it's originally borrowed from one of the function's arguments
@@ -43,27 +41,27 @@ dealing with allocated memory, at the end of functions:
 
 aliasing rules in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
 when a variable of type "T" is put into:
-, a variable of type "T", move/copy
-, a variable of type "T$", move/copy
-, a variable of type "T&", borrow
-, a variable of type "T!", borrow
+, a variable of type "T", shallow/deep copy
+, a variable of type "T$", shallow/deep copy
+, a variable of type "T&", shallow copy
+, a variable of type "T!", copy address
 when a variable of type "T$" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", increase reference count
-, a variable of type "T&", borrow
+, a variable of type "T", deep copy
+, a variable of type "T$", shallow copy, increase reference count
+, a variable of type "T&", shallow copy
 , a variable of type "T!", it's compile time error
 when a variable of type "T&" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", copy
-, a variable of type "T&", borrow
+, a variable of type "T", deep copy
+, a variable of type "T$", deep copy
+, a variable of type "T&", shallow copy
 , a variable of type "T!", it's compile time error
 when a variable of type "T!" is put into:
-, a variable of type "T", copy
-, a variable of type "T$", copy
-, a variable of type "T&", borrow
-, a variable of type "T!", borrow
+, a variable of type "T", deep copy
+, a variable of type "T$", deep copy
+, a variable of type "T&", shallow copy
+, a variable of type "T!", copy address
 
-in Jina, type definitions containing borrow types, must have a borrow marker itself:
+in Jina, type definitions containing borrow types, must have a borrow marker themselves:
 	T& := A, B$, C&, D!
 this is necessary for their scope tags to be statically determined
 in other words, borrows can't be wrapped, they always leak out
@@ -84,8 +82,9 @@ in Jina, functions are closures, ie they can capture their environment
 each function has its own distinct type that includes the type of the captured variables
 but we usually do not work with function types directly
 what we care about is the interface that a particular function implements
-	:f::(A,B->C)
-borrow closures (f&) can have borrowed captured variables; own closures (f) can't
+	f[t::(A,B->C)] :t& = { a :A, b :B -> C | ... }
+	f[t::(A,B->C)] :t = { a :A, b :B -> C || ... }
+a borrow closure (with type "t&") can have borrowed captured variables; an own closure (with type "t") can't
 
 sharing mutable data in concurrent parts of a program is problematic
 a data race happens when these three behaviors occur:
@@ -124,7 +123,7 @@ to avoid this problem, some languages (eg Rust) have two kinds of types:
 Rust has trait objects (dynamic interfaces) with the same problem regarding variance
 	https://users.rust-lang.org/t/vector-covariant-in-its-element-type/80582
 	https://stackoverflow.com/questions/55200843/what-does-it-mean-that-box-is-covariant-if-boxdyn-b-is-not-a-subtype-of-boxdy
-in Jina we have traits, but there is no trait objects
+in Jina we have interfaces, but there is no dynamic interfaces
 
 instead, in Jina we have convertible types
 it's like in mathematics where we can easily do arithmetic across integer, rational, real and complex numbers

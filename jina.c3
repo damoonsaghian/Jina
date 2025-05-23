@@ -23,22 +23,25 @@ fn void generate_c3_file(String jin_file_path) {
 	https://www.learn-c3.org/
 	
 	type markers:
-		module type_marker {T, L};
-		struct Borrow @tag("borrow", 1) { inline T* }
-		struct BorrowMut @tag("borrow_mut", 1) { inline Borrow{T, L} }
-		struct Shared @tag("shared", 1) { inline Borrow{T, L} }
+		module type_marker {T, usz};
+		struct Borrow @tag("borrow", 1) { inline T type }
+		struct BorrowMut @tag("borrow_mut", 1) { inline Borrow{T} type }
+		struct Shared @tag("shared", 1) { inline Borrow{T} type, ushort ref_count }
+	any type "T" implement into'Borrow[T] into'BorrowMut[T] into'Shared[T]
 	the tags are used to:
 	, call appropriate (defered) destroyers
 	, check if mutation is allowed
 	
+	name oof borrow variables will be postfixed with the name of their owner
+	the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
+	
 	to indicate that a type has a heap part: @tag("heap", 1)
 	
-	converters:
+	implementing converters:
 	wrap all function calls (including assignments) in "call" macro
 	for each arg it finds its type using $typeof
-	functions have tags like this: @tag("param_name", "Type")
-		so the macro can find the type of the corresponding function parameter too
-	if they don't match (considering subtype relation), it adds the converter method
+		and using "paramsof" can find the type of the corresponding function parameter too
+	if they don't match (considering subtype relation), it inserts ".into'TargetType"
 	
 	generic types can be implemented using c3 generic modules
 	for generic methods, use macros
@@ -62,10 +65,10 @@ fn void generate_c3_file(String jin_file_path) {
 	characters: 'a' '\n' '\x12'
 	
 	operators:
-	a + b		a .plus b
-	a - b		a .minus b
-	a * b		a .times b
-	a / b		a .over b
+	a + b		a .add'op b
+	a - b		a .sub'op b
+	a * b		a .mul'op b
+	a / b		a .div'op b
 	a ^ b		a .exp b
 	-a			a .neg
 	a && b		a .and {b}
@@ -78,9 +81,9 @@ fn void generate_c3_file(String jin_file_path) {
 	a <= b		a .is'before'or'equal b
 	
 	note that:
-	a-b		;; a .minus b
-	a - b	;; a .minus b
-	a -b	;; a b.neg
+	a-b		;; a .sub'op b
+	a - b	;; a .sub'op b
+	a -b	;; a(b.neg)
 	a -1	;; a(-1)
 	
 	enums are implemented using c3 enums and unions

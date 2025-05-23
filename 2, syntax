@@ -62,7 +62,7 @@ lists:
 	l :List[IntC] = ['a', 'b', 'c']
 indexing:
 	e :Maybe[IntC] = l_1
-note that the type of the result of indexing above is actually "Maybe[IntC&]",
+note that the type of the result of indexing above is actually "Maybe[IntC]&",
 	which is copied into the variable with type "Maybe[IntC]"
 mutating lists:
 	l.put 'd' at: 3 ;; ['a', 'b', 'c', 'd']
