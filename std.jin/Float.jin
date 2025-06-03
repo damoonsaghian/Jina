@@ -2,6 +2,7 @@
 
 ;; https://flintlib.org/doc/arb.html
 ;; decimal?
+;; https://www.bytereef.org/mpdecimal/index.html
 ;c3 typedef Float = ;
 ;ns Float ::NumF ::OrdP ::StrRep
 	to'Complex[n::NumR] = { self& -> Complex[n] |

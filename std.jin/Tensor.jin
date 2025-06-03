@@ -4,4 +4,6 @@
 	https://github.com/ggml-org/ggml
 ;; otherwise use lapacke
 
+;; https://www.deeplearningbook.org/contents/linear_algebra.html
+
 ;ns Tensor[n::Num]
