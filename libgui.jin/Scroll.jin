@@ -1,0 +1,37 @@
+;; declare required functions an types from gtk
+;c3 extern fn gtk_scrolled_window_new();
+;c3 distinct GtkScrolledWindow = any;
+
+;; use undershoot lines on borders of ScrolledWindow to show the amount of overflowed content
+
+Scroll := GtkScrolledWindow
+
+;ns Scroll ::Widget
+	new = { -> Scroll |
+		scrolled'window = gtk'scrolled'window'new()
+		
+		;; set these properties of scrolled'window
+		;; "child", widget
+		;; "hscrollbar_policy", GTK'POLICY'NEVER
+		;; "vscrollbar_policy", GTK'POLICY'NEVER
+		
+		;;
+		connect to these signals
+		"notify:vadjustment", { scrolled'window |
+			vadjust = scrolled'window.vadjustment
+			top'overflow = vadjust.value * 10 // vadjust.upper
+			bottom'overflow = (vadjust.upper - vadjust.page_size - vadjust.value) * 10 // vadjust.upper
+			scrolled'window.set'css'class("overflow-t{top'overflow}", "overflow-b{bottom'overflow}")
+		}
+		"notify:hadjustment", { scrolled'window |
+			hadjust = scrolled'window.hadjustment
+			left'overflow = hadjust.value * 10 // hadjust.upper
+			right'overflow = (hadjust.upper - hadjust.page_size - hadjust.value) * 10 // hadjust.upper
+			scrolled'window.set'css'class("overflow-l{left_overflow}", "overflow-r{right_overflow}")
+		}
+		;
+		
+		scrolled'window
+	}
+
+	;; Widget
