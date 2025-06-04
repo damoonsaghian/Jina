@@ -1,0 +1,25 @@
+;; declare required functions and types from gio of glib2
+;c3 extern fn ...;
+;c3 typedef ... = any;
+;; https://docs.gtk.org/gio/
+;; https://docs.gtk.org/gio/class.VolumeMonitor.html
+
+;c3 typedef File = ;
+
+;ns File
+	delete = { path :Str&, cb ::(->) = {} |
+	}
+	
+	move = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
+	}
+	
+	copy = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
+	}
+	
+	read = { self, then ::(List[IntC]->) |
+		;; close the file descriptor
+	}
+	
+	write = { self, data :List[IntC], mode :(#append #overwrite) = #append, then ::(->) = {} |
+		;; close the file descriptor
+	}

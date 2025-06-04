@@ -1,0 +1,35 @@
+;ns Sys
+	print = { message :Str& |
+		;c3 std::io::printn(message.array_view());
+	}
+	
+	print'err = { message :Str& |
+	}
+	
+	read = { cb ::(Str&->) |
+		actor = Actor.new '
+		actor.do { answer! |
+			;; read non'blocking from stdin
+			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
+			;; https://discourse.gnome.org/t/read-from-stdin-and-write-to-stdout/16392/2
+			;c3
+			
+			;; append the read characters to answer
+			
+			;; if EOF, call cb(answer), and return false
+			;; otherwise return true
+		}
+	}
+	
+	exec = { program'name :Str&, args :?Str& = #null -> stdin: File, stdout: File |
+	}
+	
+	get'env = { -> Str |
+	}
+	
+	get'args = { -> Str |
+	}
+	
+	get'time = { format :Str& = "" -> Str |
+		;c3 return (Str) std::time::;
+	}
