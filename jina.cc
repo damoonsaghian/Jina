@@ -1,46 +1,41 @@
-import std::io;
+#include <iostream>
+#include <optional>
+#include <string>
 
-String? read_jina_exp(File jina_file) {
-	do {
-		String? line = io::readline(&jin_file);
-		if (catch excuse = line) {
-			jin_file.close();
+using namespace std;
+
+optional<string> readJinaExp(const ifstream& jinfile) {
+	string exp;
+	
+	while (true) {
+		exp->append(jinfile.getline());
+		if ((jinFile.rdstate() & ifstream::failbit ) != 0 )
 			break;
-		}
 	};
+	
+	if (!exp.empty()) return exp;
 }
 
-String jina2c3(String jina_exp) {
+string jina2c3(const string& jinaExp) {
 	// words: alpha'numerics plus apostrophe, dot at start or colon at start or end
 }
 
-void generate_c3_file(String jin_file_path) {
+void generateCcFile(const string& jinfilePath) {
 	/*
-	https://c3-lang.org/getting-started
-	https://github.com/c3lang/c3c
-	https://github.com/c3lang/c3c/blob/master/c3c.1
-	https://github.com/c3lang/c3c/tree/master/resources/examples
-	https://www.learn-c3.org/
-	
 	type markers:
-		module type_marker {T};
-		struct BorrowMut_ @tag("borrow_mut", 1) { inline Borrow{T} value }
-		struct Shared_ @tag("shared", 1) { inline Borrow{T} value, ushort ref_count }
-		typedef Unique_ @tag("unique", 1) = T
-	the tags are used to:
-	, call appropriate (defered) destroyers
-	, check if mutation is allowed
+	Jina	C++
+	T		unique_ptr<T>
+	T$		shared_ptr<T>
+	T&		const T&
+	T!		T&
 	
 	name of borrow variables will be postfixed with the name of their owner
 	the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
 	
 	to indicate that a type has a heap part: @tag("heap", 1)
 	
-	implementing converters:
-	wrap all function calls (including assignments) in "call" macro
-	for each arg, it finds its type using $typeof
-		and using "paramsof" can find the type of the corresponding function parameter too
-	if they don't match (considering substruct relation), it inserts ".into'TargetType"
+	converters are implemented using c++ user'defined conversion
+	https://cppreference.com/w/cpp/language/cast_operator.html
 	
 	generic types can be implemented using c3 generic modules
 	for generic methods, use macros
@@ -168,14 +163,14 @@ void generate_c3_file(String jin_file_path) {
 	};
 }
 
-generate_jina_api_file() {
+generateJinaApiFile() {
 	// distributed with compiled packages, for IDE hints
 }
 
-void? main(String[] args) {
-	if (args.len == 0) {
-		io::printn("interactive Jina is not yet implemented");
-		io::printn("usage: jina <project_path> [c3c_options]");
+int main(int argc, char** argv) {
+	if (argc == 0) {
+		cout << "interactive Jina is not yet implemented";
+		cou << "usage: jina <project_path> [c3c_options]";
 		return;
 	}
 	
@@ -187,14 +182,7 @@ void? main(String[] args) {
 		io::printfn("\"%s\" is not a directory", project_dir);
 	}
 	
-	/*
-	using glib for eventloop is not such a bad idea
-	glib is already used in lots of system libraries and services
-	in the future we can rewrite them (even those written in C++) in Jina
-	eventually we can implement std.jin completely in Jina and C3 (without using glib, gmp, and mpfr)
-	*/
-	
-	// if build target is "ELF freestanding" (kernel or embeded), link statically, and use --no-evloop
+	// if build target is "ELF freestanding" (kernel or embedded), link statically, and use --no-evloop
 	
 	foreach (pkg : io::Path.ls()) {
 		// if --no-evloop is not used
@@ -207,40 +195,32 @@ void? main(String[] args) {
 			// spm import <gnunet-namespace> <package-name>
 		}
 		
-		// mkdir -p "$project_dir/.cache/jina/c3"
+		// mkdir -p "$project_dir/.cache/jina/cc"
 		
 		/*
-		find all .jina files (recursively), and if it's newer that the last generated .c3 file,
-			regenerate the .c3 file
+		find all .jin files (recursively), and if it's newer than the last generated .cc file,
+			regenerate the .cc file
 		number of parallel processes will be equal to the number of CPU cores,
 			or the number of .jin files, either one which is smaller
 		*/
-		String c3_file_path = ;
-		String c3_file_mtime = ;
-		String jin_file_mtime = ;
-		if (! jin_file_mtime || ! c3_file_mtime ||
-			jin_file_mtime > c3_file_mtime ||
-			c3_file_mtime > std::time:: // c3_file is from future!
+		string cc_file_path = ;
+		string cc_file_mtime = ;
+		string jin_file_mtime = ;
+		if (! jin_file_mtime || ! cc_file_mtime ||
+			jin_file_mtime > cc_file_mtime ||
+			cc_file_mtime > std::time:: // cc_file is from future!
 		) {}
 		
-		// std.jin is compiled to c3 and imported to all the generated c3 files above
+		// std.jin is compiled to C++ and imported to all the generated C++ files above
 		
-		// https://ninja-build.org/
+		// from .jin directories, produce and publish packages
 		
 		/*
-		cat <<-EOF > "$project_dir/.cache/jina/c3/project.json"
-		{
-			"dependencies": [ "glib" ],
-			"targets": {
-				"linux-$ARCH": {
-					"type": "executable",
-				},
-			}
-		}
-		EOF
+		generate a build file, and then build
+		https://ninja-build.org/
+		args given to the build command:
+			$clang_options
+			"$project_dir/.cache/jina/cc"
 		*/
-		
-		// compile the generated c3 project
-		// c3c build $c3c_options "$project_dir/.cache/jina/c3"
 	}
 }
