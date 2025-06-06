@@ -1,9 +1,0 @@
-;; if the generic parameter is a fixed size integer or float, create tensors with accelerated computations
-	https://github.com/arrayfire/arrayfire
-	https://arrayfire.org/docs/gettingstarted.htm#gettingstarted_api_usage
-	https://github.com/ggml-org/ggml
-;; otherwise use lapacke
-
-;; https://www.deeplearningbook.org/contents/linear_algebra.html
-
-;ns Tensor[n::Num]

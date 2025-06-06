@@ -1,9 +1,0 @@
-;i Num
-
-;i NumR ::Num
-
-;i NumF ::NumR
-
-;i NumI ::NumR
-
-;i NumU ::NumI
