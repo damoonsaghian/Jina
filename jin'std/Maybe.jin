@@ -1,0 +1,19 @@
+Maybe[t] := #result t #null
+
+;ns Maybe[t]
+	elif = { self, cond :Bool, then ::(->t)& -> ?t |
+		self >> {
+			#result () | self
+			#null | cond >> {
+				#true | #result then()
+				#false | #null
+			}
+		}
+	}
+	
+	else = { self, then :(->t)& -> t |
+		self >> {
+			#result r | r
+			#null | then()
+		}
+	}
