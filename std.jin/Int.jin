@@ -1,0 +1,292 @@
+;cc #include <cmath>
+
+;; https://gmplib.org/manual/
+;; https://flintlib.org/doc/fmpz.html
+;cc enum class Int : ;
+;ns Int ::NumI ::Ord ::StrRep
+	to'Float = { self& -> Float |
+		;cc return ;
+	}
+	to'Complex[n::NumR] = { self& -> Complex[n] |
+		Complex self 0
+	}
+	
+	add'op = { self&, addend :Int& -> Int |
+		;cc return ;
+	}
+	add'op = { self&, addend :Float& -> Float |
+		self.to'Float + addend
+	}
+	add'op[n::NumR] = { self&, addend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] + addend
+	}
+	
+	add = { self!, addend :Int& |
+		;cc ;
+	}
+	
+	sub'op = { self&, subtrahend :Int& -> Int |
+		;cc return ;
+	}
+	sub'op = { self&, subtrahend :Float& -> Float |
+		self.to'Float - subtrahend
+	}
+	sub'op[n::NumR] = { self&, subtrahend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] - subtrahend
+	}
+	
+	sub = { self!, subtrahend :Int& |
+		;cc ;
+	}
+	
+	mul'op = { self&, multiplicand :Int& -> Int |
+		;cc return ;
+	}
+	mul'op = { self&, multiplicand :Float& -> Float |
+		self.to'Float * multiplicand
+	}
+	mul'op[n::NumR] = { self&, multiplicand :Complex[n] -> Complex[n] |
+		self.to'Complex[n] * multiplicand
+	}
+	
+	mul = { self!, multiplicand :Int& |
+		;cc ;
+	}
+	
+	div'op = { self&, divisor :Int& -> ?Int |
+		divisor == 0 .then { #null } .else {
+			;cc var result = ;
+			#result result
+		}
+	}
+	div'op = { self&, divisor :Float& -> Float |
+		divisor == 0 .then { #null } .else { self.to'Foat / divisor }
+	}
+	div'op[n::NumI] = { self&, divisor :Complex[n] -> ?Complex[n] |
+		divisor.0 == 0 .then { #null } .else { #result(self.to'Complex[n] / divisor) }
+	}
+	div'op[n::NumF] = { self&, divisor :Complex[n] -> Complex[n] |
+		self.to'Complex[n] / divisor
+	}
+	
+	div = { self!, divisor :Int& -> Bool |
+		divisor == 0 .then { #false } .else {
+			;cc ;
+			#true
+		}
+	}
+	
+	mod = { self&, modulus :Int& -> ?Int |
+		modulus == 0 .then { #null } .else {
+			;cc var result = ;
+			#result result
+		}
+	}
+	
+	mod'm = { self!, modulus :Int& -> Bool |
+		modulus == 0 .then { #false } .else {
+			;cc self %= divisor;
+			#true
+		}
+	}
+	
+	;; 0^0 == 1
+	exp = {}
+	
+	log = {}
+	
+	neg = { self& -> Int& |
+		;cc return ;
+	}
+	
+	negate = { self! |
+		;cc ;
+	}
+	
+	abs = { self& -> Int& |
+		;cc return ;
+	}
+	
+	;; create a range iterator
+	til = { self&, end :Int& -> Iter[Int&] |
+	}
+	
+	;;Ord
+	
+	is'equal = { self&, other :Int& -> Bool |
+		;cc ;
+	}
+	
+	is'after = { self&, other :Int& -> Bool |
+		;cc ;
+	}
+	
+	;;StrRep
+	to'str = { self& -> Str |
+	}
+
+;cc enum class Int8 : long;
+
+;ns Int8 ::NumI ::Ord ::StrRep
+	to'Int = { self -> Int |
+		;cc return ;
+	}
+	to'Float = { self -> Float |
+		;cc return ;
+	}
+	to'Complex[n::Num] = { self -> Complex[n] |
+		Complex[n] self 0
+	}
+	
+	add'op = { self, addend :Int8 -> Int8 |
+		;cc return self + addend;
+	}
+	add'op = { self, addend :Int& -> Int |
+		self.to'Int + addend
+	}
+	add'op = { self, addend :Float& -> Float |
+		self.to'Float + addend
+	}
+	add'op[n::Num] = { self, addend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] + addend
+	}
+	
+	add = { self!, addend :Int8 |
+		;cc self += addend;
+	}
+	
+	sub'op = { self, subtrahend :Int8 -> Int8 |
+		;cc return self - subtrahend;
+	}
+	sub'op = { self, subtrahend :Int& -> Int |
+		self.to'Int - subtrahend
+	}
+	sub'op = { self, subtrahend :Float& -> Float |
+		self.to'Float - subtrahend
+	}
+	sub'op[n::Num] = { self, subtrahend :Complex[n] -> Complex[n] |
+		self.to'Complex[n] - subtrahend
+	}
+	
+	sub = { self!, subtrahend :Int8 |
+		;cc self -= subtrahend;
+	}
+	
+	mul'op = { self, multiplicand :Int8 -> Int8 |
+		;cc return self * multiplicand;
+	}
+	mul'op = { self, multiplicand :Int& -> Int |
+		self.to'Int * multiplicand
+	}
+	mul'op = { self, multiplicand :Float& -> Float |
+		self.to'Float * multiplicand
+	}
+	mul'op[n::Num] = { self, multiplicand :Complex[n] -> Complex[n] |
+		self.to'Complex[n] * multiplicand
+	}
+	
+	mul = { self!, multiplicand :Int8 |
+		;cc self *= multiplicand;
+	}
+	
+	div'op = { self, divisor :Int8 -> ?Int8 |
+		divisor == 0 .then { #null } .else {
+			;cc var result = self / divisor;
+			#result result
+		}
+	}
+	div'op = { self, divisor :Int -> ?Int |
+		divisor == 0 .then { #null } .else { #result(self.to'Int / divisor) }
+	}
+	div'op = { self, divisor :Float& -> Float |
+		self.to'Float / divisor
+	}
+	div'op[n::NumI] = { self, divisor :Complex[n] -> ?Complex[n] |
+		divisor.0 == 0 .then { #null } .else { #result(self.to'Complex[n] / divisor) }
+	}
+	div'op[n::NumF] = { self, divisor :Complex[n] -> Complex[n] |
+		self.to'Complex[n] / divisor
+	}
+	
+	div = { self!, divisor :Int8 -> Bool |
+		divisor == 0 .then { #false } .else {
+			;cc self /= divisor;
+			#true
+		}
+	}
+	
+	mod = { self, modulus :Int8 -> ?Int8 |
+		modulus == 0 .then { #null } .else {
+			;cc var result = self % modulus;
+			#result result
+		}
+	}
+	mod = { self, modulus :Int -> ?Int |
+		modulus == 0 .then { #null } .else { #result(self.to'Int % modulus) }
+	}
+	
+	mod'm = { self!, modulus :Int8 -> Bool |
+		modulus == 0 .then { #false } .else {
+			;cc self %= divisor
+			#true
+		}
+	}
+	
+	;; 0^0 == 1
+	exp = {}
+	
+	log = {}
+	
+	neg = { self -> Int8 |
+		;cc return -self;
+	}
+	
+	negate = { self! |
+		;cc self *= -1;
+	}
+	
+	abs = { self -> Int8 |
+		;cc return math.abs(self);
+	}
+	
+	min = ;cc
+	max = ;cc
+	
+	;; create a range iterator
+	til = { self, end :Int8 -> Iter[Int8] |
+	}
+	
+	;;Ord
+	
+	is'equal = { self, other :Int8 -> Bool |
+		;cc self == other;
+	}
+	
+	is'after = { self, other :Int8 -> Bool |
+		;cc self > other;
+	}
+	
+	;;StrRep
+	to'str = { self -> Str |
+	}
+
+;cc enum class Int4 : int;
+;ns Int4 ::NumI ::Ord ::StrRep
+
+;cc enum class Int2 : short;
+;ns Int2 ::NumI ::Ord ::StrRep
+
+;cc enum class Int1 : ichar;
+;ns Int1 ::NumI ::Ord ::StrRep
+
+;cc enum class IntU : usz;
+;ns IntU ::NumU ::Ord ::StrRep
+
+;cc enum class IntU4 : uint;
+;ns IntU4 ::NumU ::Ord ::StrRep
+
+;cc enum class IntU2 : ushort;
+;ns IntU2 ::NumU ::Ord ::StrRep
+
+;cc enum class IntC : char;
+;ns IntC ::NumU ::Ord ::StrRep
