@@ -1,3 +1,5 @@
+;cc #include <cstdint>
+;cc #include <cstddef>
 ;cc #include <cmath>
 
 ;; https://gmplib.org/manual/
