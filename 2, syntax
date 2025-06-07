@@ -26,19 +26,19 @@ defining a variable with shared type:
 assignment to mutable variables (ie those with unique or mutable'borrow type):
 	v. = ...
 
-numeric types types:
+numeric types:
 , Float: floating'point numbers with arbitrary precision and ball arithmetic
-, Float2: floating'point numbers with double precision ("double" in C3)
-, Float1: floating'point numbers with single precision ("float" in C3)
+, Float2: floating'point numbers with double precision ("double" in C++)
+, Float1: floating'point numbers with single precision ("float" in C++)
 , Int: arbitrary sized integer
-, Int8: 8 bytes integer ("long" in C3)
-, Int4: 4 bytes integer ("int" in C3)
-, Int2: 2 bytes integer ("short" in C3)
-, Int1: 1 byte integer ("ichar" in C3)
-, IntU: word'sized unsigned integer ("usz" in C3)
-, IntU4: 4 bytes unsigned integer ("uint" in C3)
-, IntU2: 2 bytes unsigned integer ("ushort" in C3)
-, IntC: 1 byte unsigned integer ("char" in C3)
+, Int8: 8 bytes integer ("std::int64_t" in C++)
+, Int4: 4 bytes integer ("std::int32_t" in C++)
+, Int2: 2 bytes integer ("std::int16_t" in C++)
+, Int1: 1 byte integer ("std::int8_t" in C++)
+, IntU: word'sized unsigned integer ("std::size_t" in C++)
+, IntU4: 4 bytes unsigned integer ("std::uint32_t" in C++)
+, IntU2: 2 bytes unsigned integer ("std::uint16_t" in C++)
+, IntC: 1 byte unsigned integer ("unsigned char" in C++)
 numeric literals:
 	1.0 ;; Float2
 	1.23e4
@@ -134,7 +134,7 @@ which are equivalent to:
 not: -a
 
 there is no loop construct directly available in Jina
-instead we have iterators with "each" method, that is internally implemented using C3 loop
+instead we have iterators with "each" method, that is internally implemented using C++ loop
 	iter.each { x | ... }
 any type that implements "Iter" trait, must define an "iter" method,
 	whose returned value stores the mutable state
@@ -235,14 +235,11 @@ generics:
 bounded generics:
 	T[x::I] := a: x, b: x
 
-to directly enter C3 code:
-	;c3 ...
+to directly enter C++ code:
+	;cc ...
 		...
 or:
-	;c3
+	;cc
 	...
 	;
-declaring functions and types from a C3 lib
-	;c3 extern fn ...;
-	;c3 typedef ... = any;
 beware! with great power comes great responsibility

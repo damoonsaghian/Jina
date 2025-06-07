@@ -133,7 +133,7 @@ then when an expression of type "A" is used in a place that wants type "B",
 the idea is to only do this for types that can be converted with negligible run'time overhead
 
 Jina compiles to C++, and thus can easily use existing C/C++ libraries
-C++ (unlike Rust) allows us to have packages that are compiled independently as dynamic libs,
+C++ (unlike Rust) allows us to have packages that are compiled independently as dynamic libraries,
 	then imported and used in other packages
 
 Jina is installed by default in SPM Linux

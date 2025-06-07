@@ -213,7 +213,11 @@ int main(int argc, char** argv) {
 		
 		// std.jin is compiled to C++ and imported to all the generated C++ files above
 		
-		// from .jin directories, produce and publish packages
+		/*
+		search for .jin files in the project recursively
+		when one is found, its containing directory, and the sibling directories containing .jin files,
+			are the packages that must be compiled and published
+		*/
 		
 		/*
 		generate a build file, and then build
