@@ -8,7 +8,7 @@ optional<string> readJinaExp(const ifstream& jinfile) {
 	string exp;
 	
 	while (true) {
-		exp->append(jinfile.getline());
+		exp.append(jinfile.getline());
 		if ((jinFile.rdstate() & ifstream::failbit ) != 0 )
 			break;
 	};
@@ -16,7 +16,7 @@ optional<string> readJinaExp(const ifstream& jinfile) {
 	if (!exp.empty()) return exp;
 }
 
-string jina2c3(const string& jinaExp) {
+string jina2cc(const string& jinaExp) {
 	// words: alpha'numerics plus apostrophe, dot at start or colon at start or end
 }
 
@@ -31,23 +31,25 @@ void generateCcFile(const string& jinfilePath) {
 	
 	name of borrow variables will be postfixed with the name of their owner
 	the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
-	
-	to indicate that a type has a heap part: @tag("heap", 1)
+	https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3444r0.html
+	https://github.com/ladroid/CppBorrowChecker
 	
 	converters are implemented using c++ user'defined conversion
 	https://cppreference.com/w/cpp/language/cast_operator.html
 	
-	generic types can be implemented using c3 generic modules
-	for generic methods, use macros
+	c++ dynamic linking templates
+	
+	c++ auto header file
+	https://hackaday.com/2021/11/08/linux-fu-automatic-header-file-generation/
+	https://softwareengineering.stackexchange.com/questions/35375/what-to-do-if-i-hate-c-header-files
+	https://www.hwaci.com/sw/mkhdr/
+	
 	in generic methods, in certain situations, we can use this syntax sugar:
 		m = { x ::I | ... }
 	which is equivalent to:
 		m[g::I] = { x :g | ... }
-	if there is an interface constrain, use contract to implement it
-	type inference from constructor args; is it implemented in C3?
-		if not, implement them as a macro instead
 	
-	append "__" to identifiers that are C3 keywords
+	append "__" to identifiers that are C++ keywords
 	
 	literals
 	numbers (words starting with a digit, or a "-" prepended digit):
@@ -80,19 +82,26 @@ void generateCcFile(const string& jinfilePath) {
 	a -b	;; a(b.neg)
 	a -1	;; a(-1)
 	
-	enums are implemented using c3 enums and unions
-	https://en.wikipedia.org/wiki/Tagged_union
+	enums are implemented using C++ variants and enum classes
+	
+	https://en.cppreference.com/w/cpp/utility/tuple.html
 	
 	named tuples
+	https://stackoverflow.com/questions/13065166/c11-tagged-tuple
+	https://github.com/erez-strauss/named_tuples
+	named arguments
+	https://www.reddit.com/r/cpp/comments/l4nyhv/c23_named_parameters_design_notes/
+	https://en.wikipedia.org/wiki/Named_parameter
+	https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Named_Parameter
+	https://pdimov.github.io/blog/2020/09/07/named-parameters-in-c20/
+	
+	https://www.reddit.com/r/cpp/comments/mthcgb/universal_function_call_syntax_in_c20/
+	https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html
 	
 	function: { | }
 	replace with: fn () {}
 	if the function is only made of one expression, replace with: fn () @inline {}
 	if there are multiple "|", compile the body of the function to C3 switch
-	
-	overloaded methods:
-	each method definition is soorounded by a "overload" macro
-	use $switch, and $typeof to implement "overload" macro
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient
@@ -102,64 +111,35 @@ void generateCcFile(const string& jinfilePath) {
 	each thread runs a loop that processes the messages
 	after each loop, if there are no messages left, it goes to sleep (sigwait)
 	when a message is registered, a signal will be sent to all threads to wake up the slept ones
-	https://docs.gtk.org/glib/main-loop.html
-	https://docs.gtk.org/glib/struct.MainLoop.html
-	https://docs.gtk.org/glib/threads.html
-	https://docs.gtk.org/glib/struct.Thread.html
-	https://docs.gtk.org/glib/struct.ThreadPool.html
-	https://docs.gtk.org/glib/struct.MainContext.html
-	
+	use Qt eventloop if --no-evloop is not used
+	https://www.actor-framework.org/
 	after running a message, if it returns false, remove the message from the list
 	messages will be reapted until they return false
-	
 	a linked list containing tuples of actor's ID and memory address
-	std::collections::LinkedList{Actor}* GLOBAL_actors_list;
-	
-	// if --no-evloop is not used
-	GMainLoop eventloop = g_main_loop_new();
-	https://wiki.libsdl.org/SDL3/README-main-functions
-	https://wiki.libsdl.org/SDL3/SDL_Event
-	https://wiki.libsdl.org/SDL3/CategoryAsyncIO
-	https://lazyfoo.net/tutorials/SDL/33_file_reading_and_writing/index.php
-	https://news.ycombinator.com/item?id=41471707
-	https://www.actor-framework.org/
-	
+	GLOBAL_actors_list
 	actors list is partitioned: file handle 1, file handle 2, socket 1, socket 2, user interface
 	each partition can wake up the eventloop to process the partition's messages
 	
 	the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
 	, a heavy computation that blocks its thread, can't make the UI lag
 	, the UI remains responsive, even when the number of non'UI actors is extremely large
-	the main loop runs messages of UI actors, and then polls (non'waiting) more events (glib2)
+	the main loop runs messages of UI actors, and then polls (non'waiting) more events
 		if there is no more messages for UI actors, wait for events
 	
 	use mutexes to hold the list of actors and their message queues
 	https://www.classes.cs.uchicago.edu/archive/2018/spring/12300-1/lab6.html
 	https://docs.gtk.org/glib/struct.RWLock.html
 	*/
-	io::File! jin_file = io::File::open(jin_file_path, "r");
-	if (catch excuse = jin_file?) {
-		io::printfn("file \"%s\" does not exist", jin_file_path);
-	}
 	
-	// create c3 file
-	io::File! c3_file = io::File::open(c3_file_path, "w");
-	if (catch excuse = c3_file?) {
-		io::printfn("file \"%s\" does not exist", c3_file_path);
-	}
+	// open jinFile from jinFilePath
+	// create ccFile
 	
-	String jina_exp;
-	String c3_exp;
+	string jinaExp;
+	string ccExp;
 	do {
-		jina_exp = read_exp(&jin_file_path);
-		c3_exp = jina2c3(jina_exp);
-		c3_file.write(c3_exp);
-		
-		if (catch excuse = jina_exp) {
-			jin_file.close();
-			c3_file.close();
-			break;
-		}
+		jinaExp = readJinaExp(&jinFilePath);
+		ccExp = jina2cc(jinaExp);
+		ccFile.write(ccExp);
 	};
 }
 
@@ -172,28 +152,28 @@ int main(int argc, char** argv) {
 		cout << "interactive Jina is not yet implemented";
 		cou << "usage: jina <project_path> [c3c_options]";
 		return;
-	}
+	};
 	
-	io::Path! project_dir = io::Path::new(args[1]);
-	if (catch excuse = project_dir) {
-		io::printfn("directory \"%s\" does not exist", project_dir);
-		return excuse?;
-	} else if (! project_dir.is_dir()) {
-		io::printfn("\"%s\" is not a directory", project_dir);
-	}
+	// projectDir from args[1]
+	// printfn("directory \"%s\" does not exist", projectDir);
+	// printfn("\"%s\" is not a directory", project_dir);
 	
 	// if build target is "ELF freestanding" (kernel or embedded), link statically, and use --no-evloop
 	
-	foreach (pkg : io::Path.ls()) {
+	/*
+	search for .jin files in the project recursively
+	when one is found, its containing directory, and the sibling directories containing .jin files,
+		are the packages that must be compiled and published
+	*/
+	
+	// for each package
+	{
 		// if --no-evloop is not used
-		// spm import $gnunet_namespace glib
+		// spm import $gnunet_namespace qt
 		
-		// go through all files (recursively) and find ".p" files
-		foreach (p_file : $(find .p)) {
-			cat p_file
-			
-			// spm import <gnunet-namespace> <package-name>
-		}
+		// go through all files (recursively) and find ".p" files, and for each:
+		// read the file and obtain: <gnunet-namespace> <package-name>
+		// spm import <gnunet-namespace> <package-name>
 		
 		// mkdir -p "$project_dir/.cache/jina/cc"
 		
@@ -212,12 +192,6 @@ int main(int argc, char** argv) {
 		) {}
 		
 		// std.jin is compiled to C++ and imported to all the generated C++ files above
-		
-		/*
-		search for .jin files in the project recursively
-		when one is found, its containing directory, and the sibling directories containing .jin files,
-			are the packages that must be compiled and published
-		*/
 		
 		/*
 		generate a build file, and then build
