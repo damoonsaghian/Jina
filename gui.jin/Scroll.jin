@@ -1,8 +1,0 @@
-;; include qt
-
-;; don't show scroll bars
-;; use undershoot lines on borders of scrolled views, to show the amount of overflowed content
-
-;cc enum class Scroll {};
-
-;ns Scroll ::Widget
