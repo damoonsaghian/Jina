@@ -1,0 +1,19 @@
+;; include qt core and sd
+
+;cc enum class File : QFile;
+
+;ns File
+	delete = { path :Str&, cb ::(->) = {} |
+	}
+	
+	move = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
+	}
+	
+	copy = { source'path :Str&, destination'path :Str&, cb ::(->) = {} |
+	}
+	
+	read = { self&, then ::(List[IntC]->) |
+	}
+	
+	write = { self&, data :List[IntC], mode :(#append #overwrite) = #append, then ::(->) = {} |
+	}
