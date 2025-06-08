@@ -24,10 +24,14 @@ void generateCcFile(const string& jinfilePath) {
 	/*
 	type markers:
 	Jina	C++
-	T		unique_ptr<T>
+	T		T (with RAII for heap part)
 	T$		shared_ptr<T>
 	T&		const T&
 	T!		T&
+	
+	C++ already uses move automatically when copying from an object it knows will never be used again,
+		such as a temporary object or a local variable being returned or thrown from a function
+	this is achieved through move constructors and move assignment operators
 	
 	name of borrow variables will be postfixed with the name of their owner
 	the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
