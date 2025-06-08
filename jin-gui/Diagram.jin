@@ -20,10 +20,14 @@
 ;; https://github.com/LibreCAD/LibreCAD
 ;; https://github.com/openscad/openscad/
 ;; https://pymadcad.readthedocs.io/en/latest/index.html
+;; https://github.com/simbody/simbody
+;; https://github.com/precice/precice
+;; https://github.com/coal-library/coal
+;; https://github.com/stack-of-tasks/pinocchio
+
+;; https://github.com/openchemistry/avogadrolibs
 
 ;; formula editor
 ;; https://github.com/alexhuntley/Plots/blob/main/plots/formula.py
-
-;; https://github.com/openchemistry/avogadrolibs
 
 ;; https://doc.qt.io/qt-6/qml-location5-maps.html
