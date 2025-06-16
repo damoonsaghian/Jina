@@ -1,7 +1,6 @@
-pkg=jina
-	spm_import clang
-	# build jina
-	spm_xcript jina inst/cmd
+spm_import clang
+# build jina
+spm_xcript jina inst/cmd
 
 pkg=jin-std
 	spm_build jina
