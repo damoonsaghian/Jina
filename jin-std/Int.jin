@@ -127,7 +127,7 @@
 	to'str = { self& -> Str |
 	}
 
-;cc enum class Int8 : long;
+;cc enum class Int8 : std::int64_t;
 
 ;ns Int8 ::NumI ::Ord ::StrRep
 	to'Int = { self -> Int |
@@ -272,23 +272,26 @@
 	to'str = { self -> Str |
 	}
 
-;cc enum class Int4 : int;
+;cc enum class Int4 : std::int32_t;
 ;ns Int4 ::NumI ::Ord ::StrRep
 
-;cc enum class Int2 : short;
+;cc enum class Int2 : std::int16_t;
 ;ns Int2 ::NumI ::Ord ::StrRep
 
-;cc enum class Int1 : ichar;
+;cc enum class Int1 : std::int8_t;
 ;ns Int1 ::NumI ::Ord ::StrRep
 
-;cc enum class IntU : usz;
+;cc enum class IntU : std::size_t;
 ;ns IntU ::NumU ::Ord ::StrRep
 
-;cc enum class IntU4 : uint;
+;cc enum class IntU4 : std::uint32_t;
 ;ns IntU4 ::NumU ::Ord ::StrRep
 
-;cc enum class IntU2 : ushort;
+;cc enum class IntU2 : std::uint16_t;
 ;ns IntU2 ::NumU ::Ord ::StrRep
 
+;cc enum class IntU1 : std::uint8_t;
+;ns IntU1 ::NumU ::Ord ::StrRep
+
 ;cc enum class IntC : char;
-;ns IntC ::NumU ::Ord ::StrRep
+;ns IntC ::Num ::Ord ::StrRep
