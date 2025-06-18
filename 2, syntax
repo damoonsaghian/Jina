@@ -38,7 +38,8 @@ numeric types:
 , IntU: word'sized unsigned integer ("std::size_t" in C++)
 , IntU4: 4 bytes unsigned integer ("std::uint32_t" in C++)
 , IntU2: 2 bytes unsigned integer ("std::uint16_t" in C++)
-, IntC: 1 byte unsigned integer ("unsigned char" in C++)
+, IntU1: 1 bytes unsigned integer ("std::uint8_t" in C++)
+, IntC: an ASCII code representing a character ("char" in C++)
 numeric literals:
 	1.0 ;; Float2
 	1.23e4
@@ -48,7 +49,7 @@ numeric literals:
 	0x1234'5678'9ABC'DEF0
 	'a' ;; IntC, ASCII code for character "a"
 	'\n' ;; ASCII code for character with escape code "\n"
-	'\x12' ;; a byte with hexadecimal value 0x12
+	'\x12' ;; character with hexadecimal ASCII code 0x12
 numbers are automatically converted when there is no data loss:
 	i :Int8 = 123
 	i = 123.to'Int8
