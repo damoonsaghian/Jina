@@ -1,8 +1,0 @@
-https://github.com/arrayfire/arrayfire
-https://arrayfire.org/docs/gettingstarted.htm#gettingstarted_api_usage
-https://github.com/ggml-org/ggml
-;; https://www.deeplearningbook.org/contents/linear_algebra.html
-
-;; but for multiple precision numbers, it's non'trivial to implement
-
-;ns Tensor[n::Num]
