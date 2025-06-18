@@ -1,0 +1,16 @@
+;; https://doc.qt.io/qt-6/qml-qtquick-textedit.html#textDocument-prop
+;; https://doc.qt.io/qt-6/qtextdocument.html
+;; https://doc.qt.io/qt-6/richtext.html
+
+;; next and previous: word, line, paragraph
+
+;; "psi" followed by two succesive apostrophes will be replaced by "ψ"
+
+;; white space (space, tab, new line) + space -> tab
+
+;; elastic tabstops: "http://nickgravgaard.com/elastic-tabstops/"
+
+;; indentation guides:
+;; change the background color of leading tabs; interchange between 2 colors
+
+;; sticky scrolling
