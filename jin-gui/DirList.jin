@@ -1,5 +1,0 @@
-;; https://doc.qt.io/qt-6/qml-qt-labs-folderlistmodel-folderlistmodel.html
-
-;; two views:
-	list view: show root dir name as title
-	grid view
