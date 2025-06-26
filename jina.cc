@@ -91,6 +91,7 @@ void generateCcFile(const string& jinfilePath) {
 	enums are implemented using C++ variants and enum classes
 	
 	https://en.cppreference.com/w/cpp/utility/tuple.html
+	for each struct define a converter that turns it into a std::tuple
 	
 	named tuples
 	https://stackoverflow.com/questions/13065166/c11-tagged-tuple
@@ -108,6 +109,8 @@ void generateCcFile(const string& jinfilePath) {
 	replace with: fn () {}
 	if the function is only made of one expression, replace with: fn () @inline {}
 	if there are multiple "|", compile the body of the function to C3 switch
+	
+	https://www.foonathan.net/2021/07/concepts-structural-nominal/
 	
 	stacks are designed for sync computation
 	using a lot of them as async cores (stackful green threads) is inefficient
