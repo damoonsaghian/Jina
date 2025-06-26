@@ -91,8 +91,7 @@ void generateCcFile(const string& jinfilePath) {
 	enums are implemented using C++ variants and enum classes
 	
 	https://en.cppreference.com/w/cpp/utility/tuple.html
-	for each struct define a converter that turns it into a std::tuple
-	
+		
 	named tuples
 	https://stackoverflow.com/questions/13065166/c11-tagged-tuple
 	https://github.com/erez-strauss/named_tuples
@@ -102,6 +101,11 @@ void generateCcFile(const string& jinfilePath) {
 	https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Named_Parameter
 	https://pdimov.github.io/blog/2020/09/07/named-parameters-in-c20/
 	
+	in Jina, types has some structural aspects (other than nominal one)
+	structs and named tuples are convertible to each other
+	for each struct define a converter that turns it into a named tuple
+	plus a converter for that named tuple that turns it into the struct
+		
 	https://www.reddit.com/r/cpp/comments/mthcgb/universal_function_call_syntax_in_c20/
 	https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html
 	
