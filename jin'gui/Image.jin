@@ -1,0 +1,4 @@
+;; kimageformats: jxl https://archlinux.org/packages/extra/x86_64/kimageformats/ (disable rav1e)
+;; qt6-imageformat: webp tiff mng jpeg2000
+;; qt6-svg
+;; https://doc.qt.io/qt-6/qtimageformats-index.html
