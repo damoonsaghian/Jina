@@ -49,6 +49,7 @@ void generateCcFile(const string& jinfilePath) {
 	https://hackaday.com/2021/11/08/linux-fu-automatic-header-file-generation/
 	https://softwareengineering.stackexchange.com/questions/35375/what-to-do-if-i-hate-c-header-files
 	https://www.hwaci.com/sw/mkhdr/
+	pre'compiled headers and external header guards
 	
 	in generic methods, in certain situations, we can use this syntax sugar:
 		m = { x ::I | ... }
@@ -89,6 +90,7 @@ void generateCcFile(const string& jinfilePath) {
 	a -1	;; a(-1)
 	
 	enums are implemented using C++ variants and enum classes
+	https://www.foonathan.net/2016/12/variant
 	
 	https://en.cppreference.com/w/cpp/utility/tuple.html
 		
