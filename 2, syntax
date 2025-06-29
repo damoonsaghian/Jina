@@ -35,11 +35,11 @@ numeric types:
 , Int4: 4 bytes integer ("std::int32_t" in C++)
 , Int2: 2 bytes integer ("std::int16_t" in C++)
 , Int1: 1 byte integer ("std::int8_t" in C++)
-, IntU: word'sized unsigned integer ("std::size_t" in C++)
-, IntU4: 4 bytes unsigned integer ("std::uint32_t" in C++)
-, IntU2: 2 bytes unsigned integer ("std::uint16_t" in C++)
-, IntU1: 1 bytes unsigned integer ("std::uint8_t" in C++)
-, IntC: an ASCII code representing a character ("char" in C++)
+, Int'u: word'sized unsigned integer ("std::size_t" in C++)
+, Int'u4: 4 bytes unsigned integer ("std::uint32_t" in C++)
+, Int'u2: 2 bytes unsigned integer ("std::uint16_t" in C++)
+, Int'u1: 1 byte unsigned integer ("std::uint8_t" in C++)
+, Int'c: equivalent to "char" in C++
 numeric literals:
 	1.0 ;; Float2
 	1.23e4
@@ -47,9 +47,9 @@ numeric literals:
 	0x1:23p4
 	1'234'567'890 ;; Int4
 	0x1234'5678'9ABC'DEF0
-	'a' ;; IntC, ASCII code for character "a"
-	'\n' ;; ASCII code for character with escape code "\n"
-	'\x12' ;; character with hexadecimal ASCII code 0x12
+	'a' ;; Int'c, a byte whose value is the ASCII code for character "a"
+	'\n' ;; a byte whose value is the ASCII code for the character with escape code "\n"
+	'\x12' ;; a byte with hexadecimal value 0x12
 numbers are automatically converted when there is no data loss:
 	i :Int8 = 123
 	i = 123.to'Int8
@@ -60,16 +60,16 @@ complex numbers can be made of any type implementing the "Num" trait
 	c = Complex[Int4] 1 0
 
 lists:
-	l :List[IntC] = ['a', 'b', 'c']
+	l :List[Int'c] = ['a', 'b', 'c']
 indexing:
-	e :Maybe[IntC] = l_1
-note that the type of the result of indexing above is actually "Maybe[IntC]&",
-	which is copied into the variable with type "Maybe[IntC]"
+	e :Maybe[Int'c] = l_1
+note that the type of the result of indexing above is actually "Maybe[Int'c]&",
+	which is copied into the variable with type "Maybe[Int'c]"
 mutating lists:
 	l.put 'd' at: 3 ;; ['a', 'b', 'c', 'd']
 	l.put 'e' at: 0 ;; ['e', 'b', 'c', 'd']
 
-character strings are UTF8 encoded, and implemented a list of characters:
+character strings are UTF8 encoded, and implemented as a list of "Int'c" values:
 	s :Str = "abc def"
 string interpolation: "abc{x}"
 alternative syntax that makes writing single word strings easier:
@@ -87,7 +87,7 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of "IntU" as in lists):
+dictionaries are indexed using strings (instead of "Int'u" as in lists):
 	d :Dict[Int4] = [a: 1, b: 2, c: 3]
 indexing:
 	d_'a
@@ -148,7 +148,7 @@ modules are files containing definitions
 any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
 exported names can have these kind of extensions:
 , a number
-, a word starting with capital letter
+, a postfix starting with an apostrophe
 , letters inside brackets
 to access the definitions in a module which is inside a directory: dir.Definition
 to hide a module so it can't be accessed from modules in the parent directory, or outside of the package,
@@ -237,10 +237,10 @@ bounded generics:
 	T[x::I] := a: x, b: x
 
 to directly enter C++ code:
-	;cc ...
+	;cpp ...
 		...
 or:
-	;cc
+	;cpp
 	...
 	;
 beware! with great power comes great responsibility
