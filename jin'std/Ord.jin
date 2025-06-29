@@ -19,7 +19,7 @@
 		self == other .neg
 	}
 
-;i OrdP
+;i Ord'p
 	is'equal :(self, other: self -> ?Bool)
 	
 	is'after :(self, other: self -> ?Bool)

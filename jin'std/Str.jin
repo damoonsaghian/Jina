@@ -1,6 +1,6 @@
-Str := List[IntC]
+Str := List[Int'c]
 
-;ns Str ::StrRep
+;ns Str ::Str'rep
 	;; implement list methods such that they respect UTF8 encoding
 	
 	replace = { self!, substring :Str&, replacement :Str& |
@@ -9,7 +9,7 @@ Str := List[IntC]
 	split =
 	join =
 	
-	find = { self, substring :Str& -> ?IntU |
+	find = { self, substring :Str& -> ?Int'u |
 	}
 	contains = { self, substring :Str& -> Bool |
 	}
@@ -28,7 +28,7 @@ Str := List[IntC]
 	trim = { self! |
 	}
 	
-	truncate = { self!, max'len :IntU |
+	truncate = { self!, max'len :Int'u |
 	}
 	
 	clear = { self! | List.clear self }
@@ -53,7 +53,7 @@ Str := List[IntC]
 	to'int1 = { self -> ?Int1 |
 	}
 	
-	;; StrRep
+	;; Str'rep
 	to'str = { self -> Str |
 		rep = "\""
 		rep.append self
@@ -61,5 +61,5 @@ Str := List[IntC]
 		rep
 	}
 
-;i StrRep
+;i Str'rep
 	to'str ::(self -> Str)&

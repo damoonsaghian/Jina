@@ -2,10 +2,10 @@
 ;; to avoid unnecessary allocation, the initial list will be on stack, if number of elements and their size is small
 	when we try to mutate it, and its size exceeds the initial size, it will be reallocated on the heap
 
-;cc enum class List[t] : ;
+;cpp enum class List[t] : ;
 
-;ns List[t] ::Iter ::StrRep
-	get = { self&, index :IntU -> ?t& |
+;ns List[t] ::Iter ::Str'rep
+	get = { self&, index :Int'u -> ?t& |
 		;; checks if index is less than the length
 	}
 	
@@ -15,25 +15,25 @@
 	extend = { self!, ext :List[t]& |
 	}
 	
-	put = { self!, element :t, at :IntU |
+	put = { self!, element :t, at :Int'u |
 	}
 	
-	insert = { self!, element :t, at :IntU |
+	insert = { self!, element :t, at :Int'u |
 	}
 	
-	slice = { self!, from :IntU, to :?IntU = #null |
+	slice = { self!, from :Int'u, to :?Int'u = #null |
 	}
 	
-	remove = { self!, at :IntU |
+	remove = { self!, at :Int'u |
 	}
 
 	;;Iter
 	iter = {}
 	
-	;;StrRep
+	;;Str'rep
 	to'str = {}
 
 ;; linked list: reading is slow, writing is fast
-ListL[t] := ;cc
+List'l[t] := ;cpp
 
-;ns ListL[t] ::Iter ::StrRep
+;ns List'l[t] ::Iter ::Str'rep

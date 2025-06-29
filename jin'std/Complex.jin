@@ -1,13 +1,13 @@
-Complex[n::NumR] := n, n
+Complex[n::Num'r] := n, n
 
-;ns Complex[n::NumR] ::Num ::StrRep
+;ns Complex[n::Num'r] ::Num ::Str'rep
 
 ;; https://mathworld.wolfram.com/ComplexExponentiation.html
 
 ;; quaternions
-Complex4[n::NumR] := n, n, n, n
-;ns Complex4 [n::NumR] ::Num ::StrRep
+Complex4[n::Num'r] := n, n, n, n
+;ns Complex4 [n::Num'r] ::Num ::Str'rep
 
 ;; octonions
-Complex8[n::NumR] := n, n, n, n, n, n, n, n
-;ns Complex8[n::NumR] ::Num ::StrRep
+Complex8[n::Num'r] := n, n, n, n, n, n, n, n
+;ns Complex8[n::Num'r] ::Num ::Str'rep

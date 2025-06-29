@@ -9,13 +9,13 @@ Actor'[s, m::(s!->Bool)] :=
 ;ns Actor[s,m::(s!->Bool)]
 	new = { state :s -> Actor[s] |
 		;; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
-		;cc
+		;cpp
 		
 		Actor[s] state messages: []
 	}
 	
 	do = { self!, message :m |
 		;; notify that there is a new message
-		;cc
+		;cpp
 		self.messages.append message
 	}

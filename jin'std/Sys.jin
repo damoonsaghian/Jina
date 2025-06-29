@@ -1,8 +1,8 @@
-;cc #include <iostream>
+;cpp #include <iostream>
 
 ;ns Sys
 	print = { message :Str& |
-		;cc std::cout << (char*) message;
+		;cpp std::cout << (char*) message;
 	}
 	
 	print'err = { message :Str& |
@@ -14,7 +14,7 @@
 			;; read non'blocking from stdin
 			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
 			;; https://discourse.gnome.org/t/read-from-stdin-and-write-to-stdout/16392/2
-			;cc
+			;cpp
 			
 			;; append the read characters to answer
 			
@@ -33,5 +33,5 @@
 	}
 	
 	get'time = { format :Str& = "" -> Str |
-		;cc return (Str) ;
+		;cpp return (Str) ;
 	}
