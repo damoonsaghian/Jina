@@ -1,4 +1,6 @@
 ;; https://doc.qt.io/qt-6/qml-qt-labs-folderlistmodel-folderlistmodel.html
+;; https://github.com/kitswas/File-Manager
+;; https://github.com/TogekissTube/QtFM
 
 ;; two views:
 	list view: show root dir name as title
