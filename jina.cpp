@@ -5,6 +5,41 @@
 using namespace std;
 
 /*
+https://www.cbyexample.com/
+https://www.programming-books.io/essential/cpp/index.html
+https://www.learncpp.com/
+https://www.tutorialspoint.com/cplusplus/index.htm
+https://cplusplus.com/doc/tutorial/
+https://cplusplus.com/reference/
+https://en.cppreference.com/index.html
+https://chenweixiang.github.io/2016/07/10/c++.html
+https://en.wikibooks.org/wiki/C%2B%2B_Programming
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Operators
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Operators/Logical_Operators
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Type_Casting
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Flow_Control
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Statements/Functions
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Standard_C_Library
+https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Debugging
+chapter 3
+https://tartanllama.xyz/posts/learning-cpp/
+https://changkun.de/modern-cpp/en-us/01-intro/
+https://cpprocks.com/an-overview-of-c14-language-features/
+https://www.artima.com/articles/a-brief-introduction-to-rvalue-references
+https://www.think-cell.com/en/career/devblog/if-constexpr-requires-requires-requires
+https://www.foonathan.net/2023/08/static-constexpr-integral_constant/#content
+https://www.foonathan.net/2023/07/stop-writing-functions/#content
+https://www.foonathan.net/2023/07/constrain-user-defined-conversions/#content
+https://www.foonathan.net/2020/10/constexpr-platform/#content
+https://www.foonathan.net/2017/09/destructive-move/#content
+https://en.cppreference.com/w/cpp/language/lifetime.html
+https://www.learncpp.com/cpp-tutorial/temporary-class-objects/
+https://ericniebler.com/
+https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/
+https://akrzemi1.wordpress.com/page/2/
+https://github.com/fffaraz/awesome-cpp?tab=readme-ov-file#articles
+https://en.cppreference.com/w/cpp/links/libs
+
 https://github.com/hsutter/cppfront
 
 type markers:
