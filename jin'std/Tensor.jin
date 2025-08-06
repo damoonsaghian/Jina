@@ -3,5 +3,6 @@
 ;; https://github.com/ggml-org/ggml
 ;; for multiple precision numbers:
 	https://github.com/nakatamaho/mplapack
-
+;; https://chsasank.com/sycl-portable-cuda-alternative.html
+	https://wiki.archlinux.org/title/GPGPU#SYCL
 ;ns Tensor[n::Num]
