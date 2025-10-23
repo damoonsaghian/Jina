@@ -135,6 +135,13 @@ the idea is to only do this for types that can be converted with negligible run'
 Jina compiles to C++, and thus can easily use existing C/C++ libraries
 C++ (unlike Rust) allows us to have packages that are compiled independently as dynamic libraries,
 	then imported and used in other packages
+C++ may look ugly on the outside, but to quote its creator:
+	"within C++, there is a much smaller and cleaner language struggling to get out"
+	and i think it's "Jina"
+C was the first attempt to make programming easier by introducing types and functions
+after C, there was generally two approaches in creating more advanced programming languages
+, garbage collection (the wrong approach): Java, C# ...
+, C++: keep pointers for systems programming, but otherwise use references, move semantic, and RAII
 
 Jina is installed by default in SPM Linux
 in other Unix'like systems:
