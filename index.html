@@ -32,7 +32,7 @@ body {
 </div><div>
 </div><div>when a variable with unique type is aliased by another variable of the same unique type:
 </div><div>, if the original variable is not used in the following block (directly or through its borrowers),
-</div><div>	it's a shallow copy (heap part will not be copied)
+</div><div>	it's a move (heap part will not be copied)
 </div><div>, otherwise, it's a deep copy
 </div><div>
 </div><div>variables with borrow types will be tagged by their owner
@@ -59,25 +59,25 @@ body {
 </div><div>
 </div><div>aliasing rules in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
 </div><div>when a variable of type "T" is put into:
-</div><div>, a variable of type "T", shallow/deep copy
-</div><div>, a variable of type "T$", shallow/deep copy
+</div><div>, a variable of type "T", move/copy
+</div><div>, a variable of type "T$", move/copy
 </div><div>, a variable of type "T&", shallow copy
-</div><div>, a variable of type "T!", copy address
+</div><div>, a variable of type "T!", shallow copy
 </div><div>when a variable of type "T$" is put into:
-</div><div>, a variable of type "T", deep copy
+</div><div>, a variable of type "T", copy
 </div><div>, a variable of type "T$", shallow copy, increase reference count
 </div><div>, a variable of type "T&", shallow copy
 </div><div>, a variable of type "T!", it's compile time error
 </div><div>when a variable of type "T&" is put into:
-</div><div>, a variable of type "T", deep copy
-</div><div>, a variable of type "T$", deep copy
+</div><div>, a variable of type "T", copy
+</div><div>, a variable of type "T$", copy
 </div><div>, a variable of type "T&", shallow copy
 </div><div>, a variable of type "T!", it's compile time error
 </div><div>when a variable of type "T!" is put into:
-</div><div>, a variable of type "T", deep copy
-</div><div>, a variable of type "T$", deep copy
+</div><div>, a variable of type "T", copy
+</div><div>, a variable of type "T$", copy
 </div><div>, a variable of type "T&", shallow copy
-</div><div>, a variable of type "T!", copy address
+</div><div>, a variable of type "T!", shallow copy
 </div><div>
 </div><div>in Jina, type definitions containing borrow types, must have a borrow marker themselves:
 </div><div>	T& := A, B$, C&, D!
@@ -128,7 +128,7 @@ body {
 </div><div>reference counting combined with interior mutability can create reference cycles
 </div><div>	<a href="https://doc.rust-lang.org/book/ch15-06-reference-cycles.html">https://doc.rust-lang.org/book/ch15-06-reference-cycles.html</a>
 </div><div>	in Jina interior mutability is only possible using actors
-</div><div>	since actors are not reference counted, there is no reference cycles in Jina
+</div><div>	and since actors are not reference counted, there is no reference cycles in Jina
 </div><div>
 </div><div>types show us what we can do with the data, ie which operations are valid
 </div><div>subtyping is problematic:
@@ -155,17 +155,13 @@ body {
 </div><div>	then imported and used in other packages
 </div><div>C++ may look ugly on the outside, but to quote its creator:
 </div><div>	"within C++, there is a much smaller and cleaner language struggling to get out"
-</div><div>	and i think it's "Jina"
+</div><div>	and i think that is "Jina"
 </div><div>C was the first attempt to make programming easier by introducing types and functions
 </div><div>after C, there was generally two approaches in creating more advanced programming languages
 </div><div>, garbage collection (the wrong approach): Java, C# ...
 </div><div>, C++: keep pointers for systems programming, but otherwise use references, move semantic, and RAII
 </div><div>
-</div><div>Jina is installed by default in SPM Linux
-</div><div>in other Unix'like systems:
-</div><div>, first install "spm", by following the instructions mentioned in SPM Linux project
-</div><div>, then run this:
-</div><div>	spm install $gnunet_namespace jina
+</div><div>Jina can be build and installed using "upm" (Uni's package manager)
 </div>
 <h2>2, syntax</h2><div>comments:
 </div><div>	;; comment line
