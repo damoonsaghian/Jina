@@ -14,7 +14,7 @@ to achieve that, Jina introduces three special markers for types:
 
 when a variable with unique type is aliased by another variable of the same unique type:
 , if the original variable is not used in the following block (directly or through its borrowers),
-	it's a shallow copy (heap part will not be copied)
+	it's a move (heap part will not be copied)
 , otherwise, it's a deep copy
 
 variables with borrow types will be tagged by their owner
@@ -41,25 +41,25 @@ dealing with allocated memory, at the end of functions:
 
 aliasing rules in variable definitions (and also assignments, in case of mutable ones, ie T and T!)
 when a variable of type "T" is put into:
-, a variable of type "T", shallow/deep copy
-, a variable of type "T$", shallow/deep copy
+, a variable of type "T", move/copy
+, a variable of type "T$", move/copy
 , a variable of type "T&", shallow copy
-, a variable of type "T!", copy address
+, a variable of type "T!", shallow copy
 when a variable of type "T$" is put into:
-, a variable of type "T", deep copy
+, a variable of type "T", copy
 , a variable of type "T$", shallow copy, increase reference count
 , a variable of type "T&", shallow copy
 , a variable of type "T!", it's compile time error
 when a variable of type "T&" is put into:
-, a variable of type "T", deep copy
-, a variable of type "T$", deep copy
+, a variable of type "T", copy
+, a variable of type "T$", copy
 , a variable of type "T&", shallow copy
 , a variable of type "T!", it's compile time error
 when a variable of type "T!" is put into:
-, a variable of type "T", deep copy
-, a variable of type "T$", deep copy
+, a variable of type "T", copy
+, a variable of type "T$", copy
 , a variable of type "T&", shallow copy
-, a variable of type "T!", copy address
+, a variable of type "T!", shallow copy
 
 in Jina, type definitions containing borrow types, must have a borrow marker themselves:
 	T& := A, B$, C&, D!
@@ -110,7 +110,7 @@ actors (and their messages) can only be destroyed explicitly
 reference counting combined with interior mutability can create reference cycles
 	"https://doc.rust-lang.org/book/ch15-06-reference-cycles.html"
 	in Jina interior mutability is only possible using actors
-	since actors are not reference counted, there is no reference cycles in Jina
+	and since actors are not reference counted, there is no reference cycles in Jina
 
 types show us what we can do with the data, ie which operations are valid
 subtyping is problematic:
@@ -137,14 +137,10 @@ C++ (unlike Rust) allows us to have packages that are compiled independently as 
 	then imported and used in other packages
 C++ may look ugly on the outside, but to quote its creator:
 	"within C++, there is a much smaller and cleaner language struggling to get out"
-	and i think it's "Jina"
+	and i think that is "Jina"
 C was the first attempt to make programming easier by introducing types and functions
 after C, there was generally two approaches in creating more advanced programming languages
 , garbage collection (the wrong approach): Java, C# ...
 , C++: keep pointers for systems programming, but otherwise use references, move semantic, and RAII
 
-Jina is installed by default in SPM Linux
-in other Unix'like systems:
-, first install "spm", by following the instructions mentioned in SPM Linux project
-, then run this:
-	spm install $gnunet_namespace jina
+Jina can be build and installed using "upm" (Uni's package manager)
