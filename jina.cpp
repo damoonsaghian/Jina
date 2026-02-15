@@ -214,11 +214,11 @@ int main(int argc, char** argv) {
 	// if build target is "ELF freestanding" (kernel or embedded), link statically, and use --no-evloop
 	
 	// if --no-evloop is not used
-	// spm import $gnunet_namespace qt
+	// upm import $gnunet_namespace qt
 	
 	// go through all files (recursively) and find ".p" files, and for each:
 	// read the file and obtain: <gnunet-namespace> <package-name>
-	// spm import <gnunet-namespace> <package-name>
+	// upm import <gnunet-namespace> <package-name>
 	
 	// mkdir -p "$project_dir/.cache/jina/cpp"
 	
