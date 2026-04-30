@@ -10,20 +10,23 @@ comments:
 identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 	abc'efg0123
 
-defining a variable with unique type:
+defining an immutable variable:
 	v :T = ...
-	v = ...
-defining a variable with mutable borrow type:
-	v :T! = ...
-	v! = ...
-defining a variable with immutable borrow type:
-	v :T& = ...
-	v& = ...
-defining a variable with shared type:
+	v = T()
+defining a shared variable ($ is optional for variables defined outside of funtions, aka static variables):
 	v :T$ = ...
-	v$ = ...
+	v$ = T()
+defining a immutable borrow variable:
+	v :T& = ...
+	v& = T()
+defining a mutable variable:
+	vm :T! = ...
+	vm! = T()
+defining a mutable borrow variable:
+	v :T!& = vm
+	v!& = vm
 
-assignment to mutable variables (ie those with unique or mutable'borrow type):
+assignment to mutable variables:
 	v. = ...
 
 numeric types:
@@ -36,50 +39,48 @@ numeric types:
 , Int2: 2 bytes integer ("std::int16_t" in C++)
 , Int1: 1 byte integer ("std::int8_t" in C++)
 , Int'u: word'sized unsigned integer ("std::size_t" in C++)
-, Int'u4: 4 bytes unsigned integer ("std::uint32_t" in C++)
-, Int'u2: 2 bytes unsigned integer ("std::uint16_t" in C++)
-, Int'u1: 1 byte unsigned integer ("std::uint8_t" in C++)
-, Int'c: equivalent to "char" in C++
+, Int'u4 4 bytes unsigned integer ("std::uint32_t" in C++)
+, Int'u2 2 bytes unsigned integer ("std::uint16_t" in C++)
+, Int'u1 1 bytes unsigned integer ("std::uint8_t" in C++)
 numeric literals:
-	1.0 ;; Float2
-	1.23e4
-	0x1:0
-	0x1:23p4
-	1'234'567'890 ;; Int4
+	1.0
+	1.23e-4
+	0x123p-6 ;; point can't be used in hexadecimal floats, due to ambiguity with method calls
+	1'234'567'890
 	0x1234'5678'9ABC'DEF0
-	'a' ;; Int'c, a byte whose value is the ASCII code for character "a"
-	'\n' ;; a byte whose value is the ASCII code for the character with escape code "\n"
-	'\x12' ;; a byte with hexadecimal value 0x12
-numbers are automatically converted when there is no data loss:
-	i :Int8 = 123
-	i = 123.to'Int8
-
-complex numbers can be made of any type implementing the "Num" trait
+complex numbers can be made of any type implementing the "Num'r" interface
 	c :Complex[Int4] = 1 + 1i
 	c = 1 + 0i
 	c = Complex[Int4] 1 0
 
 lists:
-	l :List[Int'c] = ['a', 'b', 'c']
+	l :List[Int4] = [1, 2, 3]
 indexing:
-	e :Maybe[Int'c] = l_1
-note that the type of the result of indexing above is actually "Maybe[Int'c]&",
-	which is copied into the variable with type "Maybe[Int'c]"
+	e :Maybe[Int4] = l_1
+note that the type of the result of indexing above is actually "Maybe[Int4]&",
+	which is copied into the variable with type "Maybe[Int4]"
 mutating lists:
-	l.put 'd' at: 3 ;; ['a', 'b', 'c', 'd']
-	l.put 'e' at: 0 ;; ['e', 'b', 'c', 'd']
+	l.put 4 at: 3 ;; [ 1, 2, 3, 4 ]
+	l.put 0 at: 0 ;; [ 0, 2, 3, 4 ]
 
-character strings are UTF8 encoded, and implemented as a list of "Int'c" values:
-	s :Str = "abc def"
-string interpolation: "abc{x}"
-alternative syntax that makes writing single word strings easier:
+text:
+, Txt'b: a byte containing an ASCII code (equivalent to "char" in C++)
+, Txt: UTF8 encoded text, implemented as a list of "Txt'b" values
+character literals:
+	'a' ;; a byte whose value is the ASCII code for character "a"
+	'\n' ;; a byte whose value is the ASCII code for the character with escape code "\n"
+	'\x12' ;; a byte with hexadecimal value 0x12
+text literals:
+	t :Txt = "abc def"
+text interpolation: "abc{x}"
+alternative syntax that makes writing single word text easier:
 	'abc
-multiline string equivalent to "first line\n\tsecond line":
+multiline text, equivalent to "first line\n\tsecond line":
 	s = "
 		first line
 			second line
 	"
-it's better to split long strings into a list of single'line strings:
+it's better to split long text into a list of lines:
 	s = """
 		first line
 			second line
@@ -87,28 +88,32 @@ it's better to split long strings into a list of single'line strings:
 which is equivalent to:
 	["first line", "\tsecond line"]
 
-dictionaries are indexed using strings (instead of "Int'u" as in lists):
+dictionaries are indexed using text (instead of "Int'u" as in lists):
 	d :Dict[Int4] = [a: 1, b: 2, c: 3]
 indexing:
 	d_'a
 
-records:
+tuples:
 	r :(Int4, Int4, c: Int4) = 1, 2, c: 3
 to access elements:
 	r.a
 	r.0
-multiple assignment using record expansion:
+multiple assignment using tuple expansion:
 	a, b = 1, 2, 3
 tagged fields can be expanded too, if the name of variables match:
 	a, b = a: 1, b: 2
-mutating a record field:
+mutating a tuple field:
 	r.a = 10
-small records will be kept on stack, big ones on the heap
+small tuples will be kept on stack, big ones on the heap
 
 function:
-	f = { a :A&, b :B! -> C | ... }
-note that the type of above function is:
-	(a: A&, b: B! -> C)&
+	f[t::(A,B->C)] :t = { a :A, b :B -> C || ... }
+	f ::(A,B->C) = { a :A, b :B -> C || ... }
+	f = { a :A, b :B -> C || ... }
+function that can borrow from its environment:
+	f ::(A,B->C)!& = { a :A, b :B -> C | ... }
+	f ::(->)!& = { ... }
+	f = { ... }
 function call:
 	f x y
 which is equivalent to these forms:
@@ -117,7 +122,7 @@ which is equivalent to these forms:
 	x, y >> f
 
 default values for parameters:
-	f = { a = 1 , b = 2 | ... }
+	f = { a = 1 , b = 2 || ... }
 	f b: 22
 	f 11
 	f()
@@ -134,22 +139,20 @@ which are equivalent to:
 	a .or {b}
 not: -a
 
-there is no loop construct directly available in Jina
-instead we have iterators with "each" method, that is internally implemented using C++ loop
+there is no loop construct in Jina
+instead we have iterators (types that implement Iter interface):
 	iter.each { x | ... }
-any type that implements "Iter" trait, must define an "iter" method,
-	whose returned value stores the mutable state
 
 actor:
 	a :Actor[S] = Actor.new S.new()
-	a.do { b :S! || ... }
+	a.do { b :S!& || ... }
 
 modules are files containing definitions
 any definition whose name is the module's name, will be exported (ie are accessible outside of the module)
 exported names can have these kind of extensions:
 , a number
 , a postfix starting with an apostrophe
-, letters inside brackets
+, letters inside brackets (generics)
 to access the definitions in a module which is inside a directory: dir.Definition
 to hide a module so it can't be accessed from modules in the parent directory, or outside of the package,
 	append an apostrophe at the end of its file name
@@ -158,7 +161,7 @@ a package is a collection of modules
 in a project directory, we can have multiple package directories
 	the name of the package directory is the package name, plus a ".jin" extension
 packages are of two kinds:
-, application packages that contain a file named "0.jina" (which must contain the init function)
+, application packages that contain a file named "1.jin" (which must contain the init function)
 , library packages
 
 to use a library package in a another package, create a file named "your'chosen'name.p" with this format:
@@ -178,14 +181,14 @@ type definition:
 	T := a: A, b: B
 defining methods (using a namespace):
 	;ns T
-		new = { a :A -> T |
+		new = { a :A -> T ||
 			b = ...
 			a, b
 		}
-		m1 = { self!, x :X -> Y |
+		m1 = { self!&, x :X -> Y ||
 			...
 		}
-		m2 = { self |
+		m2 = { self ||
 			...
 		}
 to create an instance of the type:
@@ -194,7 +197,7 @@ to create an instance of the type:
 	i = T.new a: x
 accessing a member:
 	i.a
-calling a method (note that there is no record field named "m", otherwise this will not work):
+calling a method (note that there is no tuple field named "m", otherwise this will not work):
 	i.m x
 which is equivalent to:
 	T.m i x
@@ -214,8 +217,8 @@ type "?A" is a shortcut for "Maybe[A]"
 
 intefaces:
 	;i I
-		m1 ::(self!, x: X -> Y)&
-		m2 = { self! |
+		m1 ::(self!&, X -> Y)
+		m2 = { self!& ||
 			;; default implementation
 		}
 interface inheritance:
