@@ -13,15 +13,6 @@ https://cplusplus.com/doc/tutorial/
 https://cplusplus.com/reference/
 https://en.cppreference.com/index.html
 https://chenweixiang.github.io/2016/07/10/c++.html
-https://en.wikibooks.org/wiki/C%2B%2B_Programming
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Operators
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Operators/Logical_Operators
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Variables/Type_Casting
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Statements/Flow_Control
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Statements/Functions
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Standard_C_Library
-https://en.wikibooks.org/wiki/C%2B%2B_Programming/Programming_Languages/C%2B%2B/Code/Debugging
-chapter 3
 https://tartanllama.xyz/posts/learning-cpp/
 https://changkun.de/modern-cpp/en-us/01-intro/
 https://cpprocks.com/an-overview-of-c14-language-features/
@@ -29,7 +20,6 @@ https://www.artima.com/articles/a-brief-introduction-to-rvalue-references
 https://www.think-cell.com/en/career/devblog/if-constexpr-requires-requires-requires
 https://www.foonathan.net/2023/08/static-constexpr-integral_constant/#content
 https://www.foonathan.net/2023/07/stop-writing-functions/#content
-https://www.foonathan.net/2023/07/constrain-user-defined-conversions/#content
 https://www.foonathan.net/2020/10/constexpr-platform/#content
 https://www.foonathan.net/2017/09/destructive-move/#content
 https://en.cppreference.com/w/cpp/language/lifetime.html
@@ -42,34 +32,47 @@ https://en.cppreference.com/w/cpp/links/libs
 
 https://github.com/hsutter/cppfront
 
+data:
+, inline (stack)
+, free store (heap)
+
 type markers:
 Jina	C++
-T		T (with RAII for heap part)
-T$		shared_ptr<T>
+T		const T
+T$		shared_ref<T> (implemented as a subclass of T, and wraps atomic<share_ptr<T>>)
 T&		const T&
-T!		T&
+T!&		T&
+T!		T
 
 C++ already uses move automatically when copying from an object it knows will never be used again,
 	such as a temporary object or a local variable being returned or thrown from a function
 this is achieved through move constructors and move assignment operators
+in move constructors and assignments, only the heap part (which is implemented using unique_ptr) will be moved
+	the stack part will be copied
+
+when a variable with type "T" or "T!!" is aliased by another variable of type "T" or "T!!",
+	if the original variable is not used in the following block (directly or through its borrowers),
+	static_cast<T&&>(remove_const_t<T>(v))
 
 name of borrow variables will be postfixed with the name of their owner
 the borrow tag of variables captured in a closure, will be prefixed with "PARENT_"
 https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3444r0.html
 https://github.com/ladroid/CppBorrowChecker
 
-converters are implemented using c++ user'defined conversion
-https://cppreference.com/w/cpp/language/cast_operator.html
+"from" converters are implemented using c++ user'defined conversion implemented by single arg constructors
+https://www.foonathan.net/2023/07/constrain-user-defined-conversions/#content
 
 c++ dynamic linking templates
+move all the template definition code to the header file
 
+C++ modules incremental compilation
 c++ auto header file
 https://hackaday.com/2021/11/08/linux-fu-automatic-header-file-generation/
 https://softwareengineering.stackexchange.com/questions/35375/what-to-do-if-i-hate-c-header-files
 https://www.hwaci.com/sw/mkhdr/
-pre'compiled headers and external header guards
+every symbol starting with a capital letter, if not defined in current file, will be imported as module
 
-in generic methods, in certain situations, we can use this syntax sugar:
+syntax sugar for generics:
 	m = { x ::I | ... }
 which is equivalent to:
 	m[g::I] = { x :g | ... }
@@ -78,10 +81,7 @@ append "__" to identifiers that are C++ keywords
 
 literals
 numbers (words starting with a digit, or a "-" prepended digit):
-, remove apostrophes
-, if there is no point or "e", prepend with "(Int4)" cast
-	otherwise prepend with "(Float2)" cast
-, if there is an "i" at the end: Complex[<type>] 0 <num-without-i>
+	if there is an "i" at the end: Complex[<type>] 0 <num-without-i>
 
 characters: 'a' '\n' '\x12'
 
@@ -111,7 +111,8 @@ enums are implemented using C++ variants and enum classes
 https://www.foonathan.net/2016/12/variant
 
 https://en.cppreference.com/w/cpp/utility/tuple.html
-	
+structured binding declarations
+
 named tuples
 https://stackoverflow.com/questions/13065166/c11-tagged-tuple
 https://github.com/erez-strauss/named_tuples
@@ -121,18 +122,16 @@ https://en.wikipedia.org/wiki/Named_parameter
 https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Named_Parameter
 https://pdimov.github.io/blog/2020/09/07/named-parameters-in-c20/
 
-in Jina, types has some structural aspects (other than nominal one)
-structs and named tuples are convertible to each other
-for each struct define a converter that turns it into a named tuple
-plus a converter for that named tuple that turns it into the struct
-	
 https://www.reddit.com/r/cpp/comments/mthcgb/universal_function_call_syntax_in_c20/
 https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html
 
-function: { | }
-replace with: fn () {}
-if the function is only made of one expression, replace with: fn () @inline {}
-if there are multiple "|", compile the body of the function to C3 switch
+if the function is only made of one expression, make it inline
+or even better, use the Clang option that lets the compilers automatically inline any suitable function
+
+functions will be marked with noexcept
+void f() noexcept {};
+
+if there are multiple "|", compile the body of the closure to C++ switch
 
 https://www.foonathan.net/2021/07/concepts-structural-nominal/
 
