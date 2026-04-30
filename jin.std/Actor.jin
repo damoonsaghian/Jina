@@ -1,21 +1,21 @@
-;; include qt core
+;; import qt core
 
 Message := 
 
-Actor'[s, m::(s!->Bool)] :=
+Actor'[s, m::(s!&->Bool)] :=
 	state: s,
 	messages: List[m]
 
-;ns Actor[s,m::(s!->Bool)]
+;ns Actor[s,m::(s!&->Bool)]
 	new = { state :s -> Actor[s] |
 		;; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
-		;cpp
+		;ffi
 		
 		Actor[s] state messages: []
 	}
 	
-	do = { self!, message :m |
+	do = { self!&, message :m |
 		;; notify that there is a new message
-		;cpp
+		;ffi
 		self.messages.append message
 	}
