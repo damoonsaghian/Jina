@@ -1,4 +1,4 @@
-# Jina multimedia lib
+# Jina library for processing video and audio
 
 bdep jina
 dep qt6
