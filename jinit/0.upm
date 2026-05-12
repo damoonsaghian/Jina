@@ -1,0 +1,5 @@
+desc "Jina's initial (standard) library"
+
+bdep jina
+
+jina .

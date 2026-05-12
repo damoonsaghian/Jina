@@ -1,0 +1,19 @@
+;; import qt core
+
+;cpp enum class File : QFile;
+
+;ns File
+	delete = { path :Txt&, cb ::(->) = {} |
+	}
+	
+	move = { source'path :Txt&, destination'path :Txt&, cb ::(->) = {} |
+	}
+	
+	copy = { source'path :Txt&, destination'path :Txt&, cb ::(->) = {} |
+	}
+	
+	read = { self&, then ::(Txt&->) |
+	}
+	
+	write = { self&, data :Txt&, mode :(#append #overwrite) = #append, then ::(->) = {} |
+	}
