@@ -174,8 +174,8 @@ if there is no URL, it refers to the current project
 
 to use the definitions of a package:
 	dot'p'file'name.Definition
-definitions in "std" package, are directly accessible
-	so there is no need for a "std.p" file, and prefixing with "std."
+definitions in "jinit" package, are directly accessible
+	so there is no need for a "jinit.p" file, and prefixing with "jinit."
 
 type definition:
 	T := a: A, b: B
@@ -239,11 +239,11 @@ generics:
 bounded generics:
 	T[x::I] := a: x, b: x
 
-to directly enter C++ code:
-	;cpp ...
+unsafe code to interoperate with low level system, and existing C/C++ code:
+	;sys ...
 		...
 or:
-	;cpp
+	;sys
 	...
 	;
 beware! with great power comes great responsibility

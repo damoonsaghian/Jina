@@ -143,7 +143,14 @@ instead of subtyping, in Jina we have convertible types
 it's like in mathematics where we can easily do arithmetic across integer, rational, real and complex numbers
 the idea is to only do this for types that can be converted with negligible run'time overhead
 
-Jina compiles to C++, and thus can easily use existing C/C++ libraries
+compile'time polymorphism (eg templates and generics) has different linking semantics
+	ie each compilation unit generates its own specialized version,
+	which can create duplicates, and thus increase the size of the produced binary
+but run'time polymorphism (eg trait objects, or inheritance plus virtual functions) has serious problems too:
+, it destroys covariance
+, there is some run'time overhead (3 times regular function calls)
+
+Jina also has an unsafe portion to interoperate with the low level system, and existing C/C++ libraries
 C++ (unlike Rust) allows us to have packages that are compiled independently as dynamic libraries,
 	then imported and used in other packages
 C was one of the first attempts to make programming easier by introducing types and functions
@@ -154,4 +161,4 @@ C++ may look ugly on the outside, but to quote its creator:
 	"within C++, there is a much smaller and cleaner language struggling to get out"
 	and i think that language is "Jina"
 
-Jina can be built and installed using UPM (Uni's package manager)
+Jina can be built and installed using UPM
