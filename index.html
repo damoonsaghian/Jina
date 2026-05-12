@@ -161,7 +161,14 @@ body {
 </div><div>it's like in mathematics where we can easily do arithmetic across integer, rational, real and complex numbers
 </div><div>the idea is to only do this for types that can be converted with negligible run'time overhead
 </div><div>
-</div><div>Jina compiles to C++, and thus can easily use existing C/C++ libraries
+</div><div>compile'time polymorphism (eg templates and generics) has different linking semantics
+</div><div>	ie each compilation unit generates its own specialized version,
+</div><div>	which can create duplicates, and thus increase the size of the produced binary
+</div><div>but run'time polymorphism (eg trait objects, or inheritance plus virtual functions) has serious problems too:
+</div><div>, it destroys covariance
+</div><div>, there is some run'time overhead (3 times regular function calls)
+</div><div>
+</div><div>Jina also has an unsafe portion to interoperate with the low level system, and existing C/C++ libraries
 </div><div>C++ (unlike Rust) allows us to have packages that are compiled independently as dynamic libraries,
 </div><div>	then imported and used in other packages
 </div><div>C was one of the first attempts to make programming easier by introducing types and functions
@@ -172,7 +179,7 @@ body {
 </div><div>	"within C++, there is a much smaller and cleaner language struggling to get out"
 </div><div>	and i think that language is "Jina"
 </div><div>
-</div><div>Jina can be built and installed using UPM (Uni's package manager)
+</div><div>Jina can be built and installed using UPM
 </div>
 <h2>2, syntax</h2><div>comments:
 </div><div>	;; comment line
@@ -244,14 +251,17 @@ body {
 </div><div>, Txt: UTF8 encoded text, implemented as a list of "Txt'b" values
 </div><div>character literals:
 </div><div>	'a' ;; a byte whose value is the ASCII code for character "a"
-</div><div>	'\n' ;; a byte whose value is the ASCII code for the character with escape code "\n"
+</div><div>	'
+' ;; a byte whose value is the ASCII code for the character with escape code "
+"
 </div><div>	'\x12' ;; a byte with hexadecimal value 0x12
 </div><div>text literals:
 </div><div>	t :Txt = "abc def"
 </div><div>text interpolation: "abc{x}"
 </div><div>alternative syntax that makes writing single word text easier:
 </div><div>	'abc
-</div><div>multiline text, equivalent to "first line\n\tsecond line":
+</div><div>multiline text, equivalent to "first line
+	second line":
 </div><div>	s = "
 </div><div>		first line
 </div><div>			second line
@@ -262,7 +272,7 @@ body {
 </div><div>			second line
 </div><div>	"""
 </div><div>which is equivalent to:
-</div><div>	["first line", "\tsecond line"]
+</div><div>	["first line", "	second line"]
 </div><div>
 </div><div>dictionaries are indexed using text (instead of "Int'u" as in lists):
 </div><div>	d :Dict[Int4] = [a: 1, b: 2, c: 3]
@@ -309,7 +319,7 @@ body {
 </div><div>
 </div><div>and or:
 </div><div>	a && b
-</div><div>	a \\ b
+</div><div>	a \ b
 </div><div>which are equivalent to:
 </div><div>	a .and {b}
 </div><div>	a .or {b}
@@ -350,8 +360,8 @@ body {
 </div><div>
 </div><div>to use the definitions of a package:
 </div><div>	dot'p'file'name.Definition
-</div><div>definitions in "std" package, are directly accessible
-</div><div>	so there is no need for a "std.p" file, and prefixing with "std."
+</div><div>definitions in "jinit" package, are directly accessible
+</div><div>	so there is no need for a "jinit.p" file, and prefixing with "jinit."
 </div><div>
 </div><div>type definition:
 </div><div>	T := a: A, b: B
@@ -415,11 +425,11 @@ body {
 </div><div>bounded generics:
 </div><div>	T[x::I] := a: x, b: x
 </div><div>
-</div><div>to directly enter C++ code:
-</div><div>	;cpp ...
+</div><div>unsafe code to interoperate with low level system, and existing C/C++ code:
+</div><div>	;sys ...
 </div><div>		...
 </div><div>or:
-</div><div>	;cpp
+</div><div>	;sys
 </div><div>	...
 </div><div>	;
 </div><div>beware! with great power comes great responsibility
