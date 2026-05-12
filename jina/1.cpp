@@ -5,6 +5,10 @@
 using namespace std;
 
 /*
+at first, implement a Jina to C++ compiler
+later a faster compiler can be implemented directly on top of LLVM,
+	and it can even be written in Jina itself!
+
 https://www.cbyexample.com/
 https://www.programming-books.io/essential/cpp/index.html
 https://www.learncpp.com/
@@ -61,6 +65,9 @@ https://github.com/ladroid/CppBorrowChecker
 
 "from" converters are implemented using c++ user'defined conversion implemented by single arg constructors
 https://www.foonathan.net/2023/07/constrain-user-defined-conversions/#content
+
+definition'checked generics: C++ concepts
+https://www.classcentral.com/course/youtube-definition-checked-generics-part-1-the-why-how-chandler-carruth-josh-levenberg-richard-smith-245156
 
 c++ dynamic linking templates
 move all the template definition code to the header file
@@ -235,7 +242,7 @@ int main(int argc, char** argv) {
 		cpp_file_mtime > std::time:: // cpp_file is from future!
 	) {}
 	
-	// jina-std is compiled to C++ and imported to all the generated C++ files above
+	// jinit is compiled to C++ and imported to all the generated C++ files above
 	
 	/*
 	generate a build file, and then build

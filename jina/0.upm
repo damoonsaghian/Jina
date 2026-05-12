@@ -1,0 +1,3 @@
+desc "a programming language with sane memory management, actors, and a coherent type system and syntax"
+
+dep clang gmp mpfr arrayfire qt6base
