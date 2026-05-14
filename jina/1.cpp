@@ -43,10 +43,14 @@ data:
 type markers:
 Jina	C++
 T		const T
-T$		shared_ref<T> (implemented as a subclass of T, and wraps atomic<share_ptr<T>>)
+T$		shared_ref<T>
 T&		const T&
 T!&		T&
 T!		T
+
+shared_ref<T> is implemented as a subclass of T, and wraps atomic<share_ptr<T>>
+how to do reference counting with reference semantics:
+https://isocpp.org/wiki/faq/freestore-mgmt#ref-count-with-cow
 
 C++ already uses move automatically when copying from an object it knows will never be used again,
 	such as a temporary object or a local variable being returned or thrown from a function
