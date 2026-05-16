@@ -69,16 +69,24 @@ in other words, borrow and mutability markers can't be wrapped, they always leak
 in addition, borrow and shared markers are penetrative, ie:
 	, borrow types can't contain non'borrow types
 	, share types can't contain non'share types (though all of them use the parent's reference counter)
-immutable types can only immutable snd share types
-	T := A, B$
+type definitions (immutable types) can only be made of immutable and share types
+	A := B, C$
 share types can only contain share types
-	T$ := A$, B$
+	a :A$ = ...
+	a.1 :B$
+	a.2 :C$
 immutable borrow types can only contain immutable borrow types
-	T& := A&, B&
+	a :A& = ...
+	a.1 :B&
+	a.2 :C&
 mutable borrow types can only contain borrow types
-	T!& := A!&, B&
+	a :A!&
+	a.1 :B!&
+	a.2 :C&
 mutable types can only contain mutable and shared types
-	T! := A!, B$
+	a :A!
+	a.1 :B!
+	a.2 :C$
 
 functions in Jina are closures, ie they capture their environment
 each closure has its own distinct type that includes the type of the captured variables
