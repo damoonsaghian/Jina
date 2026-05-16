@@ -6,35 +6,16 @@ using namespace std;
 
 /*
 at first, implement a Jina to C++ compiler
+https://github.com/hsutter/cppfront
 later a faster compiler can be implemented directly on top of LLVM,
 	and it can even be written in Jina itself!
 
-https://www.cbyexample.com/
-https://www.programming-books.io/essential/cpp/index.html
-https://www.learncpp.com/
-https://www.tutorialspoint.com/cplusplus/index.htm
-https://cplusplus.com/doc/tutorial/
-https://cplusplus.com/reference/
-https://en.cppreference.com/index.html
-https://chenweixiang.github.io/2016/07/10/c++.html
-https://tartanllama.xyz/posts/learning-cpp/
-https://changkun.de/modern-cpp/en-us/01-intro/
-https://cpprocks.com/an-overview-of-c14-language-features/
-https://www.artima.com/articles/a-brief-introduction-to-rvalue-references
-https://www.think-cell.com/en/career/devblog/if-constexpr-requires-requires-requires
-https://www.foonathan.net/2023/08/static-constexpr-integral_constant/#content
-https://www.foonathan.net/2023/07/stop-writing-functions/#content
-https://www.foonathan.net/2020/10/constexpr-platform/#content
-https://www.foonathan.net/2017/09/destructive-move/#content
-https://en.cppreference.com/w/cpp/language/lifetime.html
-https://www.learncpp.com/cpp-tutorial/temporary-class-objects/
-https://ericniebler.com/
-https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/
-https://akrzemi1.wordpress.com/page/2/
-https://github.com/fffaraz/awesome-cpp?tab=readme-ov-file#articles
-https://en.cppreference.com/w/cpp/links/libs
-
-https://github.com/hsutter/cppfront
+https://federico-busato.github.io/Modern-CPP-Programming/
+https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+https://github.com/anthonycalandra/modern-cpp-features
+https://en.wikipedia.org/wiki/C%2B%2B20
+https://en.wikipedia.org/wiki/C%2B%2B23
+https://clang.llvm.org/cxx_status.html
 
 data:
 , inline (stack)
@@ -57,6 +38,8 @@ C++ already uses move automatically when copying from an object it knows will ne
 this is achieved through move constructors and move assignment operators
 in move constructors and assignments, only the heap part (which is implemented using unique_ptr) will be moved
 	the stack part will be copied
+https://www.artima.com/articles/a-brief-introduction-to-rvalue-references
+https://www.foonathan.net/2017/09/destructive-move/
 
 when a variable with type "T" or "T!!" is aliased by another variable of type "T" or "T!!",
 	if the original variable is not used in the following block (directly or through its borrowers),
@@ -71,10 +54,12 @@ https://github.com/ladroid/CppBorrowChecker
 https://www.foonathan.net/2023/07/constrain-user-defined-conversions/#content
 
 definition'checked generics: C++ concepts
-https://www.classcentral.com/course/youtube-definition-checked-generics-part-1-the-why-how-chandler-carruth-josh-levenberg-richard-smith-245156
+https://cppcheatsheet.com/notes/cpp/cpp_concepts.html
 
 c++ dynamic linking templates
 move all the template definition code to the header file
+or remove definitions from included headers but also expose templates an external API:
+	https://stackoverflow.com/a/59614755
 
 C++ modules incremental compilation
 c++ auto header file
@@ -136,6 +121,9 @@ https://pdimov.github.io/blog/2020/09/07/named-parameters-in-c20/
 https://www.reddit.com/r/cpp/comments/mthcgb/universal_function_call_syntax_in_c20/
 https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p0847r7.html
 
+use lambdas (with constexpr capture) instead of functions
+https://www.think-cell.com/en/career/devblog/should-we-stop-writing-functions
+
 if the function is only made of one expression, make it inline
 or even better, use the Clang option that lets the compilers automatically inline any suitable function
 
@@ -148,6 +136,9 @@ https://www.foonathan.net/2021/07/concepts-structural-nominal/
 
 stacks are designed for sync computation
 using a lot of them as async cores (stackful green threads) is inefficient
+
+https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/
+https://ericniebler.com/
 
 after calling the init function, create a fixed number of threads (as many as CPU cores),
 	and then run the main loop
