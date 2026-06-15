@@ -1,6 +1,0 @@
-# Jina library for processing video and audio
-
-bdep jina
-dep qt6
-
-jina .
