@@ -1,0 +1,3 @@
+# Jina's initial (standard) library
+# deps: jina gmp mpfr arrayfire qt6base
+# jina .
