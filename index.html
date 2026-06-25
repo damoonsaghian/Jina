@@ -350,19 +350,13 @@ body {
 </div><div>	append an apostrophe at the end of its file name
 </div><div>
 </div><div>a package is a collection of modules
-</div><div>in a project directory, we can have multiple package directories
-</div><div>	the name of the package directory is the package name, plus a ".jin" extension
 </div><div>packages are of two kinds:
 </div><div>, application packages that contain a file named "1.jin" (which must contain the init function)
 </div><div>, library packages
 </div><div>
-</div><div>to use a library package in a another package, create a file named "your'chosen'name.p" with this format:
-</div><div>, first line is the name of the package
-</div><div>, second line is the URL of the project containing the package
-</div><div>, the format of the URL (where protocol can be gnunet, git):
-</div><div>	protocol://address'of'the'project'containing'package'directory
-</div><div>, the third line can contain a public key, which will be used to check the signature provided by the project
-</div><div>if there is no URL, it refers to the current project
+</div><div>to use a library package, create a file named "your'chosen'name.p",
+</div><div>	which contains the name of the library file (with "lib" and ".so" trimmed)
+</div><div>
 </div><div>
 </div><div>to use the definitions of a package:
 </div><div>	dot'p'file'name.Definition
