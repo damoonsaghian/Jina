@@ -11,6 +11,7 @@ later a faster compiler can be implemented directly on top of LLVM,
 	and it can even be written in Jina itself!
 
 https://federico-busato.github.io/Modern-CPP-Programming/
+https://changkun.de/modern-cpp/en-us/00-preface/
 https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
 https://github.com/anthonycalandra/modern-cpp-features
 https://en.wikipedia.org/wiki/C%2B%2B20
