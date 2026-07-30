@@ -1,0 +1,5 @@
+# Jina library for symbolic manipulation
+# deps: jina symengine
+# jina .
+
+# https://github.com/symengine/symengine
