@@ -11,7 +11,8 @@ later a faster compiler can be implemented directly on top of LLVM,
 	and it can even be written in Jina itself!
 
 https://federico-busato.github.io/Modern-CPP-Programming/
-https://changkun.de/modern-cpp/en-us/00-preface/
+https://changkun.de/modern-cpp/en-us/01-intro/
+https://www.cbyexample.com/
 https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
 https://github.com/anthonycalandra/modern-cpp-features
 https://en.wikipedia.org/wiki/C%2B%2B20
@@ -63,6 +64,7 @@ or remove definitions from included headers but also expose templates an externa
 	https://stackoverflow.com/a/59614755
 
 C++ modules incremental compilation
+https://en.wikipedia.org/wiki/Modules_(C%2B%2B)
 c++ auto header file
 https://hackaday.com/2021/11/08/linux-fu-automatic-header-file-generation/
 https://softwareengineering.stackexchange.com/questions/35375/what-to-do-if-i-hate-c-header-files
