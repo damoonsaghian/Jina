@@ -1,7 +1,3 @@
-;; import qt core
-
-;cpp enum class File : QFile;
-
 ;ns File
 	delete = { path :Txt&, cb ::(->) = {} |
 	}

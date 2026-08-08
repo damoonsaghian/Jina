@@ -1,4 +1,4 @@
-;; https://cppcheatsheet.com/notes/os/index.html
+; https://cppcheatsheet.com/notes/os/index.html
 
 ;cpp import iostream;
 
@@ -13,15 +13,15 @@
 	read = { cb ::(Txt&->) |
 		actor = Actor.new '
 		actor.do { answer!& |
-			;; read non'blocking from stdin
-			;; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
-			;; https://discourse.gnome.org/t/read-from-stdin-and-write-to-stdout/16392/2
+			; read non'blocking from stdin
+			; https://stackoverflow.com/questions/5616092/non-blocking-call-for-reading-descriptor
+			; https://discourse.gnome.org/t/read-from-stdin-and-write-to-stdout/16392/2
 			;cpp
 			
-			;; append the read characters to answer
+			; append the read characters to answer
 			
-			;; if EOF, call cb(answer), and return false
-			;; otherwise return true
+			; if EOF, call cb(answer), and return false
+			; otherwise return true
 		}
 	}
 	

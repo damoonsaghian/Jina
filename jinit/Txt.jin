@@ -1,7 +1,7 @@
 Txt := List[Txt'b]
 
 ;ns Txt ::Txt'rep
-	;; implement list methods such that they respect UTF8 encoding
+	; implement list methods such that they respect UTF8 encoding
 	
 	replace = { self!&, txt :Txt&, replacement :Txt& |
 	}
@@ -18,13 +18,13 @@ Txt := List[Txt'b]
 	}
 	trim'suffix = { self!&, suffix :Txt& |
 	}
-	;; trim ASCII whitespace from the start of the text
+	; trim ASCII whitespace from the start of the text
 	trim'start = { self!& |
 	}
-	;; trim ASCII whitespace from the end of the text
+	; trim ASCII whitespace from the end of the text
 	trim'end = { self!& |
 	}
-	;; trim ASCII whitespace from the start and end of the text
+	; trim ASCII whitespace from the start and end of the text
 	trim = { self!& |
 	}
 	
@@ -53,7 +53,7 @@ Txt := List[Txt'b]
 	to'int1 = { self -> ?Int1 |
 	}
 	
-	;; Txt'rep
+	; Txt'rep
 	to'txt = { self -> Txt |
 		rep = "\""
 		rep.append self

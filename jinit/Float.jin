@@ -1,8 +1,8 @@
 ;cpp import cmath;
 
-;; https://flintlib.org/doc/arb.html
-;; decimal?
-;; https://www.bytereef.org/mpdecimal/index.html
+; https://flintlib.org/doc/arb.html
+; decimal?
+; https://www.bytereef.org/mpdecimal/index.html
 ;cpp enum class Float : ;
 
 ;ns Float ::Num'f ::Ord'p ::Txt'rep
@@ -77,7 +77,7 @@
 		;cpp ;
 	}
 	
-	;; 0^0 is NaN
+	; 0^0 is NaN
 	exp = {}
 	
 	log = {}
@@ -122,7 +122,7 @@
 	e = ;; base of the natural logarithm
 	pi =
 	
-	;; Ord'p
+	; Ord'p
 	
 	equal = { self&, other :Float& -> ?Bool |
 	}
@@ -130,7 +130,7 @@
 	after = { self&, other :Float& -> ?Bool |
 	}
 	
-	;; Txt'rep
+	; Txt'rep
 	to'txt = { self& -> Txt |
 	}
 
@@ -286,7 +286,7 @@
 	e = ;cpp ;; base of the natural logarithm
 	pi = ;cpp
 	
-	;;Ord
+	; Ord
 	
 	equal = { self, other :Float2 -> Bool |
 		;cpp self == other;
@@ -296,7 +296,7 @@
 		;cpp self > other;
 	}
 	
-	;;Txt'rep
+	; Txt'rep
 	to'txt = { self -> Txt |
 	}
 

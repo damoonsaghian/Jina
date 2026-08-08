@@ -4,12 +4,12 @@ Complex[n::Num'r] := n, n
 	
 	from = { real :n -> Complex[n] | Complex real 0 }
 
-;; https://mathworld.wolfram.com/ComplexExponentiation.html
+; https://mathworld.wolfram.com/ComplexExponentiation.html
 
-;; quaternions
+; quaternions
 Complex4[n::Num'r] := n, n, n, n
 ;ns Complex4 [n::Num'r] ::Num ::Txt'rep
 
-;; octonions
+; octonions
 Complex8[n::Num'r] := n, n, n, n, n, n, n, n
 ;ns Complex8[n::Num'r] ::Num ::Txt'rep

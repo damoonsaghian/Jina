@@ -1,5 +1,3 @@
-;; import qt core
-
 Message := 
 
 Actor'[s, m::(s!&->Bool)] :=
@@ -8,14 +6,14 @@ Actor'[s, m::(s!&->Bool)] :=
 
 ;ns Actor[s,m::(s!&->Bool)]
 	new = { state :s -> Actor[s] |
-		;; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
+		; append a tuple of actor's ID and memory address, to GLOBAL_actors_list
 		;ffi
 		
 		Actor[s] state messages: []
 	}
 	
 	do = { self!&, message :m |
-		;; notify that there is a new message
+		; notify that there is a new message
 		;ffi
 		self.messages.append message
 	}
