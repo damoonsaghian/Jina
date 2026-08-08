@@ -1,11 +1,12 @@
 comments:
-	;; comment line
-	;; comment
-		block
-	;;
+	; comment line
+	; comment
+		multi'line
+	;; commant at the end of the line
+	;
 	comment
 	block
-	;
+	;;
 
 identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 	abc'efg0123
@@ -213,7 +214,7 @@ intefaces:
 	;i I
 		m1 ::(self!&, X -> Y)
 		m2 = { self!& ||
-			;; default implementation
+			; default implementation
 		}
 interface inheritance:
 	;i I ::I1 ::I2
@@ -222,10 +223,10 @@ defining the methods of a type that implements some interfaces:
 	;ns T ::I1 ::I2
 		m1 = ...
 		m2 = ...
-		;; I1
+		; I1
 		m3 = ...
 		m4 = ...
-		;; I2
+		; I2
 		...
 
 generics:
@@ -239,5 +240,5 @@ unsafe code to interoperate with low level system, and existing C/C++ code:
 or:
 	;sys
 	...
-	;
+	;;
 beware! with great power comes great responsibility
