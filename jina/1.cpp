@@ -1,9 +1,3 @@
-#include <iostream>
-#include <optional>
-#include <string>
-
-using namespace std;
-
 /*
 at first, implement a Jina to C++ compiler
 https://github.com/hsutter/cppfront
@@ -18,6 +12,12 @@ https://github.com/anthonycalandra/modern-cpp-features
 https://en.wikipedia.org/wiki/C%2B%2B20
 https://en.wikipedia.org/wiki/C%2B%2B23
 https://clang.llvm.org/cxx_status.html
+
+filename and line number in C++ code: __FILE__ and __LINE__
+line numbers are measured before any escaped newlines are removed
+the current values of __FILE__ and __LINE__ can be overridden using the #line directive
+it can be useful for code generators which create C++ code base on other input files,
+so that error messages will refer back to the original input files rather than to the generated C++ code
 
 data:
 , inline (stack)
@@ -148,7 +148,6 @@ after calling the init function, create a fixed number of threads (as many as CP
 each thread runs a loop that processes the messages
 after each loop, if there are no messages left, it goes to sleep (sigwait)
 when a message is registered, a signal will be sent to all threads to wake up the slept ones
-use Qt eventloop if --no-evloop is not used
 https://www.actor-framework.org/
 after running a message, if it returns false, remove the message from the list
 messages will be reapted until they return false
@@ -158,17 +157,11 @@ use mutexes to hold the list of actors and their message queues
 actors list is partitioned: file handle 1, file handle 2, socket 1, socket 2, user interface
 each partition can wake up the eventloop to process the partition's messages
 
-the main loop only runs messages of UI actors (which are kept in a separate list); this means that:
+the UI loop only runs messages of UI actors (which are kept in a separate list); this means that:
 , a heavy computation that blocks its thread, can't make the UI lag
 , the UI remains responsive, even when the number of non'UI actors is extremely large
-the main loop runs messages of UI actors, and then polls (non'waiting) more events
-	if there is no more messages for UI actors, wait for events
-
-filename and line number in C++ code: __FILE__ and __LINE__
-line numbers are measured before any escaped newlines are removed
-the current values of __FILE__ and __LINE__ can be overridden using the #line directive
-it can be useful for code generators which create C++ code base on other input files,
-	so that error messages will refer back to the original input files rather than to the generated C++ code
+the event loop runs messages of UI actors, and then polls (non'waiting) more events
+if there is no more messages for UI actors, wait for events
 */
 
 optional<string> read_jina_exp(const ifstream& jinfile) {
