@@ -188,13 +188,14 @@ body {
 </div><div>	and i think that language is "Jina"
 </div>
 <h2>2, syntax</h2><div>comments:
-</div><div>	;; comment line
-</div><div>	;; comment
-</div><div>		block
-</div><div>	;;
+</div><div>	; comment line
+</div><div>	; comment
+</div><div>		multi'line
+</div><div>	;; commant at the end of the line
+</div><div>	;
 </div><div>	comment
 </div><div>	block
-</div><div>	;
+</div><div>	;;
 </div><div>
 </div><div>identifiers (variable names) start with an alphabetic character, and can include numbers and apostrophe:
 </div><div>	abc'efg0123
@@ -405,7 +406,7 @@ body {
 </div><div>	;i I
 </div><div>		m1 ::(self!&, X -&gt Y)
 </div><div>		m2 = { self!& ||
-</div><div>			;; default implementation
+</div><div>			; default implementation
 </div><div>		}
 </div><div>interface inheritance:
 </div><div>	;i I ::I1 ::I2
@@ -414,10 +415,10 @@ body {
 </div><div>	;ns T ::I1 ::I2
 </div><div>		m1 = ...
 </div><div>		m2 = ...
-</div><div>		;; I1
+</div><div>		; I1
 </div><div>		m3 = ...
 </div><div>		m4 = ...
-</div><div>		;; I2
+</div><div>		; I2
 </div><div>		...
 </div><div>
 </div><div>generics:
@@ -431,7 +432,7 @@ body {
 </div><div>or:
 </div><div>	;sys
 </div><div>	...
-</div><div>	;
+</div><div>	;;
 </div><div>beware! with great power comes great responsibility
 </div>
 </body></html>
