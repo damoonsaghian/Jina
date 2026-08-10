@@ -1,3 +1,5 @@
 # Jina library for graphical user interface
 # deps: jina sdl3
 # jina .
+
+# https://github.com/talesm/SDL3pp
